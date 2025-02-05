@@ -10,7 +10,7 @@ items:
         memory: 2048
         cpus: 1.0
         disk: 10
-        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,dedicated=cb-apps
+        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
         storageClassName: "gp3-a"
   # Casc, Non-HA
   - kind: managedController
@@ -20,7 +20,7 @@ items:
         memory: 6144
         cpus: 2.0
         disk: 5
-        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,dedicated=cb-apps
+        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
         storageClassName: "gp3-a"
         yaml: |-
           ---
@@ -64,7 +64,7 @@ items:
         memory: 6144
         cpus: 2.0
         disk: 5
-        nodeSelectors: dedicated=cb-apps
+        nodeSelectors: role=cb-apps
         storageClassName: "efs"
         replication:
           config:
