@@ -18,6 +18,7 @@ csi:
 server:
   auditStorage:
     enabled: true
+    storageClass: efs
   dataStorage:
     enabled: true
     storageClass: efs
