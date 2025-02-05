@@ -124,7 +124,7 @@ module "eks_blueprints_addons" {
   source = "aws-ia/eks-blueprints-addons/aws"
   #vEKSBpAddonsTFMod#
   version    = "1.19.0"
-  depends_on = [module.eks]
+  depends_on = [kubernetes_storage_class_v1.efs, kubernetes_storage_class_v1.gp3_a, kubernetes_annotations.gp2]
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -290,7 +290,7 @@ module "eks_blueprints_addons" {
       values = [templatefile("k8s/openldap-stack-values.yml", {
         password           = local.global_password
         admin_user_outputs = local.cbci_admin_user
-        aws_region         = var.aws_region
+        #aws_region         = var.aws_region
       })]
     }
     aws-node-termination-handler = {
