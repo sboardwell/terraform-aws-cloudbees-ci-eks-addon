@@ -130,12 +130,13 @@ module "eks" {
       platform        = "linux"
       min_size        = 1
       max_size        = 3
-      desired_size    = 2
+      desired_size    = 1
       labels = {
         role    = "shared"
         storage = "enabled"
       }
     }
+    #For Controllers using EFS or EBS
     cb_apps = {
       node_group_name = "cb-apps" #cb-apps-a
       instance_types  = ["m7g.2xlarge"] #Graviton
@@ -152,44 +153,27 @@ module "eks" {
       enable_bootstrap_user_data = true
       bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
       disk_size                  = 100
-      #subnet_ids                 = ["${var.aws_region}a"]
     }
-    # cb_apps_b = {
-    #   node_group_name = "cb-apps-b"
-    #   instance_types  = ["m7g.2xlarge"] #Graviton
-    #   min_size        = 1
-    #   max_size        = 3
-    #   desired_size    = 1
-    #   taints          = [local.mng["cbci_apps"]["taints"]]
-    #   labels = {
-    #     role    = local.mng["cbci_apps"]["labels"].role
-    #     storage = "enabled"
-    #   }
-    #   ami_type                   = "BOTTLEROCKET_ARM_64"
-    #   platform                   = "bottlerocket"
-    #   enable_bootstrap_user_data = true
-    #   bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-    #   disk_size                  = 100
-    #   subnet_ids                 = ["${var.aws_region}b"]
-    # }
-    # cb_apps_c = {
-    #   node_group_name = "cb-apps"
-    #   instance_types  = ["m7g.2xlarge"] #Graviton
-    #   min_size        = 1
-    #   max_size        = 3
-    #   desired_size    = 1
-    #   taints          = [local.mng["cbci_apps"]["taints"]]
-    #   labels = {
-    #     role    = local.mng["cbci_apps"]["labels"].role
-    #     storage = "enabled"
-    #   }
-    #   ami_type                   = "BOTTLEROCKET_ARM_64"
-    #   platform                   = "bottlerocket"
-    #   enable_bootstrap_user_data = true
-    #   bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-    #   disk_size                  = 100
-    #   subnet_ids                 = ["${var.aws_region}c"]
-    # }
+    #For controllers using EBS, we guarantee there is at least one node in AZ-a to support gp3 EBS volumes
+    #https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md#common-notes-and-gotchas
+    cb_apps_a = {
+      node_group_name = "cb-apps-a"
+      instance_types  = ["m7g.2xlarge"] #Graviton
+      min_size        = 1
+      max_size        = 3
+      desired_size    = 1
+      taints          = [local.mng["cbci_apps"]["taints"]]
+      labels = {
+        role    = local.mng["cbci_apps"]["labels"].role
+        storage = "enabled"
+      }
+      ami_type                   = "BOTTLEROCKET_ARM_64"
+      platform                   = "bottlerocket"
+      enable_bootstrap_user_data = true
+      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
+      disk_size                  = 100
+      subnet_ids                 = [module.vpc.private_subnets[0]]
+    }
     # https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/
     # https://www.eksworkshop.com/docs/fundamentals/managed-node-groups/spot/instance-diversification
     cb_agents_lin_2x = {
