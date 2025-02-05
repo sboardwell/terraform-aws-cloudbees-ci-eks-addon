@@ -136,8 +136,8 @@ module "eks" {
         storage = "enabled"
       }
     }
-    cb_apps_a = {
-      node_group_name = "cb-apps-a"
+    cb_apps = {
+      node_group_name = "cb-apps" #cb-apps-a
       instance_types  = ["m7g.2xlarge"] #Graviton
       min_size        = 1
       max_size        = 3
