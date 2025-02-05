@@ -290,7 +290,6 @@ module "eks_blueprints_addons" {
       values = [templatefile("k8s/openldap-stack-values.yml", {
         password           = local.global_password
         admin_user_outputs = local.cbci_admin_user
-        #aws_region         = var.aws_region
       })]
     }
     aws-node-termination-handler = {
@@ -310,9 +309,7 @@ module "eks_blueprints_addons" {
       chart            = "vault"
       chart_version    = "0.28.1"
       repository       = "https://helm.releases.hashicorp.com"
-      values = [templatefile("k8s/vault-values.yml", {
-        aws_region     = var.aws_region
-      })]
+      values           = [file("k8s/vault-values.yml")]
     }
     otel-collector = {
       name             = "otel-collector"

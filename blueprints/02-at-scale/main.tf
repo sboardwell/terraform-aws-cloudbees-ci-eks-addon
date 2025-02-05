@@ -17,7 +17,7 @@ locals {
   cbci_inline_policy_ecr    = "${local.name}-iam_inline_policy_ecr"
   cbci_iam_role_s3          = "${local.name}-iam_role_s3"
 
-  vpc_cidr         = "10.0.0.0/16"
+  vpc_cidr = "10.0.0.0/16"
 
   #It assumes that AZ as named as "a", "b", "c" consecutively.
   azs              = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -138,7 +138,7 @@ module "eks" {
     }
     #For Controllers using EFS or EBS
     cb_apps = {
-      node_group_name = "cb-apps" #cb-apps-a
+      node_group_name = "cb-apps"
       instance_types  = ["m7g.2xlarge"] #Graviton
       min_size        = 1
       max_size        = 3
