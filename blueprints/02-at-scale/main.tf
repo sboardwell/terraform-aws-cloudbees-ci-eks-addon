@@ -18,7 +18,8 @@ locals {
   cbci_iam_role_s3          = "${local.name}-iam_role_s3"
 
   vpc_cidr         = "10.0.0.0/16"
-  
+
+  #It assumes that AZ as named as "a", "b", "c" consecutively.
   azs              = slice(data.aws_availability_zones.available.names, 0, 3)
   route53_zone_id  = data.aws_route53_zone.this.id
   route53_zone_arn = data.aws_route53_zone.this.arn
@@ -136,7 +137,7 @@ module "eks" {
       }
     }
     cb_apps_a = {
-      node_group_name = "cb-apps"
+      node_group_name = "cb-apps-a"
       instance_types  = ["m7g.2xlarge"] #Graviton
       min_size        = 1
       max_size        = 3
@@ -151,44 +152,44 @@ module "eks" {
       enable_bootstrap_user_data = true
       bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
       disk_size                  = 100
-      subnet_ids                 = ["${var.aws_region}a"]
+      #subnet_ids                 = ["${var.aws_region}a"]
     }
-    cb_apps_b = {
-      node_group_name = "cb-apps"
-      instance_types  = ["m7g.2xlarge"] #Graviton
-      min_size        = 1
-      max_size        = 3
-      desired_size    = 1
-      taints          = [local.mng["cbci_apps"]["taints"]]
-      labels = {
-        role    = local.mng["cbci_apps"]["labels"].role
-        storage = "enabled"
-      }
-      ami_type                   = "BOTTLEROCKET_ARM_64"
-      platform                   = "bottlerocket"
-      enable_bootstrap_user_data = true
-      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-      disk_size                  = 100
-      subnet_ids                 = ["${var.aws_region}b"]
-    }
-    cb_apps_c = {
-      node_group_name = "cb-apps"
-      instance_types  = ["m7g.2xlarge"] #Graviton
-      min_size        = 1
-      max_size        = 3
-      desired_size    = 1
-      taints          = [local.mng["cbci_apps"]["taints"]]
-      labels = {
-        role    = local.mng["cbci_apps"]["labels"].role
-        storage = "enabled"
-      }
-      ami_type                   = "BOTTLEROCKET_ARM_64"
-      platform                   = "bottlerocket"
-      enable_bootstrap_user_data = true
-      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-      disk_size                  = 100
-      subnet_ids                 = ["${var.aws_region}c"]
-    }
+    # cb_apps_b = {
+    #   node_group_name = "cb-apps-b"
+    #   instance_types  = ["m7g.2xlarge"] #Graviton
+    #   min_size        = 1
+    #   max_size        = 3
+    #   desired_size    = 1
+    #   taints          = [local.mng["cbci_apps"]["taints"]]
+    #   labels = {
+    #     role    = local.mng["cbci_apps"]["labels"].role
+    #     storage = "enabled"
+    #   }
+    #   ami_type                   = "BOTTLEROCKET_ARM_64"
+    #   platform                   = "bottlerocket"
+    #   enable_bootstrap_user_data = true
+    #   bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
+    #   disk_size                  = 100
+    #   subnet_ids                 = ["${var.aws_region}b"]
+    # }
+    # cb_apps_c = {
+    #   node_group_name = "cb-apps"
+    #   instance_types  = ["m7g.2xlarge"] #Graviton
+    #   min_size        = 1
+    #   max_size        = 3
+    #   desired_size    = 1
+    #   taints          = [local.mng["cbci_apps"]["taints"]]
+    #   labels = {
+    #     role    = local.mng["cbci_apps"]["labels"].role
+    #     storage = "enabled"
+    #   }
+    #   ami_type                   = "BOTTLEROCKET_ARM_64"
+    #   platform                   = "bottlerocket"
+    #   enable_bootstrap_user_data = true
+    #   bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
+    #   disk_size                  = 100
+    #   subnet_ids                 = ["${var.aws_region}c"]
+    # }
     # https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/
     # https://www.eksworkshop.com/docs/fundamentals/managed-node-groups/spot/instance-diversification
     cb_agents_lin_2x = {
