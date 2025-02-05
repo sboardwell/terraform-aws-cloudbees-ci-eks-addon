@@ -5,3 +5,7 @@
 
 nodeSelector:
   kubernetes.io/os: linux
+
+extraArgs:
+  expander: least-waste
+  balance-similar-node-groups: true

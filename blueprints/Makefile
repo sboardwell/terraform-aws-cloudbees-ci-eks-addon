@@ -6,7 +6,7 @@ BP_AGENT_USER       := bp-agent
 MKFILEDIR 			:= $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 CBCI_REPO		    ?= https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git
 CBCI_BRANCH			?= main
-DESTROY_WL_ONLY	?= false
+DESTROY_WL_ONLY		?= false
 
 define helpers
 	source helpers.sh && $(1)

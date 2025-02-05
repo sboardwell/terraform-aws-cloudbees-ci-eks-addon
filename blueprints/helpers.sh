@@ -99,11 +99,11 @@ tf-destroy () {
   export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
   rm "$TF_LOG_PATH" || INFO "No previous log found."
   tf-destroy-wl "$root"
+  eks_cluster_name=$(tf-output "$root" eks_cluster_name)
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
-    eks_cluster_name=$(tf-output "$root" eks_cluster_name)
     aws_region=$(tf-output "$root" aws_region)
     bash "$SCRIPTDIR/$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
     INFO "kube-prom-destroy.sh completed."

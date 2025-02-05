@@ -20,6 +20,7 @@ server:
     enabled: true
   dataStorage:
     enabled: true
+    storageClass: efs
   nodeSelector:
     kubernetes.io/os: linux
   ha:

@@ -18,6 +18,7 @@ locals {
   cbci_iam_role_s3          = "${local.name}-iam_role_s3"
 
   vpc_cidr         = "10.0.0.0/16"
+  
   azs              = slice(data.aws_availability_zones.available.names, 0, 3)
   route53_zone_id  = data.aws_route53_zone.this.id
   route53_zone_arn = data.aws_route53_zone.this.arn
@@ -120,7 +121,7 @@ module "eks" {
     disk_size     = 50
   }
   eks_managed_node_groups = {
-    # Note: Openldap is not compatible with Bottlerocket or Graviton.
+    # Note: Openldap is the only shared services that it is not compatible with Bottlerocket or Graviton.
     shared_apps = {
       node_group_name = "shared"
       instance_types  = ["m5d.xlarge"]
@@ -134,12 +135,12 @@ module "eks" {
         storage = "enabled"
       }
     }
-    cb_apps = {
+    cb_apps_a = {
       node_group_name = "cb-apps"
       instance_types  = ["m7g.2xlarge"] #Graviton
       min_size        = 1
-      max_size        = 6
-      desired_size    = 2
+      max_size        = 3
+      desired_size    = 1
       taints          = [local.mng["cbci_apps"]["taints"]]
       labels = {
         role    = local.mng["cbci_apps"]["labels"].role
@@ -150,6 +151,43 @@ module "eks" {
       enable_bootstrap_user_data = true
       bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
       disk_size                  = 100
+      subnet_ids                 = ["${var.aws_region}a"]
+    }
+    cb_apps_b = {
+      node_group_name = "cb-apps"
+      instance_types  = ["m7g.2xlarge"] #Graviton
+      min_size        = 1
+      max_size        = 3
+      desired_size    = 1
+      taints          = [local.mng["cbci_apps"]["taints"]]
+      labels = {
+        role    = local.mng["cbci_apps"]["labels"].role
+        storage = "enabled"
+      }
+      ami_type                   = "BOTTLEROCKET_ARM_64"
+      platform                   = "bottlerocket"
+      enable_bootstrap_user_data = true
+      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
+      disk_size                  = 100
+      subnet_ids                 = ["${var.aws_region}b"]
+    }
+    cb_apps_c = {
+      node_group_name = "cb-apps"
+      instance_types  = ["m7g.2xlarge"] #Graviton
+      min_size        = 1
+      max_size        = 3
+      desired_size    = 1
+      taints          = [local.mng["cbci_apps"]["taints"]]
+      labels = {
+        role    = local.mng["cbci_apps"]["labels"].role
+        storage = "enabled"
+      }
+      ami_type                   = "BOTTLEROCKET_ARM_64"
+      platform                   = "bottlerocket"
+      enable_bootstrap_user_data = true
+      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
+      disk_size                  = 100
+      subnet_ids                 = ["${var.aws_region}c"]
     }
     # https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/
     # https://www.eksworkshop.com/docs/fundamentals/managed-node-groups/spot/instance-diversification
@@ -178,33 +216,13 @@ module "eks" {
       # ec2-instance-selector --vcpus 4 --memory 16 --region us-east-1 --deny-list 't.*' --current-generation -a arm64 --gpus 0 --usage-class spot
       instance_types = ["im4gn.xlarge", "m6g.xlarge", "m6gd.xlarge", "m7g.xlarge", "m7gd.xlarge"] #Graviton
       capacity_type  = "SPOT"
-      min_size       = 0
+      min_size       = 1
       max_size       = 3
-      desired_size   = 0
+      desired_size   = 1
       taints         = [{ key = "dedicated", value = "build-linux-xl", effect = "NO_SCHEDULE" }]
       labels = {
         role = "build-linux-xl"
         size = "4x"
-      }
-      create_iam_role            = false
-      iam_role_arn               = aws_iam_role.managed_ng_ecr.arn
-      ami_type                   = "BOTTLEROCKET_ARM_64"
-      platform                   = "bottlerocket"
-      enable_bootstrap_user_data = true
-      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-    }
-    cb_agents_lin_8x = {
-      node_group_name = "agent-lin-8x"
-      # ec2-instance-selector --vcpus 8 --memory 32 --region us-east-1 --deny-list 't.*' --current-generation -a arm64 --gpus 0 --usage-class spot
-      instance_types = ["im4gn.2xlarge", "m6g.2xlarge", "m6gd.2xlarge", "m7g.2xlarge", "m7gd.2xlarge"] #Graviton
-      capacity_type  = "SPOT"
-      min_size       = 0
-      max_size       = 3
-      desired_size   = 0
-      taints         = [{ key = "dedicated", value = "build-linux-xl", effect = "NO_SCHEDULE" }]
-      labels = {
-        role = "build-linux-xl"
-        size = "8x"
       }
       create_iam_role            = false
       iam_role_arn               = aws_iam_role.managed_ng_ecr.arn

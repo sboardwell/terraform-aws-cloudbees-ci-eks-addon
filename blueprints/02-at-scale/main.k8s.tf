@@ -290,6 +290,7 @@ module "eks_blueprints_addons" {
       values = [templatefile("k8s/openldap-stack-values.yml", {
         password           = local.global_password
         admin_user_outputs = local.cbci_admin_user
+        aws_region         = var.aws_region
       })]
     }
     aws-node-termination-handler = {
@@ -309,7 +310,9 @@ module "eks_blueprints_addons" {
       chart            = "vault"
       chart_version    = "0.28.1"
       repository       = "https://helm.releases.hashicorp.com"
-      values           = [file("k8s/vault-values.yml")]
+      values = [templatefile("k8s/vault-values.yml", {
+        aws_region     = var.aws_region
+      })]
     }
     otel-collector = {
       name             = "otel-collector"
@@ -362,9 +365,9 @@ resource "kubernetes_annotations" "gp2" {
   }
 }
 
-resource "kubernetes_storage_class_v1" "gp3_aza" {
+resource "kubernetes_storage_class_v1" "gp3_a" {
   metadata {
-    name = "gp3"
+    name = "gp3-a"
 
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
@@ -376,13 +379,13 @@ resource "kubernetes_storage_class_v1" "gp3_aza" {
   allow_volume_expansion = true
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
-  # # Issue #195
-  # allowed_topologies {
-  #   match_label_expressions {
-  #     key    = "topology.ebs.csi.aws.com/zone"
-  #     values = ["${var.aws_region}a"]
-  #   }
-  # }
+  # Issue #195
+  allowed_topologies {
+    match_label_expressions {
+      key    = "topology.ebs.csi.aws.com/zone"
+      values = ["${var.aws_region}a"]
+    }
+  }
 
   parameters = {
     encrypted = "true"
