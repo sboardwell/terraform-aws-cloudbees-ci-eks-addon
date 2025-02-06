@@ -18,8 +18,10 @@ csi:
 server:
   auditStorage:
     enabled: true
+    storageClass: efs
   dataStorage:
     enabled: true
+    storageClass: efs
   nodeSelector:
     kubernetes.io/os: linux
   ha:

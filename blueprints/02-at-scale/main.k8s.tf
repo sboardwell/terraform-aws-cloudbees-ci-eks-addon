@@ -124,7 +124,7 @@ module "eks_blueprints_addons" {
   source = "aws-ia/eks-blueprints-addons/aws"
   #vEKSBpAddonsTFMod#
   version    = "1.19.0"
-  depends_on = [module.eks]
+  depends_on = [kubernetes_storage_class_v1.efs, kubernetes_storage_class_v1.gp3_a, kubernetes_annotations.gp2]
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -362,9 +362,9 @@ resource "kubernetes_annotations" "gp2" {
   }
 }
 
-resource "kubernetes_storage_class_v1" "gp3_aza" {
+resource "kubernetes_storage_class_v1" "gp3_a" {
   metadata {
-    name = "gp3"
+    name = "gp3-a"
 
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
@@ -376,13 +376,13 @@ resource "kubernetes_storage_class_v1" "gp3_aza" {
   allow_volume_expansion = true
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
-  # # Issue #195
-  # allowed_topologies {
-  #   match_label_expressions {
-  #     key    = "topology.ebs.csi.aws.com/zone"
-  #     values = ["${var.aws_region}a"]
-  #   }
-  # }
+  # Issue #195
+  allowed_topologies {
+    match_label_expressions {
+      key    = "topology.ebs.csi.aws.com/zone"
+      values = ["${var.aws_region}a"]
+    }
+  }
 
   parameters = {
     encrypted = "true"

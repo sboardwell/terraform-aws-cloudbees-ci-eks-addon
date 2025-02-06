@@ -99,11 +99,11 @@ tf-destroy () {
   export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
   rm "$TF_LOG_PATH" || INFO "No previous log found."
   tf-destroy-wl "$root"
+  eks_cluster_name=$(tf-output "$root" eks_cluster_name)
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
-    eks_cluster_name=$(tf-output "$root" eks_cluster_name)
     aws_region=$(tf-output "$root" aws_region)
     bash "$SCRIPTDIR/$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
     INFO "kube-prom-destroy.sh completed."
@@ -177,12 +177,13 @@ probes () {
       fi
     until eval "$(tf-output "$root" prometheus_active_targets)" | jq '.data.activeTargets[] | select(.labels.container=="jenkins") | {job: .labels.job, instance: .labels.instance, status: .health}'; do sleep $wait && echo "Waiting for CloudBees CI Prometheus Targets..."; done ;\
       INFO "CloudBees CI Targets are loaded in Prometheus."
-    until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
-      INFO "CloudBees CI Log Streams are already in Cloud Watch."
     until [ "$(eval "$(tf-output "$root" tempo_tags)" | grep -c 'jenkins.pipeline')" -ge 1 ]; do sleep $wait && echo "Waiting for Tempo to inject jenkins.pipeline* tags from Open Telemetry plugin"; done ;\
       eval "$(tf-output "$root" tempo_tags)" | jq .tagNames && INFO "Tempo has injested tags from Open Telemetry plugin."
     until [ "$(eval "$(tf-output "$root" loki_labels)" | grep -c 'com_cloudbees')" -ge 1 ]; do sleep $wait && echo "Waiting for Loki to inject com_cloudbees* labels from FluentBit"; done ;\
       eval "$(tf-output "$root" loki_label)" && INFO "Loki has injested labels from FluentBit."
+    # Commenting this one. Sometime log groups are not created yet.
+    # until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
+    #   INFO "CloudBees CI Log Streams are already in Cloud Watch."
   fi
 }
 

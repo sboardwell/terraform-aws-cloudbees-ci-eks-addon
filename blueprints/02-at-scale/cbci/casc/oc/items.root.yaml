@@ -10,7 +10,8 @@ items:
         memory: 2048
         cpus: 1.0
         disk: 10
-        storageClassName: "gp3"
+        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
+        storageClassName: "gp3-a"
   # Casc, Non-HA
   - kind: managedController
     name: team-b
@@ -19,7 +20,8 @@ items:
         memory: 6144
         cpus: 2.0
         disk: 5
-        storageClassName: "gp3"
+        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
+        storageClassName: "gp3-a"
         yaml: |-
           ---
           apiVersion: "apps/v1"
@@ -62,6 +64,7 @@ items:
         memory: 6144
         cpus: 2.0
         disk: 5
+        nodeSelectors: role=cb-apps
         storageClassName: "efs"
         replication:
           config:
