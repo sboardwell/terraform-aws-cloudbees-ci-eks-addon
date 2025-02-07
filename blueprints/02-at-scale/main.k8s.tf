@@ -243,13 +243,12 @@ module "eks_blueprints_addons" {
   enable_aws_for_fluentbit = true
   aws_for_fluentbit_cw_log_group = {
     create          = true
-    use_name_prefix = true # Set this to true to enable name prefix
+    # Set this to true to enable name prefix
+    use_name_prefix = true
     name_prefix     = "eks-cluster-logs-"
     retention       = local.cloudwatch_logs_expiration_days
   }
   aws_for_fluentbit = {
-    # Enable Container Insights just for troubleshooting
-    # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html
     enable_containerinsights = true
     #Enable kubelet_monitoring for large clusters
     kubelet_monitoring       = true
