@@ -239,6 +239,7 @@ module "eks_blueprints_addons" {
       cert_arn         = module.acm.acm_certificate_arn
     })]
   }
+  #enable_aws_cloudwatch_metrics = true
   enable_aws_for_fluentbit = true
   aws_for_fluentbit_cw_log_group = {
     create          = true
@@ -249,7 +250,9 @@ module "eks_blueprints_addons" {
   aws_for_fluentbit = {
     # Enable Container Insights just for troubleshooting
     # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html
-    enable_containerinsights = false
+    enable_containerinsights = true
+    #Enable kubelet_monitoring for large clusters
+    kubelet_monitoring       = true
     namespace                = local.observability_ns
     create_namespace         = true
     values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
@@ -259,16 +262,19 @@ module "eks_blueprints_addons" {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
     })]
-    kubelet_monitoring = true
     chart_version      = "0.1.34"
     s3_bucket_arns = [
       module.cbci_s3_bucket.s3_bucket_arn,
       "${local.fluentbit_s3_location}/*"
     ]
-    # Note: This values are duplicated in k8s/aws-for-fluent-bit-values.yml but they are required here to not be overwrite by default values.
+    #Note: this values requires to be defined here to avoid bein overrided
     set = [{
-      name  = "cloudWatchLogs.autoCreateGroup"
-      value = true
+        name  = "cloudWatchLogs.autoCreateGroup"
+        value = true
+      },
+      {
+        name  = "cloudWatchLogs.logGroupName"
+        value = "/aws/eks/${local.cluster_name}/aws-fluentbit-logs"
       },
       {
         name  = "hostNetwork"
