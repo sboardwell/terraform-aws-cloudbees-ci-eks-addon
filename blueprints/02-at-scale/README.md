@@ -86,7 +86,6 @@ CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazo
 |------|-------------|
 | acm_certificate_arn | AWS Certificate Manager (ACM) certificate for Amazon Resource Names (ARN). |
 | aws_backup_efs_protected_resource | AWS description for the Amazon EFS drive that is used to back up protected resources. |
-| aws_logstreams_fluentbit | AWS CloudWatch log streams from Fluent Bit. |
 | aws_region | AWS region. |
 | cbci_agent_linuxtempl_events | Retrieves a list of events related to Linux template agents. |
 | cbci_agent_sec_reg | Retrieves the container registry secret deployed in the agents namespace. |
