@@ -34,7 +34,7 @@ bpAgent-dRun (){
 		INFO "Building Docker Image local.cloudbees/bp-agent:latest" && \
 		docker build . --file "$SCRIPTDIR/../.docker/agent/agent.rootless.Dockerfile" --tag "$bpAgentLocalImage"; \
 		fi
-	docker run --rm -it --name "$bpAgentUser" \
+	docker run --rm -it \
 		-v "$SCRIPTDIR/..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
     --workdir="/$bpAgentUser/cbci-eks-addon/blueprints" \
 		"$bpAgentLocalImage"
