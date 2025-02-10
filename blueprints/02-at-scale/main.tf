@@ -236,6 +236,7 @@ module "eks" {
 
   # https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
   # https://aws.amazon.com/blogs/containers/understanding-and-cost-optimizing-amazon-eks-control-plane-logs/
+  # Saved by default in /aws/eks/${local.cluster_name}/cluster
   create_cloudwatch_log_group            = true
   cluster_enabled_log_types              = ["audit", "api", "authenticator", "controllerManager", "scheduler"]
   cloudwatch_log_group_retention_in_days = local.cloudwatch_logs_expiration_days

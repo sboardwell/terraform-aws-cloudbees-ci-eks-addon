@@ -409,6 +409,9 @@ Grafana imports Prometheus as a datasource and provides metrics dashboards for C
 
 Additionally, [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) for all your containerized applications and microservices.
 
+>[!NOTE]
+>[CloudWatch agent with Prometheus metrics collection on Amazon EKS and Kubernetes clusters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup.html) can be enabled to collect Jenkins Metrics in prometheus format.
+
 ##### Tracing
 
 Tempo is used as the Tracing/APM backend for Jenkins tracing data via the Jenkins OpenTelemetry plugin: [HTTP](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/http-requests-traces.md) and [Jobs](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/job-traces.md).
