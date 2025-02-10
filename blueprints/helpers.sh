@@ -181,8 +181,9 @@ probes () {
       eval "$(tf-output "$root" tempo_tags)" | jq .tagNames && INFO "Tempo has injested tags from Open Telemetry plugin."
     until [ "$(eval "$(tf-output "$root" loki_labels)" | grep -c 'com_cloudbees')" -ge 1 ]; do sleep $wait && echo "Waiting for Loki to inject com_cloudbees* labels from FluentBit"; done ;\
       eval "$(tf-output "$root" loki_label)" && INFO "Loki has injested labels from FluentBit."
-    until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
-      INFO "CloudBees CI Log Streams are already in Cloud Watch."
+    # Note: name aws fluent bit  log streams is not consistent, it has a random suffix
+    # until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
+    #   INFO "CloudBees CI Log Streams are already in Cloud Watch."
   fi
 }
 
