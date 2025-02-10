@@ -86,7 +86,6 @@ CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazo
 |------|-------------|
 | acm_certificate_arn | AWS Certificate Manager (ACM) certificate for Amazon Resource Names (ARN). |
 | aws_backup_efs_protected_resource | AWS description for the Amazon EFS drive that is used to back up protected resources. |
-| aws_logstreams_fluentbit | AWS CloudWatch log streams from Fluent Bit. |
 | aws_region | AWS region. |
 | cbci_agent_linuxtempl_events | Retrieves a list of events related to Linux template agents. |
 | cbci_agent_sec_reg | Retrieves the container registry secret deployed in the agents namespace. |
@@ -406,6 +405,11 @@ Grafana imports Prometheus as a datasource and provides metrics dashboards for C
 1. To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI**, and then select the controller pod to view the metrics. The following image shows metrics for `team-b`:
 
    ![CloudBees CI Metrics Dashboard](img/observability/cbci-metrics-dashboard.png)
+
+Additionally, [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) for all your containerized applications and microservices.
+
+>[!NOTE]
+>[CloudWatch agent with Prometheus metrics collection on Amazon EKS and Kubernetes clusters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup.html) can be enabled to collect Jenkins Metrics in prometheus format.
 
 ##### Tracing
 

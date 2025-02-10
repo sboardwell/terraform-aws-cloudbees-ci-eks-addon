@@ -239,36 +239,29 @@ module "eks_blueprints_addons" {
       cert_arn         = module.acm.acm_certificate_arn
     })]
   }
+  # It enables /aws/containerinsights/${local.cluster_name}/performance which is required for CloudWatch Insights metrics
+  enable_aws_cloudwatch_metrics = true
   enable_aws_for_fluentbit = true
+  # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
   aws_for_fluentbit_cw_log_group = {
     create          = true
-    use_name_prefix = true # Set this to true to enable name prefix
-    name_prefix     = "eks-cluster-logs-"
     retention       = local.cloudwatch_logs_expiration_days
   }
   aws_for_fluentbit = {
-    # Enable Container Insights just for troubleshooting
-    # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html
-    enable_containerinsights = false
+    enable_containerinsights = true
+    #Enable kubelet_monitoring for large clusters
+    #kubelet_monitoring       = true
     namespace                = local.observability_ns
     create_namespace         = true
-    values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
-      region                  = var.aws_region
-      bucketName              = module.cbci_s3_bucket.s3_bucket_id
-      log_retention_days      = local.cloudwatch_logs_expiration_days
-      cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
-      cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
-    })]
-    kubelet_monitoring = true
-    chart_version      = "0.1.34"
+    chart_version            = "0.1.34"
     s3_bucket_arns = [
       module.cbci_s3_bucket.s3_bucket_arn,
       "${local.fluentbit_s3_location}/*"
     ]
-    # Note: This values are duplicated in k8s/aws-for-fluent-bit-values.yml but they are required here to not be overwrite by default values.
+    #Note: this values requires to be defined here to avoid bein overrided
     set = [{
-      name  = "cloudWatchLogs.autoCreateGroup"
-      value = true
+        name  = "cloudWatchLogs.autoCreateGroup"
+        value = true
       },
       {
         name  = "hostNetwork"
@@ -279,6 +272,13 @@ module "eks_blueprints_addons" {
         value = "ClusterFirstWithHostNet"
       }
     ]
+    values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
+      region                  = var.aws_region
+      bucketName              = module.cbci_s3_bucket.s3_bucket_id
+      log_retention_days      = local.cloudwatch_logs_expiration_days
+      cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
+      cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
+    })]
   }
   helm_releases = {
     openldap-stack = {

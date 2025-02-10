@@ -156,10 +156,11 @@ output "aws_backup_efs_protected_resource" {
   value       = "aws backup describe-protected-resource --resource-arn ${module.efs.arn} --region ${var.aws_region}"
 }
 
-output "aws_logstreams_fluentbit" {
-  description = "AWS CloudWatch log streams from Fluent Bit."
-  value       = "aws logs describe-log-streams --log-group-name /aws/eks/${local.cluster_name}/aws-fluentbit-logs --order-by LastEventTime --no-descending --query 'logStreams[?creationTime > `${local.epoch_millis}` ]' --region ${var.aws_region}"
-}
+# Note: name aws fluent bit  log streams is not consistent, it has a random suffix
+# output "aws_logstreams_fluentbit" {
+#   description = "AWS CloudWatch log streams from Fluent Bit."
+#   value       = "aws logs describe-log-streams --log-group-name /aws/eks/${local.cluster_name}/aws-fluentbit-logs --order-by LastEventTime --no-descending --query 'logStreams[?creationTime > `${local.epoch_millis}` ]' --region ${var.aws_region}"
+# }
 
 output "velero_backup_schedule" {
   description = "Creates a Velero backup schedule for the selected controller that is using block storage, and then deletes the existing schedule, if it exists."
