@@ -60,3 +60,5 @@ tfplan*.txt
 blueprints/02-at-scale/cbci/casc-pre-validate
 #tmp folder for any temporary files
 **/tmp
+#testing
+**/03-karpenter
