@@ -9,7 +9,7 @@ CBCI_BRANCH			?= main
 DESTROY_WL_ONLY		?= false
 
 define helpers
-	source helpers.sh && $(1)
+	source common/helpers.sh && $(1)
 endef
 
 ##########################
