@@ -1,4 +1,4 @@
-# CloudBees CI blueprint add-on: At scale
+# CloudBees CI blueprint add-on: At scale with Cluster Autoscaler
 
 Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get started](../01-getting-started/README.md), this blueprint presents a scalable architecture and configuration by adding:
 
