@@ -8,7 +8,7 @@ metadata:
   name: default
 spec:
   role: "${local.node_iam_role_name}"
-  amiSelectorTerms: 
+  amiSelectorTerms:
   - alias: al2@latest
   securityGroupSelectorTerms:
   - tags:
@@ -35,8 +35,8 @@ resource "kubectl_manifest" "karpenter_default_node_pool" {
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: default 
-spec:  
+  name: default
+spec:
   template:
     metadata:
       labels:
@@ -67,7 +67,7 @@ spec:
   disruption:
     consolidationPolicy: WhenEmptyOrUnderutilized
     consolidateAfter: 1m
-    
+
 YAML
   depends_on = [
     module.eks.cluster,

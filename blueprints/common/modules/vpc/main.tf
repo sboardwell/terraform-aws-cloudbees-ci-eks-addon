@@ -36,13 +36,13 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${var.vpc_name}" = "shared"
-    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/role/elb"                = 1
   }
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${var.vpc_name}" = "shared"
-    "kubernetes.io/role/internal-elb"     = 1
-    "karpenter.sh/discovery"              = var.vpc_name
+    "kubernetes.io/role/internal-elb"       = 1
+    "karpenter.sh/discovery"                = var.vpc_name
   }
 
   tags = var.tags

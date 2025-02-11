@@ -141,7 +141,7 @@ module "eks_blueprints_addons" {
   #####################
   #03-karpenter
   #####################
-  enable_metrics_server   = true
+  enable_metrics_server    = true
   enable_aws_for_fluentbit = true
   aws_for_fluentbit = {
     set = [
@@ -202,7 +202,7 @@ module "aws-auth" {
 }
 
 module "k8s_storage" {
-  source = "../common/modules/k8s_sc"
+  source     = "../common/modules/k8s_sc"
   depends_on = [module.eks]
 
   aws_region = var.aws_region
@@ -216,16 +216,16 @@ module "k8s_storage" {
 module "vpc" {
   source = "../common/modules/vpc"
 
-  vpc_name     = local.name
-  tags         = local.tags
+  vpc_name = local.name
+  tags     = local.tags
 
 }
 
 module "acm" {
   source = "../common/modules/acm"
 
-  hosted_zone  = var.hosted_zone
+  hosted_zone     = var.hosted_zone
   route53_zone_id = local.route53_zone_id
-  tags         = local.tags
+  tags            = local.tags
 
 }

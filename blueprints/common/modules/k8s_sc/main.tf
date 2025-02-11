@@ -6,7 +6,7 @@ resource "kubernetes_annotations" "gp2" {
   api_version = "storage.k8s.io/v1"
   kind        = "StorageClass"
   # This is true because the resources was already created by the ebs-csi-driver addon
-  force      = "true"
+  force = "true"
 
   metadata {
     name = "gp2"
@@ -48,7 +48,7 @@ resource "kubernetes_storage_class_v1" "gp3_a" {
 
 resource "kubernetes_storage_class_v1" "efs" {
   count = local.create_efs_storage_class ? 1 : 0
-  
+
   metadata {
     name = "efs"
   }
