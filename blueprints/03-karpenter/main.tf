@@ -15,16 +15,16 @@ locals {
   name            = var.suffix == "" ? "cbci-bp03" : "cbci-bp03-${var.suffix}"
   cluster_version = "1.30"
   region          = var.aws_region
-  node_group_name = "managed-ondemand"
 
   node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
 
   route53_zone_arn = data.aws_route53_zone.this.arn
   route53_zone_id  = data.aws_route53_zone.this.id
 
-  tags = {
-    blueprint = local.name
-  }
+  tags = merge(var.tags, {
+    "tf-blueprint"  = local.name
+    "tf-repository" = "github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon"
+  })
 
   kubeconfig_file      = "kubeconfig_${local.name}.yaml"
   kubeconfig_file_path = abspath(local.kubeconfig_file)
@@ -186,7 +186,7 @@ module "ebs_csi_driver_irsa" {
   tags = local.tags
 }
 
-module "aws-auth" {
+module "aws_auth" {
   source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
   version = "~> 20.0"
 
