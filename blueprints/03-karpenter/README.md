@@ -18,11 +18,20 @@
 
 | Name | Description |
 |------|-------------|
-| eks_cluster_name | Cluster name of the EKS cluster |
-| kubeconfig_add | Adds kubeconfig to the local configuration to access the Kubernetes API. |
+| acm_certificate_arn | AWS Certificate Manager (ACM) certificate for Amazon Resource Names (ARN). |
+| cbci_helm | Helm configuration for the CloudBees CI add-on. It is accessible via state files only. |
+| cbci_initial_admin_password | Operations center service initial admin password for the CloudBees CI add-on. |
+| cbci_liveness_probe_ext | Operations center service external liveness probe for the CloudBees CI add-on. |
+| cbci_liveness_probe_int | Operations center service internal liveness probe for the CloudBees CI add-on. |
+| cbci_namespace | Namespace for the CloudBees CI add-on. |
+| cbci_oc_ing | Operations center Ingress for the CloudBees CI add-on. |
+| cbci_oc_pod | Operations center pod for the CloudBees CI add-on. |
+| cbci_oc_url | URL of the CloudBees CI operations center for the CloudBees CI add-on. |
+| eks_cluster_arn | Amazon EKS cluster ARN. |
+| eks_cluster_name | Amazon EKS cluster Name. |
+| kubeconfig_add | Adds kubeconfig to your local configuration to access the Kubernetes API. |
 | kubeconfig_export | Exports the KUBECONFIG environment variable to access the Kubernetes API. |
-| node_instance_role_name | IAM Role name that each Karpenter node will use |
-| vpc_id | VPC ID that the EKS cluster is using |
+| vpc_id | VPC ID. |
 <!-- END_TF_DOCS -->
 
 ## Prerequisites
