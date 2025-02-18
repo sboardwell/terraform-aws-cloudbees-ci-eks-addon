@@ -475,7 +475,7 @@ module "cbci_s3_bucket" {
 
       expiration = {
         days                         = local.s3_objects_expiration_days
-        expired_object_delete_marker = true
+        #expired_object_delete_marker = true
       }
     }
   ]
