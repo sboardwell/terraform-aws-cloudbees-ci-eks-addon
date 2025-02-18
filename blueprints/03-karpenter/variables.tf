@@ -25,11 +25,11 @@ variable "suffix" {
   }
 }
 
-# variable "ci" {
-#   description = "Running in a CI service versus running locally. False when running locally, true when running in a CI service."
-#   default     = false
-#   type        = bool
-# }
+variable "ci" {
+  description = "Running in a CI service versus running locally. False when running locally, true when running in a CI service."
+  default     = false
+  type        = bool
+}
 
 #Check number of AZ: aws ec2 describe-availability-zones --region var.aws_region
 variable "aws_region" {

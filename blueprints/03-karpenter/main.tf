@@ -27,7 +27,8 @@ locals {
   })
 
   kubeconfig_file      = "kubeconfig_${local.name}.yaml"
-  kubeconfig_file_path = abspath(local.kubeconfig_file)
+  kubeconfig_file_path = abspath("./${local.kubeconfig_file}")
+
 }
 
 ################################################################################
@@ -207,6 +208,20 @@ module "k8s_storage" {
 
   aws_region = var.aws_region
 
+}
+
+################################################################################
+# Kubeconfig
+################################################################################
+
+resource "terraform_data" "create_kubeconfig" {
+  depends_on = [module.eks]
+
+  triggers_replace = var.ci ? [timestamp()] : []
+
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.aws_region} --kubeconfig ${local.kubeconfig_file_path}"
+  }
 }
 
 #---------------------------------------------------------------
