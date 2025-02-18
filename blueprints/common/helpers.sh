@@ -11,8 +11,8 @@ export TF_LOG=DEBUG
 
 declare -a BLUEPRINTS=(
     "01-getting-started"
-    "02-at-scale"
-    "03-karpenter"
+    "02-at-scale-ca"
+    "03-at-scale-k"
   )
 
 INFO () {
