@@ -42,7 +42,7 @@ locals {
   fluentbit_s3_location = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
   velero_s3_location    = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
 
-  epoch_millis                    = time_static.epoch.unix * 1000
+  #epoch_millis                    = time_static.epoch.unix * 1000
   cloudwatch_logs_expiration_days = 7
   s3_objects_expiration_days      = 90
 
@@ -52,6 +52,10 @@ locals {
   })
 
 }
+
+# resource "time_static" "epoch" {
+#   depends_on = [module.eks_blueprints_addons]
+# }
 
 ################################################################################
 # EKS Cluster

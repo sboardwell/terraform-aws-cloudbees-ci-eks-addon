@@ -47,10 +47,6 @@ resource "random_string" "global_pass_string" {
   lower   = true
 }
 
-resource "time_static" "epoch" {
-  depends_on = [module.eks_blueprints_addons]
-}
-
 ################################################################################
 # Workloads
 ################################################################################
