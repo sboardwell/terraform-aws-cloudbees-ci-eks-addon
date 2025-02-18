@@ -178,7 +178,7 @@ jobs:
       # Troubleshooting: deploy,validate,onboarding
       # Nuke (Delete Dangling resource): wipeout
       STAGES: "deploy,validate,destroy"
-      ROOT: 02-at-scale
+      ROOT: 02-at-scale-ca
       TF_VAR_hosted_zone: bp02-ci.aws.ps.beescloud.com
     needs:
       - init
@@ -197,7 +197,7 @@ jobs:
     - name: Checkout code
       uses: cloudbees-io/checkout@v1
 
-    - name: 02-at-scale - Set
+    - name: 02-at-scale-ca - Set
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       shell: bash
       run : |
@@ -222,7 +222,7 @@ jobs:
         echo "Environment Variables:"
         printenv
 
-    - name: 02-at-scale - Deploy
+    - name: 02-at-scale-ca - Deploy
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: contains(env.STAGES, 'deploy')
       kind: build
@@ -243,7 +243,7 @@ jobs:
           --body blueprints/${{ env.ROOT }}/terraform.output \
           --key ${{ env.ROOT }}/ci/${{ env.ROOT }}.terraform.output || echo "Failed to put $body object in ${{ env.BUCKET_NAME_TF_STATE }}"
 
-    - name: 02-at-scale - Validate
+    - name: 02-at-scale-ca - Validate
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: contains(env.STAGES, 'validate')
       kind: test
@@ -251,21 +251,21 @@ jobs:
       run : |
         CI=true make validate
 
-    - name: 02-at-scale - Destroy
+    - name: 02-at-scale-ca - Destroy
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: contains(env.STAGES, 'destroy')
       shell: bash
       run : |
         CI=true make destroy
 
-    - name: 02-at-scale - Wipeout
+    - name: 02-at-scale-ca - Wipeout
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: contains(env.STAGES, 'wipeout')
       shell: bash
       run : |
         terraform -chdir=blueprints/${{ env.ROOT }} init -reconfigure && CI=true make destroy
 
-    - name: 02-at-scale  - Role Onboarding
+    - name: 02-at-scale-ca  - Role Onboarding
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: contains(env.STAGES, 'onboarding')
       env:
