@@ -20,7 +20,6 @@ data "aws_availability_zones" "available" {
 locals {
 
   name            = var.suffix == "" ? "cbci-bp03" : "cbci-bp03-${var.suffix}"
-  cluster_version = "1.30"
   region          = var.aws_region
 
   node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
@@ -161,7 +160,8 @@ module "eks" {
   version = "20.23.0"
 
   cluster_name                   = local.name
-  cluster_version                = local.cluster_version
+  #vK8#
+  cluster_version                = "1.30"
   cluster_endpoint_public_access = true
 
   cluster_addons = {
@@ -305,13 +305,13 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/role/elb"                = 1
   }
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"     = 1
-    "karpenter.sh/discovery"              = local.name
+    "kubernetes.io/role/internal-elb"       = 1
+    "karpenter.sh/discovery"                = local.name
   }
 
   tags = var.tags
