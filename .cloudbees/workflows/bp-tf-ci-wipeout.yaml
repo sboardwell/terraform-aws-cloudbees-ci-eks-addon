@@ -163,7 +163,7 @@ jobs:
       run : |
         terraform -chdir=blueprints/${{ env.ROOT }} init -reconfigure && CI=true make destroy
 
-  
+
   bp03:
     env:
       ROOT: 03-at-scale-k
@@ -210,4 +210,3 @@ jobs:
       shell: bash
       run : |
         terraform -chdir=blueprints/${{ env.ROOT }} init -reconfigure && CI=true make destroy
-

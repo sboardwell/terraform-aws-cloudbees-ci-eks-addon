@@ -340,11 +340,11 @@ module "efs" {
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
   }
-  
+
   #https://docs.cloudbees.com/docs/cloudbees-ci/latest/eks-install-guide/eks-pre-install-requirements-helm#_storage_requirements
   performance_mode = "generalPurpose"
   throughput_mode  = "elastic"
-  
+
   #Issue #39
   enable_backup_policy = false
 
@@ -475,7 +475,7 @@ module "cbci_s3_bucket" {
       ]
 
       expiration = {
-        days                         = local.s3_objects_expiration_days
+        days = local.s3_objects_expiration_days
         #expired_object_delete_marker = true
       }
     }

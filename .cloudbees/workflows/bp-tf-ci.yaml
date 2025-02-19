@@ -221,7 +221,7 @@ jobs:
           --region "${{ env.AWS_REGION_TF_BUCKET }}" \
           --body blueprints/${{ env.ROOT }}/terraform.output \
           --key ${{ env.ROOT }}/ci/${{ env.ROOT }}.terraform.output || echo "Failed to put $body object in ${{ env.BUCKET_NAME_TF_STATE }}"
-    
+
     - name: 02-at-scale-ca  - Role Onboarding
       uses: docker://public.ecr.aws/r1n1q0e5/cloudbees-labs/tf-aws-cb-ci-eks-addon-agent:latest
       if: ${{always()}}
@@ -345,4 +345,3 @@ jobs:
       shell: bash
       run : |
         CI=true make destroy
-
