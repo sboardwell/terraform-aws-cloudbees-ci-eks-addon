@@ -60,7 +60,8 @@ module "eks_blueprints_addon_cbci" {
 
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "1.16.3"
+  #vEKSBpAddonsTFMod#
+  version = "1.20.0"
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -161,7 +162,7 @@ module "eks" {
 
   cluster_name                   = local.name
   #vK8#
-  cluster_version                = "1.30"
+  cluster_version                = "1.31"
   cluster_endpoint_public_access = true
 
   cluster_addons = {
