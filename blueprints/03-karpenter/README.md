@@ -71,9 +71,9 @@ If the command is successful, no output is returned.
 ### Examples
 
     ```sh
-    kubectl apply -f examples/statefulset.yaml
-    kubectl scale deployment.apps/stateful --replicas=10
-    kubectl delete -f examples/statefulset.yaml
+    kubectl apply -f examples/statefulset-ebs.yaml
+    kubectl scale deployment.apps/statefulset-ebs --replicas=10
+    kubectl delete -f examples/statefulset-ebs.yaml
     ```
 
 ## Reference

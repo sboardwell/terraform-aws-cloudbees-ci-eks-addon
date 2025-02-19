@@ -6,6 +6,7 @@ set -euox pipefail
 
 SCRIPTDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+
 #https://developer.hashicorp.com/terraform/internals/debugging
 export TF_LOG=DEBUG
 
@@ -76,50 +77,50 @@ retry () {
 tf-output () {
   local root="$1"
   local output="$2"
-  terraform -chdir="$SCRIPTDIR/../$root" output -raw "$output" 2> /dev/null
+  terraform -chdir="$SCRIPTDIR/$root" output -raw "$output" 2> /dev/null
 }
 
 #https://aws-ia.github.io/terraform-aws-eks-blueprints/getting-started/#deploy
 tf-apply () {
   local root="$1"
-  export TF_LOG_PATH="$SCRIPTDIR/../$root/terraform.log"
+  export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
   rm TF_LOG_PATH || INFO "No previous log found."
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root apply -target=module.vpc -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root apply -target=module.vpc -auto-approve"
   INFO "Apply target module.vpc completed."
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root apply -target=module.eks -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root apply -target=module.eks -auto-approve"
   INFO "Apply target module.eks completed."
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root apply -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root apply -auto-approve"
   INFO "Apply the rest completed."
-  terraform -chdir="$SCRIPTDIR/../$root" output > "$SCRIPTDIR/../$root/terraform.output"
+  terraform -chdir="$SCRIPTDIR/$root" output > "$SCRIPTDIR/$root/terraform.output"
   INFO "Outputs saved corretely."
 }
 
 #https://aws-ia.github.io/terraform-aws-eks-blueprints/getting-started/#destroy
 tf-destroy () {
   local root="$1"
-  export TF_LOG_PATH="$SCRIPTDIR/../$root/terraform.log"
+  export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
   rm "$TF_LOG_PATH" || INFO "No previous log found."
   tf-destroy-wl "$root"
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root destroy -target=module.eks -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
     aws_region=$(tf-output "$root" aws_region)
     eks_cluster_name=$(tf-output "$root" eks_cluster_name)
-    bash "$SCRIPTDIR/../$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
+    bash "$SCRIPTDIR/$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
     INFO "kube-prom-destroy.sh completed."
   fi
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root destroy -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -auto-approve"
   INFO "Destroy the rest completed."
-  rm -f "$SCRIPTDIR/../$root/terraform.output"
+  rm -f "$SCRIPTDIR/$root/terraform.output"
 }
 
 tf-destroy-wl () {
   local root="$1"
-  export TF_LOG_PATH="$SCRIPTDIR/../$root/terraform.log"
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root destroy -target=module.eks_blueprints_addon_cbci -auto-approve"
+  export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks_blueprints_addon_cbci -auto-approve"
   INFO "Destroy target module.eks_blueprints_addon_cbci completed."
-  retry 3 "terraform -chdir=$SCRIPTDIR/../$root destroy -target=module.eks_blueprints_addons -auto-approve"
+  retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks_blueprints_addons -auto-approve"
   INFO "Destroy target module.eks_blueprints_addons completed."
 }
 
@@ -198,7 +199,7 @@ test-all () {
 
 clean() {
   local root="$1"
-  cd "$SCRIPTDIR/../$root" && \
+  cd "$SCRIPTDIR/$root" && \
     rm -rf ".terraform" && \
 	  rm -f ".terraform.lock.hcl" "k8s/kubeconfig_*.yaml"  "terraform.output" "terraform.log" "tfplan.txt"
 }

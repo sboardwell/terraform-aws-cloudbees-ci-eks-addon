@@ -70,7 +70,7 @@ spec:
 
 YAML
   depends_on = [
-    module.eks.cluster,
+    module.eks,
     module.eks_blueprints_addons.karpenter,
     kubectl_manifest.karpenter_default_ec2_node_class,
   ]
