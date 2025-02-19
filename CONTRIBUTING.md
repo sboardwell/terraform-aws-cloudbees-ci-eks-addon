@@ -96,4 +96,4 @@ CloudBees CI Terraform EKS Addon versions try to be in sync with the [CloudBees 
 
 This project uses [Release Drafter](https://github.com/release-drafter/release-drafter); pull request labels should be set accordingly.
 
-Kubernetes' environment versions are managed centrally in the [blueprints/.k8.env](blueprints/.k8s.env) file.
+Kubernetes' environment versions are managed centrally in the [blueprints/.k8s.env](blueprints/.k8s.env) file.

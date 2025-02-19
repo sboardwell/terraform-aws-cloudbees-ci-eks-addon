@@ -110,7 +110,7 @@ output "acm_certificate_arn" {
 }
 
 output "vpc_arn" {
-  description = "VPC ID."
+  description = "VPC ARN."
   value       = module.vpc.vpc_arn
 }
 

@@ -6,12 +6,14 @@ set -euox pipefail
 
 SCRIPTDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+
 #https://developer.hashicorp.com/terraform/internals/debugging
 export TF_LOG=DEBUG
 
 declare -a BLUEPRINTS=(
     "01-getting-started"
     "02-at-scale"
+    "03-karpenter"
   )
 
 INFO () {
@@ -32,10 +34,10 @@ bpAgent-dRun (){
   local bpAgentLocalImage="local.cloudbees/bp-agent"
 	if [ "$(docker image ls | grep -c "$bpAgentLocalImage")" -eq 0 ]; then \
 		INFO "Building Docker Image local.cloudbees/bp-agent:latest" && \
-		docker build . --file "$SCRIPTDIR/../.docker/agent/agent.rootless.Dockerfile" --tag "$bpAgentLocalImage"; \
+		docker build . --file "$SCRIPTDIR/../../.docker/agent/agent.rootless.Dockerfile" --tag "$bpAgentLocalImage"; \
 		fi
 	docker run --rm -it \
-		-v "$SCRIPTDIR/..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
+		-v "$SCRIPTDIR/../..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
     --workdir="/$bpAgentUser/cbci-eks-addon/blueprints" \
 		"$bpAgentLocalImage"
 }
@@ -99,12 +101,12 @@ tf-destroy () {
   export TF_LOG_PATH="$SCRIPTDIR/$root/terraform.log"
   rm "$TF_LOG_PATH" || INFO "No previous log found."
   tf-destroy-wl "$root"
-  eks_cluster_name=$(tf-output "$root" eks_cluster_name)
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
     aws_region=$(tf-output "$root" aws_region)
+    eks_cluster_name=$(tf-output "$root" eks_cluster_name)
     bash "$SCRIPTDIR/$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
     INFO "kube-prom-destroy.sh completed."
   fi
@@ -135,7 +137,7 @@ probes () {
   OC_URL=$(tf-output "$root" cbci_oc_url)
   until eval "$(tf-output "$root" cbci_liveness_probe_ext)"; do sleep $wait && echo "Waiting for Operation Center Service to pass Health Check from outside the clustery..."; done ;\
     INFO "Operation Center Service passed Health Check outside the cluster. It is available at $OC_URL."
-  if [ "$root" == "${BLUEPRINTS[0]}" ]; then
+  if [ "$root" == "${BLUEPRINTS[0]}" ] || [ "$root" == "${BLUEPRINTS[2]}" ]; then
     INITIAL_PASS=$(eval "$(tf-output "$root" cbci_initial_admin_password)"); \
       INFO "Initial Admin Password: $INITIAL_PASS."
   fi

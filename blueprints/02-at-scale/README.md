@@ -1,4 +1,4 @@
-# CloudBees CI blueprint add-on: At scale
+# CloudBees CI blueprint add-on: At scale with Cluster Autoscaler
 
 Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get started](../01-getting-started/README.md), this blueprint presents a scalable architecture and configuration by adding:
 
@@ -127,7 +127,7 @@ CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazo
 | velero_backup_on_demand | Takes an on-demand Velero backup from the schedule for the selected controller that is using block storage. |
 | velero_backup_schedule | Creates a Velero backup schedule for the selected controller that is using block storage, and then deletes the existing schedule, if it exists. |
 | velero_restore | Restores the selected controller that is using block storage from a backup. |
-| vpc_arn | VPC ID. |
+| vpc_arn | VPC ARN. |
 <!-- END_TF_DOCS -->
 
 ## Prerequisites
