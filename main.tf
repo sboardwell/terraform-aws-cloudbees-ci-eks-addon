@@ -1,6 +1,8 @@
 # Copyright (c) CloudBees, Inc.
 
 locals {
+  #vCBCI_Helm#
+  cbci_version           = "3.21450.0+3eb0dca20e40"
   cbci_ns                = "cbci"
   cbci_sec_casc_name     = "cbci-sec-casc"
   cbci_sec_registry_name = "cbci-sec-reg"
@@ -141,13 +143,12 @@ resource "kubernetes_labels" "oc_sm_label" {
 }
 
 resource "helm_release" "cloudbees_ci" {
-  name             = try(var.helm_config.name, "cloudbees-ci")
-  namespace        = try(var.helm_config.namespace, "cbci")
-  create_namespace = false
-  description      = try(var.helm_config.description, null)
-  chart            = "cloudbees-core"
-  #vCBCI_Helm#
-  version                    = try(var.helm_config.version, "3.19313.0+1afe0458111d")
+  name                       = try(var.helm_config.name, "cloudbees-ci")
+  namespace                  = try(var.helm_config.namespace, "cbci")
+  create_namespace           = false
+  description                = try(var.helm_config.description, null)
+  chart                      = "cloudbees-core"
+  version                    = try(var.helm_config.version, local.cbci_version)
   repository                 = try(var.helm_config.repository, "https://public-charts.artifacts.cloudbees.com/repository/public/")
   values                     = local.create_secret_casc ? concat(var.helm_config.values, local.oc_secrets_mount, [templatefile("${path.module}/values.yml", local.cbci_template_values)]) : concat(var.helm_config.values, [templatefile("${path.module}/values.yml", local.cbci_template_values)])
   timeout                    = try(var.helm_config.timeout, 1200)
