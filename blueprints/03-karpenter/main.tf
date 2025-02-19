@@ -19,8 +19,8 @@ data "aws_availability_zones" "available" {
 
 locals {
 
-  name            = var.suffix == "" ? "cbci-bp03" : "cbci-bp03-${var.suffix}"
-  region          = var.aws_region
+  name   = var.suffix == "" ? "cbci-bp03" : "cbci-bp03-${var.suffix}"
+  region = var.aws_region
 
   node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
 
@@ -59,7 +59,7 @@ module "eks_blueprints_addon_cbci" {
 }
 
 module "eks_blueprints_addons" {
-  source  = "aws-ia/eks-blueprints-addons/aws"
+  source = "aws-ia/eks-blueprints-addons/aws"
   #vEKSBpAddonsTFMod#
   version = "1.20.0"
 
@@ -160,7 +160,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.23.0"
 
-  cluster_name                   = local.name
+  cluster_name = local.name
   #vK8#
   cluster_version                = "1.31"
   cluster_endpoint_public_access = true
@@ -306,13 +306,13 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/elb"                = 1
+    "kubernetes.io/role/elb"              = 1
   }
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"       = 1
-    "karpenter.sh/discovery"                = local.name
+    "kubernetes.io/role/internal-elb"     = 1
+    "karpenter.sh/discovery"              = local.name
   }
 
   tags = var.tags
