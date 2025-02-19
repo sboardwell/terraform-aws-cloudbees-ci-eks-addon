@@ -323,7 +323,7 @@ resource "aws_iam_instance_profile" "managed_ng_ecr" {
 
 module "efs" {
   source  = "terraform-aws-modules/efs/aws"
-  version = "1.6.0"
+  version = "1.6.4"
 
   creation_token = local.efs_name
   name           = local.efs_name
@@ -333,9 +333,6 @@ module "efs" {
   }
   security_group_description = "${local.efs_name} EFS security group"
   security_group_vpc_id      = module.vpc.vpc_id
-  #https://docs.cloudbees.com/docs/cloudbees-ci/latest/eks-install-guide/eks-pre-install-requirements-helm#_storage_requirements
-  performance_mode = "generalPurpose"
-  throughput_mode  = "elastic"
   security_group_rules = {
     vpc = {
       # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
@@ -343,7 +340,11 @@ module "efs" {
       cidr_blocks = module.vpc.private_subnets_cidr_blocks
     }
   }
-
+  
+  #https://docs.cloudbees.com/docs/cloudbees-ci/latest/eks-install-guide/eks-pre-install-requirements-helm#_storage_requirements
+  performance_mode = "generalPurpose"
+  throughput_mode  = "elastic"
+  
   #Issue #39
   enable_backup_policy = false
 
