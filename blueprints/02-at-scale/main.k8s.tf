@@ -254,7 +254,7 @@ module "eks_blueprints_addons" {
       module.cbci_s3_bucket.s3_bucket_arn,
       "${local.fluentbit_s3_location}/*"
     ]
-    #Note: this values requires to be defined here to avoid bein overrided
+    #Note: this values requires to be defined here to avoid being overrided
     set = [{
       name  = "cloudWatchLogs.autoCreateGroup"
       value = true
