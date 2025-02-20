@@ -345,6 +345,13 @@ module "efs" {
   performance_mode = "generalPurpose"
   throughput_mode  = "elastic"
 
+  # https://docs.aws.amazon.com/efs/latest/ug/lifecycle-management-efs.html
+  lifecycle_policy = {
+    transition_to_ia                    = "AFTER_30_DAYS"
+    transition_to_archive               = "AFTER_90_DAYS"
+    transition_to_primary_storage_class = "AFTER_1_ACCESS"
+  }
+
   #Issue #39
   enable_backup_policy = false
 
