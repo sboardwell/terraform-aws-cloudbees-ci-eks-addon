@@ -237,6 +237,14 @@ module "eks_blueprints_addons" {
   }
   # It enables /aws/containerinsights/${local.cluster_name}/performance which is required for CloudWatch Insights metrics
   enable_aws_cloudwatch_metrics = true
+  aws_cloudwatch_metrics = {
+    namespace        = local.observability_ns
+    create_namespace = true
+    values = [templatefile("k8s/aws-cloudwatch-metrics.yml", {
+      cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
+      cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
+    })]
+  }
   enable_aws_for_fluentbit      = true
   # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
   aws_for_fluentbit_cw_log_group = {
