@@ -25,6 +25,8 @@ singleBinary:
   replicas: 1
   nodeSelector:
       kubernetes.io/os: linux
+  persistence:
+    storageClass: efs
 read:
   replicas: 0
 backend:

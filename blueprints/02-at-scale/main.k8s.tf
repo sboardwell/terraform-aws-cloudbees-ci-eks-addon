@@ -47,10 +47,6 @@ resource "random_string" "global_pass_string" {
   lower   = true
 }
 
-resource "time_static" "epoch" {
-  depends_on = [module.eks_blueprints_addons]
-}
-
 ################################################################################
 # Workloads
 ################################################################################
@@ -58,8 +54,9 @@ resource "time_static" "epoch" {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.18072.0"
+  #source  = "cloudbees/cloudbees-ci-eks-addon/aws"
+  #version = ">= 3.21450.0"
+  source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
@@ -123,8 +120,8 @@ module "ebs_csi_driver_irsa" {
 module "eks_blueprints_addons" {
   source = "aws-ia/eks-blueprints-addons/aws"
   #vEKSBpAddonsTFMod#
-  version    = "1.17.0"
-  depends_on = [module.eks]
+  version    = "1.20.0"
+  depends_on = [kubernetes_storage_class_v1.efs, kubernetes_storage_class_v1.gp3_a, kubernetes_annotations.gp2]
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -239,33 +236,34 @@ module "eks_blueprints_addons" {
       cert_arn         = module.acm.acm_certificate_arn
     })]
   }
-  enable_aws_for_fluentbit = true
-  aws_for_fluentbit_cw_log_group = {
-    create          = true
-    use_name_prefix = true # Set this to true to enable name prefix
-    name_prefix     = "eks-cluster-logs-"
-    retention       = local.cloudwatch_logs_expiration_days
-  }
-  aws_for_fluentbit = {
-    # Enable Container Insights just for troubleshooting
-    # https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html
-    enable_containerinsights = false
-    namespace                = local.observability_ns
-    create_namespace         = true
-    values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
-      region                  = var.aws_region
-      bucketName              = module.cbci_s3_bucket.s3_bucket_id
-      log_retention_days      = local.cloudwatch_logs_expiration_days
+  # It enables /aws/containerinsights/${local.cluster_name}/performance which is required for CloudWatch Insights metrics
+  enable_aws_cloudwatch_metrics = true
+  aws_cloudwatch_metrics = {
+    namespace        = local.observability_ns
+    create_namespace = true
+    values = [templatefile("k8s/aws-cloudwatch-metrics.yml", {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
     })]
-    kubelet_monitoring = true
-    chart_version      = "0.1.28"
+  }
+  enable_aws_for_fluentbit = true
+  # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
+  aws_for_fluentbit_cw_log_group = {
+    create    = true
+    retention = local.cloudwatch_logs_expiration_days
+  }
+  aws_for_fluentbit = {
+    enable_containerinsights = true
+    #Enable kubelet_monitoring for large clusters
+    #kubelet_monitoring       = true
+    namespace        = local.observability_ns
+    create_namespace = true
+    chart_version    = "0.1.34"
     s3_bucket_arns = [
       module.cbci_s3_bucket.s3_bucket_arn,
       "${local.fluentbit_s3_location}/*"
     ]
-    # Note: This values are duplicated in k8s/aws-for-fluent-bit-values.yml but they are required here to not be overwrite by default values.
+    #Note: this values requires to be defined here to avoid being overrided
     set = [{
       name  = "cloudWatchLogs.autoCreateGroup"
       value = true
@@ -279,11 +277,18 @@ module "eks_blueprints_addons" {
         value = "ClusterFirstWithHostNet"
       }
     ]
+    values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
+      region                  = var.aws_region
+      bucketName              = module.cbci_s3_bucket.s3_bucket_id
+      log_retention_days      = local.cloudwatch_logs_expiration_days
+      cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
+      cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
+    })]
   }
   helm_releases = {
     openldap-stack = {
       chart            = "openldap-stack-ha"
-      chart_version    = "4.2.2"
+      chart_version    = "4.3.1"
       namespace        = "auth"
       create_namespace = true
       repository       = "https://jp-gouin.github.io/helm-openldap/"
@@ -307,7 +312,7 @@ module "eks_blueprints_addons" {
       namespace        = local.vault_ns
       create_namespace = true
       chart            = "vault"
-      chart_version    = "0.28.0"
+      chart_version    = "0.28.1"
       repository       = "https://helm.releases.hashicorp.com"
       values           = [file("k8s/vault-values.yml")]
     }
@@ -316,7 +321,7 @@ module "eks_blueprints_addons" {
       namespace        = local.observability_ns
       create_namespace = true
       chart            = "opentelemetry-collector"
-      chart_version    = "0.105.1"
+      chart_version    = "0.108.0"
       repository       = "https://open-telemetry.github.io/opentelemetry-helm-charts"
       values           = [file("k8s/otel-collector-values.yml")]
     }
@@ -325,7 +330,7 @@ module "eks_blueprints_addons" {
       namespace        = local.observability_ns
       create_namespace = true
       chart            = "tempo"
-      chart_version    = "1.7.2"
+      chart_version    = "1.10.3"
       repository       = "https://grafana.github.io/helm-charts"
       values           = [file("k8s/grafana-tempo-values.yml")]
     }
@@ -334,7 +339,7 @@ module "eks_blueprints_addons" {
       namespace        = local.observability_ns
       create_namespace = true
       chart            = "loki"
-      chart_version    = "6.12.0"
+      chart_version    = "6.18.0"
       repository       = "https://grafana.github.io/helm-charts"
       values           = [file("k8s/grafana-loki-values.yml")]
     }
@@ -362,9 +367,9 @@ resource "kubernetes_annotations" "gp2" {
   }
 }
 
-resource "kubernetes_storage_class_v1" "gp3_aza" {
+resource "kubernetes_storage_class_v1" "gp3_a" {
   metadata {
-    name = "gp3"
+    name = "gp3-a"
 
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
@@ -376,13 +381,13 @@ resource "kubernetes_storage_class_v1" "gp3_aza" {
   allow_volume_expansion = true
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
-  # # Issue #195
-  # allowed_topologies {
-  #   match_label_expressions {
-  #     key    = "topology.ebs.csi.aws.com/zone"
-  #     values = ["${var.aws_region}a"]
-  #   }
-  # }
+  # Issue #195
+  allowed_topologies {
+    match_label_expressions {
+      key    = "topology.ebs.csi.aws.com/zone"
+      values = ["${var.aws_region}a"]
+    }
+  }
 
   parameters = {
     encrypted = "true"

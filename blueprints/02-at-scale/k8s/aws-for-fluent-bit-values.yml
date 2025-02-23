@@ -26,10 +26,6 @@ cloudWatchLogs:
   enabled: true
   region: "${region}"
   logRetentionDays : ${log_retention_days}
-  autoCreateGroup: true
-
-hostNetwork: true
-dnsPolicy: "ClusterFirstWithHostNet"
 
 s3:
   enabled: true

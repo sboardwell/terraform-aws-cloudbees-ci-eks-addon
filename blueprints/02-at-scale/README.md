@@ -1,4 +1,4 @@
-# CloudBees CI blueprint add-on: At scale
+# CloudBees CI blueprint add-on: At scale with Cluster Autoscaler
 
 Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get started](../01-getting-started/README.md), this blueprint presents a scalable architecture and configuration by adding:
 
@@ -26,13 +26,13 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
   | [AWS Node Termination Handler](https://github.com/aws/aws-node-termination-handler) | Gracefully handles EC2 instance shutdown within Kubernetes. Note that this add-on is not compatible with managed instance groups. For more information, refer to [issue #23](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/23). |
   | [Hashicorp Vault](https://github.com/hashicorp/vault-helm) | Secrets management system that is integrated via [CloudBees HashiCorp Vault Plugin](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/hashicorp-vault-plugin). |
   | [OTEL collector](https://grafana.com/oss/tempo/) | The collector for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/) observability data. |
-  | [Jagger](https://www.jaegertracing.io/) | Provides tracing backend for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/). |
+  | [Grafana Tempo](https://grafana.com/oss/tempo/) | Provides tracing backend for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/). |
   | [Grafana Loki](https://grafana.com/oss/loki/) | Provides logs backend for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/). |
 
 - Cloudbees CI uses [Configuration as Code (CasC)](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-oc/casc-intro) (refer to the [casc](cbci/casc) folder) to enable [exciting new features for streamlined DevOps](https://www.cloudbees.com/blog/cloudbees-ci-exciting-new-features-for-streamlined-devops) and other enterprise features, such as [CloudBees CI hibernation](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/managing-controllers#hibernation-managed-controllers).
   - The CloudBees operations center is using the [CasC Bundle Retriever](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-oc/bundle-retrieval-scm).
   - Managed controller configurations are managed from the operations center using [source control management (SCM)](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-controller/add-bundle#_adding_casc_bundles_from_an_scm_tool).
-  - The managed controllers are using [CasC bundle inheritance](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-controller/advanced#_configuring_bundle_inheritance_with_casc) (refer to the [parent](cbci/casc/mc/parent) folder). This "parent" bundle is inherited by two types of "child" controller bundles: `ha` and `none-ha`, to accommodate [considerations about HA controllers](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations).
+  - The managed controllers are using [CasC bundle inheritance](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-controller/advanced#_configuring_bundle_inheritance_with_casc) (refer to the [parent](cbci/casc/mc/mc-parent) folder). This "parent" bundle is inherited by two types of "child" controller bundles: `ha` and `none-ha`, to accommodate [considerations about HA controllers](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations).
 
 > [!TIP]
 > A [resource group](https://docs.aws.amazon.com/ARG/latest/userguide/resource-groups.html) is also included, to get a full list of all resources created by this blueprint.
@@ -86,7 +86,6 @@ CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazo
 |------|-------------|
 | acm_certificate_arn | AWS Certificate Manager (ACM) certificate for Amazon Resource Names (ARN). |
 | aws_backup_efs_protected_resource | AWS description for the Amazon EFS drive that is used to back up protected resources. |
-| aws_logstreams_fluentbit | AWS CloudWatch log streams from Fluent Bit. |
 | aws_region | AWS region. |
 | cbci_agent_linuxtempl_events | Retrieves a list of events related to Linux template agents. |
 | cbci_agent_sec_reg | Retrieves the container registry secret deployed in the agents namespace. |
@@ -128,7 +127,7 @@ CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazo
 | velero_backup_on_demand | Takes an on-demand Velero backup from the schedule for the selected controller that is using block storage. |
 | velero_backup_schedule | Creates a Velero backup schedule for the selected controller that is using block storage, and then deletes the existing schedule, if it exists. |
 | velero_restore | Restores the selected controller that is using block storage from a backup. |
-| vpc_arn | VPC ID. |
+| vpc_arn | VPC ARN. |
 <!-- END_TF_DOCS -->
 
 ## Prerequisites
@@ -149,7 +148,7 @@ When preparing to deploy, you must complete the following steps:
 For more information, refer to [The Core Terraform Workflow](https://www.terraform.io/intro/core-workflow) documentation.
 
 > [!TIP]
-> The `deploy` phase can be orchestrated via the companion [Makefile](../../Makefile).
+> The `deploy` phase can be orchestrated via the companion [Makefile](../Makefile).
 
 ## Validate
 
@@ -167,6 +166,8 @@ If the command is successful, no output is returned.
 
 ### CloudBees CI
 
+#### Authentication and authorization
+
 1. Complete the steps to [validate CloudBees CI](../01-getting-started/README.md#cloudbees-ci), if you have not done so already.
 1. Authentication in this blueprint is based on LDAP using the `cn` user (available in [k8s/openldap-stack-values.yml](./k8s/openldap-stack-values.yml)) and the global password. The authorization level defines a set of permissions configured using [RBAC](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/rbac). Additionally, the operations center and controller use [single sign-on (SS0)](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/using-sso), including a [fallback mechanism](https://docs.cloudbees.com/docs/cloudbees-ci-kb/latest/operations-center/how-ldap-plugin-works-on-cjoc-sso-context) that is enabled by default. Issue the following command to retrieve the global password (valid for all users):
 
@@ -175,6 +176,8 @@ If the command is successful, no output is returned.
    ```
 
    There are differences in CloudBees CI permissions and folder restrictions when signed in as a user of the Admin group versus the Development group. For example, only Admin users have access to the agent validation jobs.
+
+#### Configuration as Code (CasC)
 
 1. CasC is enabled for the [operations center](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-oc/) (`cjoc`) and [controllers](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-controller/) (`team-b` and `team-c-ha`). `team-a` is not using CasC, to illustrate the difference between the two approaches. Issue the following command to verify that all controllers are running:
 
@@ -189,6 +192,8 @@ If the command is successful, no output is returned.
    ```sh
    eval $(terraform output --raw cbci_controller_c_hpa)
    ```
+
+1. [Validating bundles prior to update](https://docs.cloudbees.com/docs/cloudbees-ci/latest/casc-oc/update-bundle#_validating_bundles_prior_to_update) is orchestrated via `validate-all-casc-bundles` jobs using as parameters API Token from admin user `admin_cbci_a` (see [builds](#builds) section) and the branch to validate.
 
 #### Secrets management
 
@@ -401,6 +406,11 @@ Grafana imports Prometheus as a datasource and provides metrics dashboards for C
 
    ![CloudBees CI Metrics Dashboard](img/observability/cbci-metrics-dashboard.png)
 
+Additionally, [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) for all your containerized applications and microservices.
+
+>[!NOTE]
+>[CloudWatch agent with Prometheus metrics collection on Amazon EKS and Kubernetes clusters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup.html) can be enabled to collect Jenkins Metrics in prometheus format.
+
 ##### Tracing
 
 Tempo is used as the Tracing/APM backend for Jenkins tracing data via the Jenkins OpenTelemetry plugin: [HTTP](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/http-requests-traces.md) and [Jobs](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/job-traces.md).
@@ -450,4 +460,4 @@ To tear down and remove the resources created in the blueprint, refer to [Amazon
 
 > [!TIP]
 > - To avoid [#165](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/165), run `kube-prometheus-destroy.sh` after destroying the EKS cluster.
-> - The `destroy` phase can be orchestrated via the companion [Makefile](../../Makefile).
+> - The `destroy` phase can be orchestrated via the companion [Makefile](../Makefile).

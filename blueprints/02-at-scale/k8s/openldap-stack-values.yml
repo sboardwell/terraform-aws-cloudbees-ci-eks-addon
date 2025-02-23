@@ -12,6 +12,9 @@ global:
 nodeSelector:
   kubernetes.io/os: linux
 
+persistence:
+  storageClass: efs
+
 customLdifFiles:
   00-root.ldif: |-
     dn: dc=acme,dc=org

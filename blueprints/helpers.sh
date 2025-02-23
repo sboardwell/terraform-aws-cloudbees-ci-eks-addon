@@ -6,12 +6,14 @@ set -euox pipefail
 
 SCRIPTDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+
 #https://developer.hashicorp.com/terraform/internals/debugging
 export TF_LOG=DEBUG
 
 declare -a BLUEPRINTS=(
     "01-getting-started"
     "02-at-scale"
+    "03-karpenter"
   )
 
 INFO () {
@@ -34,8 +36,9 @@ bpAgent-dRun (){
 		INFO "Building Docker Image local.cloudbees/bp-agent:latest" && \
 		docker build . --file "$SCRIPTDIR/../.docker/agent/agent.rootless.Dockerfile" --tag "$bpAgentLocalImage"; \
 		fi
-	docker run --rm -it --name "$bpAgentUser" \
+	docker run --rm -it \
 		-v "$SCRIPTDIR/..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
+    --workdir="/$bpAgentUser/cbci-eks-addon/blueprints" \
 		"$bpAgentLocalImage"
 }
 
@@ -102,10 +105,10 @@ tf-destroy () {
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
-    eks_cluster_name=$(tf-output "$root" eks_cluster_name)
     aws_region=$(tf-output "$root" aws_region)
-    bash "$SCRIPTDIR/$root/scripts/kube-prometheus-destroy.sh" "$eks_cluster_name" "$aws_region"
-    INFO "kube-prometheus-destroy.sh completed."
+    eks_cluster_name=$(tf-output "$root" eks_cluster_name)
+    bash "$SCRIPTDIR/$root/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
+    INFO "kube-prom-destroy.sh completed."
   fi
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -auto-approve"
   INFO "Destroy the rest completed."
@@ -134,7 +137,7 @@ probes () {
   OC_URL=$(tf-output "$root" cbci_oc_url)
   until eval "$(tf-output "$root" cbci_liveness_probe_ext)"; do sleep $wait && echo "Waiting for Operation Center Service to pass Health Check from outside the clustery..."; done ;\
     INFO "Operation Center Service passed Health Check outside the cluster. It is available at $OC_URL."
-  if [ "$root" == "${BLUEPRINTS[0]}" ]; then
+  if [ "$root" == "${BLUEPRINTS[0]}" ] || [ "$root" == "${BLUEPRINTS[2]}" ]; then
     INITIAL_PASS=$(eval "$(tf-output "$root" cbci_initial_admin_password)"); \
       INFO "Initial Admin Password: $INITIAL_PASS."
   fi
@@ -176,12 +179,13 @@ probes () {
       fi
     until eval "$(tf-output "$root" prometheus_active_targets)" | jq '.data.activeTargets[] | select(.labels.container=="jenkins") | {job: .labels.job, instance: .labels.instance, status: .health}'; do sleep $wait && echo "Waiting for CloudBees CI Prometheus Targets..."; done ;\
       INFO "CloudBees CI Targets are loaded in Prometheus."
-    until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
-      INFO "CloudBees CI Log Streams are already in Cloud Watch."
     until [ "$(eval "$(tf-output "$root" tempo_tags)" | grep -c 'jenkins.pipeline')" -ge 1 ]; do sleep $wait && echo "Waiting for Tempo to inject jenkins.pipeline* tags from Open Telemetry plugin"; done ;\
       eval "$(tf-output "$root" tempo_tags)" | jq .tagNames && INFO "Tempo has injested tags from Open Telemetry plugin."
     until [ "$(eval "$(tf-output "$root" loki_labels)" | grep -c 'com_cloudbees')" -ge 1 ]; do sleep $wait && echo "Waiting for Loki to inject com_cloudbees* labels from FluentBit"; done ;\
       eval "$(tf-output "$root" loki_label)" && INFO "Loki has injested labels from FluentBit."
+    # Note: name aws fluent bit  log streams is not consistent, it has a random suffix
+    # until eval "$(tf-output "$root" aws_logstreams_fluentbit)" | jq '.[] '; do sleep $wait && echo "Waiting for CloudBees CI Log streams in CloudWatch..."; done ;\
+    #   INFO "CloudBees CI Log Streams are already in Cloud Watch."
   fi
 }
 
@@ -219,16 +223,28 @@ set-cbci-location () {
   local branch="$2"
   #Repo
   sed -i "s|scmRepo: .*|scmRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/k8s/cbci-values.yml"
-  sed -i "s|scmCascMmStore: .*|scmCascMmStore: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables/variables.yaml"
-  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/ha/variables/variables.yaml"
-  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/none-ha/variables/variables.yaml"
+  sed -i "s|scmCascMmStore: .*|scmCascMmStore: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
+  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
+  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
   #Branch
   sed -i "s|scmBranch: .*|scmBranch: $branch|g" "$SCRIPTDIR/02-at-scale/k8s/cbci-values.yml"
-  sed -i "s|cascBranch: .*|cascBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables/variables.yaml"
-  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/ha/variables/variables.yaml"
-  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/none-ha/variables/variables.yaml"
-  sed -i "s|bundle: \".*/none-ha\"|bundle: \"$branch/none-ha\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/items/root.yaml"
-  sed -i "s|bundle: \".*/ha\"|bundle: \"$branch/ha\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/items/root.yaml"
+  sed -i "s|cascBranch: .*|cascBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
+  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
+  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
   sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/prometheus-plugin-db.json|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/prometheus-plugin-db.json|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
   sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/opentelemetry-plugin-db.json|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/opentelemetry-plugin-db.json|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
+}
+
+zip-all-casc-bundles () {
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  cbciDirInput="$SCRIPTDIR/02-at-scale/cbci"
+  cascDirOutput="$cbciDirInput/casc-zip"
+  cascPreValidatePath="casc-pre-validate/$branch"
+  cascDirTempValidate="$cbciDirInput/$cascPreValidatePath"
+  mkdir -p "$cascDirTempValidate"
+  cp -R "${cbciDirInput}/casc/oc" "$cascDirTempValidate"
+  cp -R "${cbciDirInput}/casc/mc/"* "$cascDirTempValidate"
+  rm "$cascDirOutput/pre-validate-casc.zip" || INFO "No previous zip found."
+  cd "$cbciDirInput/casc-pre-validate" && zip "$cascDirOutput/pre-validate-casc.zip" "$branch" -r
+  rm -rf "$cascDirTempValidate"
 }

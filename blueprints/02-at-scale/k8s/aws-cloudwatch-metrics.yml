@@ -1,0 +1,23 @@
+# Copyright (c) CloudBees, Inc.
+
+# https://artifacthub.io/packages/helm/aws/aws-cloudwatch-metrics
+# https://github.com/aws/eks-charts/blob/master/stable/aws-cloudwatch-metrics/values.yaml
+
+tolerations:
+- effect: "NoSchedule"
+  key: "${cbciAppsTolerationKey}"
+  operator: "Equal"
+  value: "${cbciAppsTolerationValue}"
+- effect: "NoSchedule"
+  key: "dedicated"
+  operator: "Equal"
+  value: "build-linux-l"
+- effect: "NoSchedule"
+  key: "dedicated"
+  operator: "Equal"
+  value: "build-linux-xl"
+# Note: It is not compatible with Windows nodes by default.
+# - effect: "NoSchedule"
+#   key: "dedicated"
+#   operator: "Equal"
+#   value: "build-windows"
