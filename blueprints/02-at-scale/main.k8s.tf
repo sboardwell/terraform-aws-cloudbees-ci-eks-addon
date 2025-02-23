@@ -54,8 +54,9 @@ resource "random_string" "global_pass_string" {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.21450.0"
+  #source  = "cloudbees/cloudbees-ci-eks-addon/aws"
+  #version = ">= 3.21450.0"
+  source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
@@ -245,7 +246,7 @@ module "eks_blueprints_addons" {
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
     })]
   }
-  enable_aws_for_fluentbit      = true
+  enable_aws_for_fluentbit = true
   # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
   aws_for_fluentbit_cw_log_group = {
     create    = true
