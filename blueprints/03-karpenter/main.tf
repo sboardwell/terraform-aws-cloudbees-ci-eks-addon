@@ -46,9 +46,9 @@ locals {
 ################################################################################
 
 module "eks_blueprints_addon_cbci" {
-  #source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  #version = ">= 3.21450.0"
-  source = "../../"
+  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
+  version = ">= 3.21450.0"
+  #source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
