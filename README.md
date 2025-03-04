@@ -21,9 +21,6 @@
 [![gitleaks badge](https://img.shields.io/badge/protected%20by-gitleaks-blue)](https://github.com/zricethezav/gitleaks#pre-commit)
 [![gitsecrets](https://img.shields.io/badge/protected%20by-gitsecrets-blue)](https://github.com/awslabs/git-secrets)
 
-> [!IMPORTANT]  
-> KNOWN ISSUE: The Terraform remote module registry [https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon](https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon/aws/latest) version stopped to be in sync with the GitHub repository since the source code repository was transfered from `cloudbees` to `cloudbees-oss` organization. We are working to fix this issue. In the meantime, please use the GitHub repository as the source of truth.
-
 ## Motivation
 
 The CloudBees CI [AWS partner add-on](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-partner-addons/) streamlines the adoption and experimentation of CloudBees CI enterprise features by:
