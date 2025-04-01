@@ -101,6 +101,15 @@ metadata:
     kubernetes.io/description: "Nodes running Windows Server 2022"
 spec:
   role: "${local.node_iam_role_name}"
+  blockDeviceMappings:
+    - deviceName: /dev/sda1
+      ebs:
+        volumeSize: 200Gi
+        volumeType: gp3
+        iops: 3000
+        encrypted: true
+        deleteOnTermination: true
+        throughput: 700
   subnetSelectorTerms:
     - tags:
         karpenter.sh/discovery: ${local.name}
