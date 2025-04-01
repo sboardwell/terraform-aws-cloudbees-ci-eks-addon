@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: stateful-windows
   labels:
-    app: windows-app
+    app: windows-app-2022
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: windows-app
+      app: windows-app-2022
   template:
     metadata:
       labels:
-        app: windows-app
+        app: windows-app-2022
     spec:
       tolerations:
       - key: "dedicated"
@@ -21,6 +21,7 @@ spec:
         effect: "NoSchedule"
       terminationGracePeriodSeconds: 0    
       nodeSelector:
+        kubernetes.io/os: windows
         role: windows-builds
         type: "windows_2022"
       containers:

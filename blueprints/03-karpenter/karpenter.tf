@@ -89,7 +89,7 @@ YAML
   ]
 }
 
-# Karpenter Windows Nodes
+# Karpenter Windows Nodes 2022
 
 resource "kubectl_manifest" "karpenter_windows_ec2_node_class" {
   yaml_body = <<YAML
@@ -113,6 +113,11 @@ spec:
     httpProtocolIPv6: disabled
     httpTokens: required
     httpPutResponseHopLimit: 2
+  userData: |
+    <powershell>
+    # Restart Kubelet to ensure proper startup
+    Restart-Service kubelet
+    </powershell>
   tags:
     Name: "karpenter-windows-2022-node"
 
@@ -128,7 +133,7 @@ resource "kubectl_manifest" "karpenter_windows_node_pool" {
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: windows-builds
+  name: windows-builds-2022
   annotations:
     kubernetes.io/description: "General purpose NodePool for Windows 2022 workloads"
 spec:
@@ -146,7 +151,7 @@ spec:
         name: windows2022
       taints:
         - key: "dedicated"
-          value: "windows-builds"
+          value: "windows-builds-2022"
           effect: NoSchedule
 
       expireAfter: 720h
@@ -177,6 +182,8 @@ YAML
     kubectl_manifest.karpenter_windows_ec2_node_class,
   ]
 }
+
+# Karpenter Windows Nodes 2019
 
 resource "kubectl_manifest" "karpenter_windows_ec2_2019_node_class" {
   yaml_body = <<YAML
@@ -240,10 +247,10 @@ spec:
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-        name: windows2022
+        name: windows2019
       taints:
         - key: "dedicated"
-          value: "windows-builds"
+          value: "windows-builds-2019"
           effect: NoSchedule
 
       expireAfter: 720h
