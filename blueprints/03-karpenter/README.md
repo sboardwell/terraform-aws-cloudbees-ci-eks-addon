@@ -90,7 +90,7 @@ spec:
       requirements:
         - key: "karpenter.sh/capacity-type"
           operator: "In"
-          values: ["spot", "on-demand"]
+          values: ["spot"]
   weight: 100 
 ---
 apiVersion: karpenter.sh/v1
@@ -106,6 +106,10 @@ spec:
           values: ["on-demand"]
   weight: 50
 ```
+
+### Windows vs Linux
+
+It takes much more time in Windows vs Linux
 
 ## Reference
 
