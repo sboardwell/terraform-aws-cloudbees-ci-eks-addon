@@ -74,6 +74,20 @@ module "eks_blueprints_addons" {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
     }
+    kube-proxy = { most_recent = true }
+    coredns    = { most_recent = true }
+    vpc-cni = {
+      most_recent    = true
+      before_compute = true
+      configuration_values = jsonencode({
+        enableWindowsIpam = "true"
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
+    }
+    eks-pod-identity-agent = {}
   }
   #####################
   #01-getting-started
@@ -92,6 +106,10 @@ module "eks_blueprints_addons" {
   #####################
   #03-karpenter
   #####################
+  enable_cluster_autoscaler = true
+  cluster_autoscaler = {
+    values = [file("k8s/cluster-autoscaler-values.yml")]
+  }
   enable_metrics_server    = true
   enable_aws_for_fluentbit = true
   aws_for_fluentbit = {
@@ -165,22 +183,6 @@ module "eks" {
   cluster_version                = "1.31"
   cluster_endpoint_public_access = true
 
-  cluster_addons = {
-    kube-proxy = { most_recent = true }
-    coredns    = { most_recent = true }
-
-    vpc-cni = {
-      most_recent    = true
-      before_compute = true
-      configuration_values = jsonencode({
-        env = {
-          ENABLE_PREFIX_DELEGATION = "true"
-          WARM_PREFIX_TARGET       = "1"
-        }
-      })
-    }
-  }
-
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
@@ -193,21 +195,21 @@ module "eks" {
   eks_managed_node_groups = {
     mg_5 = {
       node_group_name = "managed-ondemand"
-      instance_types  = ["m4.large", "m5.large", "m5a.large", "m5ad.large", "m5d.large", "t2.large", "t3.large", "t3a.large"]
+      instance_types  = ["m7a.2xlarge"]
 
       create_security_group = false
 
       subnet_ids   = module.vpc.private_subnets
-      max_size     = 2
-      desired_size = 2
-      min_size     = 2
+      max_size     = 6
+      desired_size = 3
+      min_size     = 3
 
       # Launch template configuration
       create_launch_template = true              # false will use the default launch template
       launch_template_os     = "amazonlinux2eks" # amazonlinux2eks or bottlerocket
 
       labels = {
-        intent = "control-apps"
+        dedicated = "control-apps"
       }
     }
   }
@@ -238,10 +240,6 @@ resource "kubernetes_annotations" "gp2" {
 resource "kubernetes_storage_class_v1" "gp3_a" {
   metadata {
     name = "gp3-a"
-
-    annotations = {
-      "storageclass.kubernetes.io/is-default-class" = "true"
-    }
   }
   depends_on = [module.eks]
 
@@ -256,6 +254,29 @@ resource "kubernetes_storage_class_v1" "gp3_a" {
       values = ["${var.aws_region}a"]
     }
   }
+
+  parameters = {
+    encrypted = "true"
+    fsType    = "ext4"
+    type      = "gp3"
+  }
+
+}
+
+resource "kubernetes_storage_class_v1" "gp3" {
+  metadata {
+    name = "gp3"
+
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+  depends_on = [module.eks]
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  allow_volume_expansion = true
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
 
   parameters = {
     encrypted = "true"

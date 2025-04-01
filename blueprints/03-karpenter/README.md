@@ -76,6 +76,37 @@ If the command is successful, no output is returned.
     kubectl delete -f examples/statefulset-ebs.yaml
     ```
 
+
+### Karpenter
+
+```yaml
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: spot-preferred
+spec:
+  template:
+    spec:
+      requirements:
+        - key: "karpenter.sh/capacity-type"
+          operator: "In"
+          values: ["spot", "on-demand"]
+  weight: 100 
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: on-demand-fallback
+spec:
+  template:
+    spec:
+      requirements:
+        - key: "karpenter.sh/capacity-type"
+          operator: "In"
+          values: ["on-demand"]
+  weight: 50
+```
+
 ## Reference
 
 - [Karpenter Blueprints for Amazon EKS](https://github.com/aws-samples/karpenter-blueprints/tree/main)
