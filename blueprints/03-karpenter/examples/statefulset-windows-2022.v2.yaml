@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stateful-windows-v2
+  labels:
+    app: windows-app-2022-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: windows-app-2022-v2
+  template:
+    metadata:
+      labels:
+        app: windows-app-2022-v2
+    spec:
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "windows-builds-2022"
+        effect: "NoSchedule"
+      terminationGracePeriodSeconds: 0    
+      nodeSelector:
+        kubernetes.io/os: windows
+        role: windows-builds
+        type: "windows_2022"
+      containers:
+      - name: windows-server-iis-simple-2022
+        image: mcr.microsoft.com/powershell:preview-windowsservercore-ltsc2022
+        imagePullPolicy: IfNotPresent
+        command:
+          - powershell
+        args:
+          - Start-Sleep
+          - "999999"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"

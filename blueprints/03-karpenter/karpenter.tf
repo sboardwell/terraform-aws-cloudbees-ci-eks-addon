@@ -137,14 +137,14 @@ YAML
   ]
 }
 
-resource "kubectl_manifest" "karpenter_windows_node_pool" {
+resource "kubectl_manifest" "karpenter_windows_node_pool_spot" {
   yaml_body = <<YAML
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: windows-builds-2022
+  name: windows-builds-2022-spot
   annotations:
-    kubernetes.io/description: "General purpose NodePool for Windows 2022 workloads"
+    kubernetes.io/description: "NodePool for Windows 2022 workloads Spot First"
 spec:
   template:
     metadata:
@@ -164,7 +164,64 @@ spec:
           effect: NoSchedule
 
       expireAfter: 720h
-      terminationGracePeriod: 48h
+      terminationGracePeriod: 30m
+
+      requirements:
+        - key: kubernetes.io/os
+          operator: In
+          values: ["windows"]
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]
+  
+  weight: 100
+  
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 1m
+
+YAML
+  depends_on = [
+    module.eks,
+    module.eks_blueprints_addons.karpenter,
+    kubectl_manifest.karpenter_windows_ec2_node_class,
+  ]
+}
+
+resource "kubectl_manifest" "karpenter_windows_node_pool_ondemand" {
+  yaml_body = <<YAML
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: windows-builds-2022-ondemand
+  annotations:
+    kubernetes.io/description: "NodePool for Windows 2022 workloads On-Demand Fallback"
+spec:
+  template:
+    metadata:
+      labels:
+        type: "windows_2022"
+        provisioner: "karpenter"
+        windows: "2022"
+        role: windows-builds
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: windows2022
+      taints:
+        - key: "dedicated"
+          value: "windows-builds-2022"
+          effect: NoSchedule
+
+      expireAfter: 720h
+      terminationGracePeriod: 30m
 
       requirements:
         - key: kubernetes.io/os
@@ -180,104 +237,7 @@ spec:
           operator: Gt
           values: ["5"]
   
-  disruption:
-    consolidationPolicy: WhenEmptyOrUnderutilized
-    consolidateAfter: 1m
-      
-YAML
-  depends_on = [
-    module.eks,
-    module.eks_blueprints_addons.karpenter,
-    kubectl_manifest.karpenter_windows_ec2_node_class,
-  ]
-}
-
-# Karpenter Windows Nodes 2019
-
-resource "kubectl_manifest" "karpenter_windows_ec2_2019_node_class" {
-  yaml_body = <<YAML
-apiVersion: karpenter.k8s.aws/v1
-kind: EC2NodeClass
-metadata:
-  name: windows2019
-  annotations:
-    kubernetes.io/description: "Nodes running Windows Server 2019"
-spec:
-  role: "${local.node_iam_role_name}"
-  blockDeviceMappings:
-    - deviceName: /dev/sda1
-      ebs:
-        volumeSize: 200Gi
-        volumeType: gp3
-        iops: 3000
-        encrypted: true
-        deleteOnTermination: true
-        throughput: 700
-  subnetSelectorTerms:
-    - tags:
-        karpenter.sh/discovery: ${local.name}
-  securityGroupSelectorTerms:
-    - tags:
-        karpenter.sh/discovery: ${local.name}
-  amiSelectorTerms:
-    - alias: windows2019@latest # Windows does not support pinning
-  metadataOptions:
-    httpProtocolIPv6: disabled
-    httpTokens: required
-    httpPutResponseHopLimit: 2
-    httpEndpoint: enabled
-  tags:
-    Name: "karpenter-windows-2019-node"
-
-YAML
-  depends_on = [
-    module.eks.cluster,
-    module.eks_blueprints_addons.karpenter,
-  ]
-}
-
-resource "kubectl_manifest" "karpenter_windows_2019_node_pool" {
-  yaml_body = <<YAML
-apiVersion: karpenter.sh/v1
-kind: NodePool
-metadata:
-  name: windows-builds-2019
-  annotations:
-    kubernetes.io/description: "General purpose NodePool for Windows 2019 workloads"
-spec:
-  template:
-    metadata:
-      labels:
-        type: "windows_2019"
-        provisioner: "karpenter"
-        windows: "2019"
-        role: windows-builds
-    spec:
-      nodeClassRef:
-        group: karpenter.k8s.aws
-        kind: EC2NodeClass
-        name: windows2019
-      taints:
-        - key: "dedicated"
-          value: "windows-builds-2019"
-          effect: NoSchedule
-
-      expireAfter: 720h
-      terminationGracePeriod: 48h
-
-      requirements:
-        - key: kubernetes.io/os
-          operator: In
-          values: ["windows"]
-        - key: kubernetes.io/arch
-          operator: In
-          values: ["amd64"]
-        - key: karpenter.sh/capacity-type
-          operator: In
-          values: ["on-demand"]
-        - key: karpenter.k8s.aws/instance-generation
-          operator: Gt
-          values: ["5"]
+  weight: 50
   
   disruption:
     consolidationPolicy: WhenEmpty
@@ -287,6 +247,6 @@ YAML
   depends_on = [
     module.eks,
     module.eks_blueprints_addons.karpenter,
-    kubectl_manifest.karpenter_windows_ec2_2019_node_class,
+    kubectl_manifest.karpenter_windows_ec2_node_class,
   ]
 }
