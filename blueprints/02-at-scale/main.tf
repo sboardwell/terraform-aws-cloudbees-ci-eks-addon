@@ -129,9 +129,9 @@ module "eks" {
     # Note: Openldap is the only shared services that it is not compatible with Bottlerocket or Graviton.
     shared_apps = {
       node_group_name = "shared"
-      instance_types  = ["m5d.xlarge"]
-      ami_type        = "AL2023_x86_64_STANDARD"
-      platform        = "linux"
+      instance_types  = ["m7a.2xlarge"]
+      ami_type        = "BOTTLEROCKET_x86_64"
+      platform        = "bottlerocket"
       min_size        = 1
       max_size        = 3
       desired_size    = 1
