@@ -19,7 +19,7 @@ spec:
         operator: "Equal"
         value: "windows-builds-2022"
         effect: "NoSchedule"
-      terminationGracePeriodSeconds: 0    
+      terminationGracePeriodSeconds: 0
       nodeSelector:
         kubernetes.io/os: windows
         role: windows-builds

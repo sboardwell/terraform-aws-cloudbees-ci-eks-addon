@@ -179,9 +179,9 @@ spec:
         - key: karpenter.k8s.aws/instance-generation
           operator: Gt
           values: ["5"]
-  
+
   weight: 100
-  
+
   disruption:
     consolidationPolicy: WhenEmpty
     consolidateAfter: 1m
@@ -236,13 +236,13 @@ spec:
         - key: karpenter.k8s.aws/instance-generation
           operator: Gt
           values: ["5"]
-  
+
   weight: 50
-  
+
   disruption:
     consolidationPolicy: WhenEmpty
     consolidateAfter: 1m
-      
+
 YAML
   depends_on = [
     module.eks,

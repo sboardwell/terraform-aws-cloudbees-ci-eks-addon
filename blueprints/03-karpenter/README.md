@@ -91,7 +91,7 @@ spec:
         - key: "karpenter.sh/capacity-type"
           operator: "In"
           values: ["spot"]
-  weight: 100 
+  weight: 100
 ---
 apiVersion: karpenter.sh/v1
 kind: NodePool
