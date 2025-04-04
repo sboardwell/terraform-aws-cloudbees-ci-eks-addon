@@ -15,11 +15,10 @@
       }
     ]
   },
-  "description": "",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 9964,
   "graphTooltip": 0,
+  "id": 36,
   "links": [
     {
       "asDropdown": false,
@@ -34,19 +33,39 @@
       "url": ""
     }
   ],
-  "liveNow": false,
   "panels": [
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 23,
+        "x": 0,
+        "y": 0
+      },
+      "id": 49,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display: flex; align-items: center; background-color: white; padding: 10px; border-radius: 5px; height: 100%;\">\n    <img src=\"https://www.jenkins.io/images/logos/jenkins/jenkins.png\"\n         alt=\"Jenkins Automotive\" \n         width=\"80\" height=\"80\"\n         style=\"margin-right: 20px;\">\n    <h2 style=\"color: black; margin: 20; font-size: 20px;\">JENKINS HEALTH per Service or Pod</h2>\n</div>",
+        "mode": "html"
+      },
+      "pluginVersion": "11.1.4",
+      "transparent": true,
+      "type": "text"
+    },
     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 4
       },
       "id": 42,
       "panels": [],
-      "title": "CBCI Pod - Readiness",
+      "title": "Readiness",
       "type": "row"
     },
     {
@@ -80,14 +99,15 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
+        "w": 5,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 8,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -97,9 +117,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -107,7 +128,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(jenkins_health_check_score{pod=~\"$pod\"})",
+          "expr": "avg(jenkins_health_check_score{service=~\"$service\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "range": true,
@@ -115,7 +136,7 @@
           "textEditor": false
         }
       ],
-      "title": "Jenkins Health Score",
+      "title": "Jenkins Health Score (by Service)",
       "type": "gauge"
     },
     {
@@ -152,12 +173,14 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
+        "w": 5,
+        "x": 5,
+        "y": 5
       },
       "id": 35,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -167,9 +190,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -183,7 +207,7 @@
           "refId": "A"
         }
       ],
-      "title": "VM Uptime (Hours)",
+      "title": "VM Uptime Hours (by Pod)",
       "type": "gauge"
     },
     {
@@ -213,9 +237,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 8,
-        "y": 1
+        "w": 5,
+        "x": 10,
+        "y": 5
       },
       "id": 33,
       "options": {
@@ -223,6 +247,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -230,9 +255,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -240,13 +267,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "jenkins_plugins_failed{pod=~\"$pod\"}",
+          "expr": "avg(jenkins_plugins_failed{service=~\"$service\"})",
           "instant": false,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Plugins Failed",
+      "title": "Plugins Failed (by Service)",
       "type": "stat"
     },
     {
@@ -276,9 +303,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 11,
-        "y": 1
+        "w": 5,
+        "x": 15,
+        "y": 5
       },
       "id": 39,
       "options": {
@@ -286,6 +313,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -293,9 +321,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -303,13 +333,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(vm_deadlock_count{pod=~\"$pod\"})",
+          "expr": "avg(vm_deadlock_count{service=~\"$service\"})",
           "instant": false,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Number of Deadlocks",
+      "title": "Number of Deadlocks (by Service)",
       "type": "stat"
     },
     {
@@ -324,6 +354,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -337,6 +368,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -371,10 +403,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
-        "w": 14,
+        "h": 8,
+        "w": 20,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "id": 43,
       "options": {
@@ -385,11 +417,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -398,7 +431,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg(process_max_fds{pod=~\"$pod\"}) ",
+          "expr": "avg(process_max_fds{service=~\"$service\"}) ",
           "instant": false,
           "legendFormat": "Max Open Files",
           "range": true,
@@ -410,7 +443,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "avg(process_open_fds{pod=~\"$pod\"}) ",
+          "expr": "avg(process_open_fds{service=~\"$service\"}) ",
           "hide": false,
           "instant": false,
           "legendFormat": "Open files",
@@ -418,7 +451,7 @@
           "refId": "B"
         }
       ],
-      "title": "Process Open Files",
+      "title": "Process Open Files (by Service)",
       "type": "timeseries"
     },
     {
@@ -427,11 +460,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 17
       },
       "id": 32,
       "panels": [],
-      "title": "CBCI Pod - JVM status",
+      "title": "JVM status",
       "type": "row"
     },
     {
@@ -445,6 +478,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -458,6 +492,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -498,12 +533,11 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 24,
+        "w": 20,
         "x": 0,
-        "y": 15
+        "y": 18
       },
       "id": 5,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "legend": {
@@ -516,11 +550,12 @@
           "utc"
         ],
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -536,7 +571,7 @@
           "refId": "A"
         }
       ],
-      "title": "JVM CPU Load",
+      "title": "JVM CPU Load (by Pod)",
       "type": "timeseries"
     },
     {
@@ -572,12 +607,13 @@
         "h": 6,
         "w": 5,
         "x": 0,
-        "y": 22
+        "y": 25
       },
       "id": 15,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -587,9 +623,10 @@
           "values": false
         },
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -597,14 +634,14 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(avg(vm_memory_total_committed {pod=\"$pod\"}) - avg(vm_memory_total_used {pod=\"$pod\"})) * 100 / avg(vm_memory_total_committed {pod=\"$pod\"}) ",
+          "expr": "(avg(vm_memory_total_committed {pod=\"$pod\"}) - avg(vm_memory_total_used {pod=\"$pod\"})) * 100 / avg(vm_memory_total_committed {pod=\"$pod\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory  Heap Usage",
+      "title": "Memory  Heap Usage (by Pod)",
       "type": "gauge"
     },
     {
@@ -618,6 +655,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -631,6 +669,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -673,10 +712,9 @@
         "h": 6,
         "w": 19,
         "x": 5,
-        "y": 22
+        "y": 25
       },
       "id": 45,
-      "links": [],
       "maxDataPoints": 100,
       "options": {
         "legend": {
@@ -689,11 +727,12 @@
           "utc"
         ],
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.5.2",
       "targets": [
         {
           "datasource": {
@@ -735,7 +774,7 @@
           "refId": "C"
         }
       ],
-      "title": "JVM Memory Usage",
+      "title": "JVM Memory Usage (by Pod)",
       "type": "timeseries"
     },
     {
@@ -744,11 +783,315 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 31
+      },
+      "id": 44,
+      "panels": [],
+      "title": "HTTP Request Status",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "The 99% percentile of HTTP Requests handled by Jenkins masters.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 32
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(http_requests{pod=~\"$pod\",quantile=\"0.99\"})",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Request Duration 99% (by Pod)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "The ratio of ok (200) request out of all requests.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 32
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(http_responseCodes_ok_total{pod=~\"$pod\"})/ \navg(http_requests_count{pod=~\"$pod\"}) ",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Good HTTP Request Ratio (by Pod)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Http Server Errors (500)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 32
+      },
+      "id": 37,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(rate(http_responseCodes_serverError_total{pod=~\"$pod\"}[1m]))",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Server Errors (by Pod)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
       },
       "id": 24,
       "panels": [],
-      "title": "CBCI Pod - Plugins Status",
+      "title": "Plugins Status",
       "type": "row"
     },
     {
@@ -787,9 +1130,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 4,
         "x": 0,
-        "y": 29
+        "y": 41
       },
       "id": 28,
       "options": {
@@ -797,6 +1140,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -804,9 +1148,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -814,13 +1160,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(jenkins_plugins_active{pod=\"$pod\"})",
+          "expr": "avg(jenkins_plugins_active{service=\"$service\"})",
           "instant": false,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Plugins Active",
+      "title": "Plugins Active (by Service)",
       "type": "stat"
     },
     {
@@ -850,9 +1196,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 3,
-        "y": 29
+        "w": 5,
+        "x": 4,
+        "y": 41
       },
       "id": 29,
       "options": {
@@ -860,6 +1206,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -867,9 +1214,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -877,13 +1226,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(jenkins_plugins_withUpdate{pod=\"$pod\"})",
+          "expr": "avg(jenkins_plugins_withUpdate{service=\"$service\"})",
           "instant": false,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Plugins Update Available",
+      "title": "Plugins Update Available (by Service)",
       "type": "stat"
     },
     {
@@ -917,9 +1266,9 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
-        "x": 6,
-        "y": 29
+        "w": 4,
+        "x": 9,
+        "y": 41
       },
       "id": 34,
       "options": {
@@ -927,6 +1276,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -934,9 +1284,11 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.0.2",
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -944,13 +1296,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(jenkins_plugins_inactive{pod=\"$pod\"})",
+          "expr": "avg(jenkins_plugins_inactive{service=\"$service\"})",
           "instant": false,
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Plugins inactive",
+      "title": "Plugins inactive (by Service)",
       "type": "stat"
     },
     {
@@ -959,889 +1311,110 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 45
       },
-      "id": 44,
+      "id": 50,
       "panels": [],
-      "title": "CBCI Pod - HTTP Request Status",
+      "title": "Auditing",
       "type": "row"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
+        "type": "loki",
+        "uid": "lokiDatasource"
       },
-      "description": "The 99% percentile of HTTP Requests handled by Jenkins masters.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
+      "description": "Auditing updates on the configuration",
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 34
-      },
-      "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(http_requests{pod=~\"$pod\",quantile=\"0.99\"})",
-          "instant": false,
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "HTTP Request Duration (99%)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "The ratio of ok (200) request out of all requests.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-RdYlGr"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 34
-      },
-      "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(http_responseCodes_ok_total{pod=~\"$pod\"})/ \navg(http_requests_count{pod=~\"$pod\"}) ",
-          "instant": false,
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Good HTTP Request Ratio",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Http Server Errors (500)",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 34
-      },
-      "id": 37,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(rate(http_responseCodes_serverError_total{pod=~\"$pod\"}[1m]))",
-          "instant": false,
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "HTTP Server Errors",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
+        "h": 5,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 46
       },
-      "id": 23,
-      "panels": [],
-      "title": "CBCI Service - Builds",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
+      "id": 51,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "lokiDatasource"
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 5000
-              }
-            ]
+          "editorMode": "builder",
+          "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Audit Trail - Configuration Updates (by Service)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true,
+              "labelTypes": true,
+              "labels": true,
+              "tsNs": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "labels": ""
+            }
           }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 43
-      },
-      "id": 25,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(jenkins_job_count_value{service=~\"$service\"})",
-          "instant": false,
-          "range": true,
-          "refId": "A"
         }
       ],
-      "title": "Number of Jobs",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 75
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 43
-      },
-      "id": 9,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "(avg(jenkins_runs_success_total{service=~\"$service\"}) * 100) /\navg(jenkins_runs_total_total{service=~\"$service\"})",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "range": true,
-          "refId": "A",
-          "textEditor": false
-        }
-      ],
-      "title": "Successful Builds",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 25
-              },
-              {
-                "color": "red",
-                "value": 50
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 8,
-        "y": 43
-      },
-      "id": 31,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "(avg(jenkins_runs_failure_total{service=~\"$service\"}) * 100) /\navg(jenkins_runs_total_total{service=~\"$service\"})",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "Failed",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "(avg(jenkins_runs_aborted_total{service=~\"$service\"}) * 100) /\navg(jenkins_runs_total_total{service=~\"$service\"})",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "Aborted",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "(avg(jenkins_runs_unstable_total{pod=~\"$pod\"}) * 100) /\navg(jenkins_runs_total_total{pod=~\"$pod\"})",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "Unstable",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "Unsuccessful Builds",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "None!"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(50, 172, 45, 0.97)",
-                "value": null
-              },
-              {
-                "color": "#37872D",
-                "value": 0
-              },
-              {
-                "color": "#FA6400",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 43
-      },
-      "id": 11,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(jenkins_queue_size_value{service=~\"$service\"})",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "range": true,
-          "refId": "A",
-          "textEditor": false
-        }
-      ],
-      "title": "Jenkins queue size",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "rgb(151, 31, 193)",
-            "mode": "fixed"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(50, 172, 45, 0.97)",
-                "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 6
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 10
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 0,
-        "y": 47
-      },
-      "id": 12,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(rate(jenkins_job_building_duration_count{service=~\"$service\"}[1m]))",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Processing speed",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 16,
-        "x": 4,
-        "y": 47
-      },
-      "id": 4,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(jenkins_job_queuing_duration{service=~\"$service\"})",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Job queue duration",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "rgb(31, 193, 185)",
-            "mode": "fixed"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 47
-      },
-      "id": 13,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "avg(rate(jenkins_job_queuing_duration_count{service=~\"$service\"}[1m]))",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Queued rate",
-      "type": "stat"
+      "type": "logs"
     }
   ],
   "refresh": "10s",
-  "schemaVersion": 38,
-  "style": "dark",
-  "tags": [
-    "jenkins",
-    "cloudbees",
-    "ci"
-  ],
+  "schemaVersion": 39,
+  "tags": [],
   "templating": {
     "list": [
       {
+        "allowCustomValue": false,
         "current": {
           "selected": true,
+          "text": "cjoc",
+          "value": "cjoc"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "query_result(up{container=\"jenkins\"})",
+        "description": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Service",
+        "multi": false,
+        "name": "service",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(up{container=\"jenkins\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*service=\"(.*?)\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "selected": false,
           "text": "cjoc-0",
           "value": "cjoc-0"
         },
@@ -1857,6 +1430,7 @@
         "name": "pod",
         "options": [],
         "query": {
+          "qryType": 3,
           "query": "query_result(up{container=\"jenkins\"})",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
@@ -1865,63 +1439,17 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "team-b",
-          "value": "team-b"
-        },
-        "definition": "query_result(up{container=\"jenkins\"})",
-        "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "service",
-        "options": [],
-        "query": {
-          "query": "query_result(up{container=\"jenkins\"})",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": ".*service=\"(.*?)\".*",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30m",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "browser",
-  "title": "CloudBees - Prometheus Plugin",
-  "uid": "f22bb554-2024-45e2-9795-af2ca85aea82",
+  "title": "CloudBees CI - Service Health Copy",
+  "uid": "dehxllp4u7h1ca",
   "version": 1,
   "weekStart": ""
 }
