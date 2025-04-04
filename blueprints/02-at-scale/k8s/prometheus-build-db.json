@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 39,
   "links": [
     {
       "asDropdown": false,
@@ -1607,7 +1606,7 @@
             "uid": "lokiDatasource"
           },
           "editorMode": "builder",
-          "expr": "{tenant=\"$service\"} |= `[Audit]` |= `Started by`",
+          "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]` |= `Started by`",
           "queryType": "range",
           "refId": "A"
         }
@@ -1684,6 +1683,6 @@
   "timezone": "browser",
   "title": "CloudBees CI - Build Performance",
   "uid": "f22bb554-2024-45e2-9795-af2ca85aea87",
-  "version": 8,
+  "version": 1,
   "weekStart": ""
 }
