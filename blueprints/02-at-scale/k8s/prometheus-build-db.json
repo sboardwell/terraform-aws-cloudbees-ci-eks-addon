@@ -55,7 +55,7 @@
       "type": "text"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -63,370 +63,371 @@
         "y": 4
       },
       "id": 39,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Comparison of build completion status' within specified time interval.\n\nSuccess: The Build has no errors, and completed.\n\nFailure: The Build had a fatal error, and did not complete.\n\nAborted: The Build was interrupted before it reaches its expected end. For example, the user has stopped it manually or there was a time-out.\n\nUnstable: The Build had some errors but they were not fatal. The build completed.\n\nNot Built: The Build was scheduled but cancelled and not started. This could be due to manual intervention or concurrent builds are not allowed.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
-          "description": "Comparison of build completion status' within specified time interval.\n\nSuccess: The Build has no errors, and completed.\n\nFailure: The Build had a fatal error, and did not complete.\n\nAborted: The Build was interrupted before it reaches its expected end. For example, the user has stopped it manually or there was a time-out.\n\nUnstable: The Build had some errors but they were not fatal. The build completed.\n\nNot Built: The Build was scheduled but cancelled and not started. This could be due to manual intervention or concurrent builds are not allowed.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "decimals": 0,
-              "mappings": [],
-              "unit": "none"
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success"
             },
-            "overrides": [
+            "properties": [
               {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Success"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "green",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Failure"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "red",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Aborted"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "purple",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Not Built"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "blue",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Unstable"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "yellow",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
               }
             ]
           },
-          "gridPos": {
-            "h": 14,
-            "w": 9,
-            "x": 0,
-            "y": 13
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failure"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
           },
-          "id": 32,
-          "options": {
-            "displayLabels": [
-              "value",
-              "percent"
-            ],
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value",
-                "percent"
-              ]
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Aborted"
             },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "maxHeight": 600,
-              "mode": "multi",
-              "sort": "none"
-            }
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
           },
-          "pluginVersion": "11.5.2",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum (increase(jenkins_runs_unstable_total{service=\"$service\"}[$__range]))",
-              "format": "time_series",
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Unstable",
-              "range": true,
-              "refId": "A"
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Not Built"
             },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum (increase(jenkins_runs_aborted_total{service=\"$service\"}[$__range]))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Aborted",
-              "range": true,
-              "refId": "B"
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unstable"
             },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum (increase(jenkins_runs_success_total{service=\"$service\"}[$__range]))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Success",
-              "range": true,
-              "refId": "C"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum (increase(jenkins_runs_failure_total{service=\"$service\"}[$__range]))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Failure",
-              "range": true,
-              "refId": "D"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": true,
-              "expr": "sum (increase(jenkins_runs_not_built_total{service=\"$service\"}[$__range]))",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Not Built",
-              "range": true,
-              "refId": "E"
-            }
-          ],
-          "title": "Build Completion Status",
-          "transparent": true,
-          "type": "piechart"
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 9,
+        "x": 0,
+        "y": 5
+      },
+      "id": 32,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_unstable_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Unstable",
+          "range": true,
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
           },
-          "description": "Number of builds during the time period.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "decimals": 0,
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 5,
-            "x": 9,
-            "y": 13
-          },
-          "id": 33,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "auto",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [],
-              "fields": "/^Value$/",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "value",
-            "wideLayout": true
-          },
-          "pluginVersion": "11.1.4",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "exemplar": false,
-              "expr": "avg (increase(jenkins_runs_total_total{service=\"$service\"}[$__range]))",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Total Number of Builds",
-          "transparent": true,
-          "type": "stat"
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_aborted_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Aborted",
+          "range": true,
+          "refId": "B"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
           },
-          "description": "Total number of jobs",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "orange",
-                    "value": 3000
-                  },
-                  {
-                    "color": "red",
-                    "value": 5000
-                  }
-                ]
-              },
-              "unit": "locale"
-            },
-            "overrides": []
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_success_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Success",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
           },
-          "gridPos": {
-            "h": 7,
-            "w": 5,
-            "x": 14,
-            "y": 13
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_failure_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Failure",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
           },
-          "id": 34,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "11.1.4",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
-              },
-              "editorMode": "code",
-              "expr": "avg(jenkins_job_count_value{service=\"$service\"})",
-              "instant": false,
-              "legendFormat": "ALL",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Total Number of Jobs",
-          "transparent": true,
-          "type": "stat"
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_not_built_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Not Built",
+          "range": true,
+          "refId": "E"
         }
       ],
-      "title": "Overview",
-      "type": "row"
+      "title": "Build Completion Status",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Number of builds during the time period.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 9,
+        "y": 5
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^Value$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg (increase(jenkins_runs_total_total{service=\"$service\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Builds",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total number of jobs",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 3000
+              },
+              {
+                "color": "red",
+                "value": 5000
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 14,
+        "y": 5
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "expr": "avg(jenkins_job_count_value{service=\"$service\"})",
+          "instant": false,
+          "legendFormat": "ALL",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Jobs",
+      "transparent": true,
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -434,7 +435,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 19
       },
       "id": 41,
       "panels": [],
@@ -577,7 +578,7 @@
         "h": 8,
         "w": 22,
         "x": 0,
-        "y": 6
+        "y": 20
       },
       "id": 35,
       "options": {
@@ -809,7 +810,7 @@
         "h": 11,
         "w": 22,
         "x": 0,
-        "y": 14
+        "y": 28
       },
       "id": 37,
       "options": {
@@ -925,7 +926,7 @@
         "h": 9,
         "w": 22,
         "x": 0,
-        "y": 25
+        "y": 39
       },
       "id": 36,
       "options": {
@@ -1082,7 +1083,7 @@
         "h": 11,
         "w": 22,
         "x": 0,
-        "y": 34
+        "y": 48
       },
       "id": 38,
       "options": {
@@ -1152,7 +1153,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 59
       },
       "id": 43,
       "panels": [],
@@ -1210,7 +1211,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 60
       },
       "id": 42,
       "options": {
@@ -1401,7 +1402,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 60
       },
       "id": 45,
       "options": {
@@ -1416,7 +1417,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Trace ID (count)"
+          }
+        ]
       },
       "pluginVersion": "11.1.4",
       "targets": [
@@ -1535,7 +1541,7 @@
             "sort": [
               {
                 "desc": true,
-                "field": "Span ID (count)"
+                "field": "Trace ID (count)"
               }
             ]
           }
@@ -1568,7 +1574,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 68
       },
       "id": 47,
       "panels": [],
@@ -1585,7 +1591,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 69
       },
       "id": 46,
       "options": {
@@ -1606,7 +1612,7 @@
             "uid": "lokiDatasource"
           },
           "editorMode": "builder",
-          "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]` |= `Started by`",
+          "expr": "{tenant=\"$service\"} |= `[Audit]` |= `Started by`",
           "queryType": "range",
           "refId": "A"
         }
@@ -1648,9 +1654,9 @@
       {
         "allowCustomValue": false,
         "current": {
-          "selected": false,
-          "text": "team-c-ha",
-          "value": "team-c-ha"
+          "selected": true,
+          "text": "team-b",
+          "value": "team-b"
         },
         "datasource": {
           "type": "prometheus",
