@@ -1296,7 +1296,7 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1313,6 +1313,7 @@
         "type": "loki",
         "uid": "lokiDatasource"
       },
+      "description": "Auditing updates on the configuration",
       "gridPos": {
         "h": 5,
         "w": 24,
@@ -1330,6 +1331,7 @@
         "sortOrder": "Descending",
         "wrapLogMessage": false
       },
+      "pluginVersion": "11.1.4",
       "targets": [
         {
           "datasource": {
@@ -1337,12 +1339,30 @@
             "uid": "lokiDatasource"
           },
           "editorMode": "builder",
-          "expr": "{tenant=\"$service\"} |= `[Audit]`",
+          "expr": "{tenant=\"$service\"} |= `[Audit]` != `Started by`",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Audit Trail (by Service)",
+      "title": "Audit Trail - Configuration Updates (by Service)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true,
+              "labelTypes": true,
+              "labels": true,
+              "tsNs": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "labels": ""
+            }
+          }
+        }
+      ],
       "type": "logs"
     }
   ],
@@ -1361,9 +1381,9 @@
       {
         "allowCustomValue": false,
         "current": {
-          "selected": true,
-          "text": "team-b",
-          "value": "team-b"
+          "selected": false,
+          "text": "team-c-ha",
+          "value": "team-c-ha"
         },
         "datasource": {
           "type": "prometheus",
@@ -1420,13 +1440,13 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "CloudBees CI - Service Health",
   "uid": "f22bb554-2024-45e2-9795-af2ca85",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
