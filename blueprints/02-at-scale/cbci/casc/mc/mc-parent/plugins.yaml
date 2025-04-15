@@ -33,5 +33,3 @@ plugins:
   - id: sshd
   - id: timestamper
   - id: workflow-cps-checkpoint
-  #test
-  - id: beer
