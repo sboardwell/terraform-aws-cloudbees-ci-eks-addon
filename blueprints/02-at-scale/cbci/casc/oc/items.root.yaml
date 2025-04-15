@@ -22,6 +22,7 @@ items:
         disk: 5
         nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
         storageClassName: "gp3-a"
+        systemProperties: otel.instrumentation.jenkins.web.enabled=false
         yaml: |-
           ---
           apiVersion: "apps/v1"
@@ -64,6 +65,7 @@ items:
         memory: 6144
         cpus: 2.0
         disk: 5
+        systemProperties: otel.instrumentation.jenkins.web.enabled=false
         nodeSelectors: role=cb-apps
         storageClassName: "efs"
         replication:
