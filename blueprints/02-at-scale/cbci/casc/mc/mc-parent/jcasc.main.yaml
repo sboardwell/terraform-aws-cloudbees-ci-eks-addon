@@ -72,5 +72,7 @@ cloudbees-pipeline-policies:
       name: "General - Agents"
       rules:
       - agentTimeoutRule:
-          maxTime: 30
+          maxTime: 1
+          maxUnit: "HOURS"
+          properties: "1 HOURS"
       - "nodeWithoutRetryRule"
