@@ -1,5 +1,4 @@
 plugins:
-  - id: audit-trail
   - id: cloudbees-casc-client
   - id: cloudbees-casc-items-commons
   - id: cloudbees-casc-items-server
