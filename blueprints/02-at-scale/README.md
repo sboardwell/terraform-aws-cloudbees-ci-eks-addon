@@ -322,6 +322,21 @@ This blueprint use a couple of container registries for different purposes:
 > [!NOTE]
 > Besides Kaniko, there are [other alternative tools](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/using-kaniko#_alternatives) for building images in K8s.
 
+##### Pipeline Governance
+
+A [Jenkins Shared Library](https://www.jenkins.io/doc/book/pipeline/shared-libraries/) is define [here](./cbci/shared-lib/) to collect functions, resources, and steps following best practices that can be reused across the organization.
+
+Additionally, [CloudBees Pipeline Policies](https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/pipeline-policies) are enable to ensure pipelines are compliant with the organization’s policies.
+
+- For All controllers: timeout and retry policies are configured.
+- For HA controllers: HA compatible steps are configured.
+
+Steps:
+
+1. In the CloudBees CI UI, sign in to the `team-b` or `team-c-ha` controllers with admin or developer access.
+2. Navigate to the **admin > validations** and run one build for any of the pipelines
+3. Check  `Pipeline Policies Overview` for the build view.
+
 #### Back up and restore
 
 For backup and restore operations, you can use the [preconfigured CloudBees CI Cluster Operations job](#create-daily-backups-using-a-cloudbees-ci-cluster-operations-job) to automatically perform a daily backup, which can be used for Amazon EFS and Amazon EBS storage.
