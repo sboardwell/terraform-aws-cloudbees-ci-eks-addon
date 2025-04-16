@@ -391,7 +391,9 @@ Issue the following command to restore the controller from the last backup:
 > [!IMPORTANT]
 > Regarding the observability stack described in the following sections, note that the CloudBees Prometheus plugin is a CloudBees Tier 1 plugin, while the Jenkins OpenTelemetry plugin is a Tier 3 plugin. For more information, refer to the  [CloudBees plugin support policies](https://docs.cloudbees.com/docs/cloudbees-common/latest/plugin-support-policies).
 
-#### Metrics
+#### Datasources
+
+##### Metrics
 
 Prometheus is used to store metrics that are retrieved from the [Jenkins Metrics plugin](https://plugins.jenkins.io/metrics/) and the [Jenkins OpenTelemetry plugin](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/monitoring-metrics.md).
 
@@ -417,10 +419,6 @@ Grafana imports Prometheus as a datasource and provides metrics dashboards for C
    eval $(terraform output --raw grafana_url)
    ```
 
-1. To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI**, and then select the controller pod to view the metrics. The following image shows metrics for `team-b`:
-
-   ![CloudBees CI Metrics Dashboard](img/observability/cbci-metrics-dashboard.png)
-
 Additionally, [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) for all your containerized applications and microservices.
 
 >[!NOTE]
@@ -433,8 +431,6 @@ Tempo is used as the Tracing/APM backend for Jenkins tracing data via the Jenkin
 Grafana imports Tempo as a datasource and provides tracing dashboards per a CI/CD pipeline Trace ID.
 
 In CloudBees CI, the Jenkins OpenTelemetry plugin is configured to use Grafana as a visualization backend. Then, it offers a **View pipeline with Grafana** link for every pipeline run, which redirects to Grafana Explorer using Tempo as a datasource and passing a Trace ID. Other system traces can be visualized in Grafana Explorer as well.
-
-![CloudBees CI Tracing Tempo](img/observability/cbci-tracing-tempo.png)
 
 ##### Logs
 
@@ -457,26 +453,25 @@ Fluent Bit acts as a router for container logs.
    eval $(terraform output --raw aws_logstreams_fluentbit) | jq '.[] '
    ```
 
-   The following image shows an example of `team b` controller logs:
-
-   ![CloudBees CI logs from CloudWatch](img/observability/cbci-logs-cloudwatch.png)
-
   - CloudWatch log group: Stores control plane logs in `/aws/eks/CLUSTER_NAME>/cluster`.
 
   - [Loki](https://grafana.com/oss/loki/):  In Grafana, navigate to the **Explore** section, select **Loki** as the datasource, filter by `com_cloudbees_cje_tenants`, and then select a CloudBees CI application log.
 
-    ![CloudBees CI logs from Loki](img/observability/cbci-logs-loki.png)
-
 - Long-term logs are stored in an Amazon S3 bucket under the `fluentbit` path.
 
-### Auditing
+###### Audit logs
 
-Edits on configuration by [Casc](cbci/casc) are recorded in the SCM history logs.
+[Audit Trail plugin](https://plugins.jenkins.io/audit-trail/) is enabled for all controllers and the operations center to track updates via the UI and REST API. Observability Grafana Dashboards includes a widget for audit logs.
 
-Additionally, the [Audit Trail plugin](https://plugins.jenkins.io/audit-trail/) is enabled for all controllers and the operations center to track updates via the UI and REST API. Observability Grafana Dashboards includes a widget for audit logs.
+#### Dashboards
 
-- CloudBees CI - Service Health Dashboard audits edits on the configuration.
-- CloudBees CI - Build Performance audits build activity.
+To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI** folder. There are 2 Dashboards templates available with different filters. When running a controller in HA mode, requests to API pull-based endpoints may return information about the controller replica that responds to the API request instead of aggregated information about all the controller replicas part of the HA cluster (see [HA and REST-API endpoints](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints))
+
+- **CloudBees CI - Service Health Dashboard**: Provides a high-level overview of the health of the CloudBees CI services. Template filter based on service or pod (replicas) depending on the widget.
+- **CloudBees CI - Build Performance Dashboard**: Provides build performance metrics. Template filter based on service. 
+
+>[!NOTE]
+> Run the `admin/load-test` Pipeline on team-b or team-c-ha to populate build metrics.
 
 ## Destroy
 
