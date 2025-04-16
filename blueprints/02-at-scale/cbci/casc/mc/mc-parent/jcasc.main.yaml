@@ -64,3 +64,15 @@ aws:
     useHttp: false
     usePathStyleUrl: false
     useTransferAcceleration: false
+cloudbees-pipeline-policies:
+  config:
+    policies:
+    - action: "warning"
+      customMessage: "Use retry and timeout as best practices for General Agents"
+      name: "General - Agents"
+      rules:
+      - agentTimeoutRule:
+          maxTime: 1
+          maxUnit: "HOURS"
+          properties: "1 HOURS"
+      - "nodeWithoutRetryRule"

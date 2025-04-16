@@ -8,6 +8,7 @@ plugins:
   - id: cloudbees-groovy-view
   - id: cloudbees-jenkins-advisor
   - id: cloudbees-hashicorp-vault
+  - id: cloudbees-pipeline-policies
   - id: cloudbees-pipeline-explorer
   - id: cloudbees-prometheus
   - id: cloudbees-s3-cache
