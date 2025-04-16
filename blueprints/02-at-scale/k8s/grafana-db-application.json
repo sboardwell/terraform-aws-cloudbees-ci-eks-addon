@@ -704,7 +704,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "decbytes"
         },
         "overrides": []
       },
@@ -1349,7 +1349,7 @@
             "uid": "lokiDatasource"
           },
           "editorMode": "builder",
-          "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]`",
+          "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]` != `Started by`",
           "queryType": "range",
           "refId": "A"
         }
@@ -1378,15 +1378,21 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "jenkins",
+    "cloudbeesci",
+    "prometheus",
+    "audit",
+    "health-checks"
+  ],
   "templating": {
     "list": [
       {
         "allowCustomValue": false,
         "current": {
-          "selected": true,
-          "text": "cjoc",
-          "value": "cjoc"
+          "selected": false,
+          "text": "team-b",
+          "value": "team-b"
         },
         "datasource": {
           "type": "prometheus",
@@ -1415,8 +1421,8 @@
         "allowCustomValue": false,
         "current": {
           "selected": false,
-          "text": "cjoc-0",
-          "value": "cjoc-0"
+          "text": "team-b-0",
+          "value": "team-b-0"
         },
         "datasource": {
           "type": "prometheus",
@@ -1449,7 +1455,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "CloudBees CI - Service Health",
-  "uid": "dehxllp4u7h1ca",
-  "version": 1,
+  "uid": "aej3koz20pog0f",
+  "version": 2,
   "weekStart": ""
 }
