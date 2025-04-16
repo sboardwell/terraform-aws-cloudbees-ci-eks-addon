@@ -469,6 +469,15 @@ Fluent Bit acts as a router for container logs.
 
 - Long-term logs are stored in an Amazon S3 bucket under the `fluentbit` path.
 
+### Auditing
+
+Edits on configuration by [Casc](cbci/casc) are recorded in the SCM history logs.
+
+Additionally, the [Audit Trail plugin](https://plugins.jenkins.io/audit-trail/) is enabled for all controllers and the operations center to track updates via the UI and REST API. Observability Grafana Dashboards includes a widget for audit logs.
+
+- CloudBees CI - Service Health Dashboard audits edits on the configuration.
+- CloudBees CI - Build Performance audits build activity.
+
 ## Destroy
 
 To tear down and remove the resources created in the blueprint, refer to [Amazon EKS Blueprints for Terraform - Destroy](https://aws-ia.github.io/terraform-aws-eks-blueprints/getting-started/#destroy).
