@@ -37,14 +37,25 @@ locals {
     }
   }
 
-  cbci_s3_prefix        = "cbci"
-  cbci_s3_location      = "${module.cbci_s3_bucket.s3_bucket_arn}/${local.cbci_s3_prefix}"
-  fluentbit_s3_location = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
-  velero_s3_location    = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
-
   #epoch_millis                    = time_static.epoch.unix * 1000
+
+  cbci_s3_prefix             = "cbci"
+  cbci_s3_location           = "${module.cbci_s3_bucket.s3_bucket_arn}/${local.cbci_s3_prefix}"
+  fluentbit_s3_location      = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
+  velero_s3_location         = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
+  s3_objects_expiration_days = 90
+  s3_onezone_ia              = 30
+  s3_glacier                 = 60
+
   cloudwatch_logs_expiration_days = 7
-  s3_objects_expiration_days      = 90
+
+  aws_backup_schedule           = "cron(0 12 * * ? *)" # Daily at 12:00 UTC
+  aws_backup_cold_storage_after = 30                   # Move to cold storage after 30 days
+  aws_backup_delete_after       = 365                  # Delete after 365 days
+
+  efs_transition_to_ia                    = "AFTER_30_DAYS"
+  efs_transition_to_archive               = "AFTER_90_DAYS"
+  efs_transition_to_primary_storage_class = "AFTER_1_ACCESS"
 
   tags = merge(var.tags, {
     "tf-blueprint"  = local.name
@@ -347,12 +358,12 @@ module "efs" {
 
   # https://docs.aws.amazon.com/efs/latest/ug/lifecycle-management-efs.html
   lifecycle_policy = {
-    transition_to_ia                    = "AFTER_30_DAYS"
-    transition_to_archive               = "AFTER_90_DAYS"
-    transition_to_primary_storage_class = "AFTER_1_ACCESS"
+    transition_to_ia                    = local.efs_transition_to_ia
+    transition_to_archive               = local.efs_transition_to_archive
+    transition_to_primary_storage_class = local.efs_transition_to_primary_storage_class
   }
 
-  #Issue #39
+  #Creating a separate backup plan for EFS to set lifecycle policies
   enable_backup_policy = false
 
   tags = var.tags
@@ -473,10 +484,10 @@ module "cbci_s3_bucket" {
 
       transition = [
         {
-          days          = 30
+          days          = local.s3_onezone_ia
           storage_class = "ONEZONE_IA"
           }, {
-          days          = 60
+          days          = local.s3_glacier
           storage_class = "GLACIER"
         }
       ]
@@ -489,4 +500,63 @@ module "cbci_s3_bucket" {
   ]
 
   tags = local.tags
+}
+
+resource "aws_backup_plan" "efs_backup_plan" {
+  name = "efs-backup-plan"
+
+  rule {
+    rule_name         = "efs-backup-rule"
+    target_vault_name = aws_backup_vault.efs_backup_vault.name
+
+    schedule = local.aws_backup_schedule
+
+    lifecycle {
+      cold_storage_after = local.aws_backup_cold_storage_after
+      delete_after       = local.aws_backup_delete_after
+    }
+  }
+}
+
+resource "aws_backup_vault" "efs_backup_vault" {
+  name = "efs-backup-vault"
+
+  kms_key_arn = aws_kms_key.backup_key.arn
+  tags        = var.tags
+}
+
+resource "aws_backup_selection" "efs_backup_selection" {
+  name         = "efs-backup-selection"
+  iam_role_arn = aws_iam_role.backup_role.arn
+  plan_id      = aws_backup_plan.efs_backup_plan.id
+
+  resources = [module.efs.arn]
+}
+
+resource "aws_iam_role" "backup_role" {
+  name = "efs-backup-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "backup.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+}
+
+resource "aws_iam_role_policy_attachment" "backup_role_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+  role       = aws_iam_role.backup_role.name
+}
+
+resource "aws_kms_key" "backup_key" {
+  description = "KMS key for EFS backups"
+  tags        = var.tags
 }
