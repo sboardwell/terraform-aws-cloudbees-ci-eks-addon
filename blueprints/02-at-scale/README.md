@@ -471,7 +471,7 @@ Fluent Bit acts as a router for container logs.
 To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI** folder. There are 2 Dashboards templates available with different filters. When running a controller in HA mode, requests to API pull-based endpoints may return information about the controller replica that responds to the API request instead of aggregated information about all the controller replicas part of the HA cluster (see [HA and REST-API endpoints](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints))
 
 - **CloudBees CI - Service Health Dashboard**: Provides a high-level overview of the health of the CloudBees CI services. Template filter based on service or pod (replicas) depending on the widget.
-- **CloudBees CI - Build Performance Dashboard**: Provides build performance metrics. Template filter based on service. 
+- **CloudBees CI - Build Performance Dashboard**: Provides build performance metrics. Template filter based on service.
 
 >[!NOTE]
 > Run the `admin/load-test` Pipeline on team-b or team-c-ha to populate build metrics.

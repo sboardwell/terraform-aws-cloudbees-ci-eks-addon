@@ -39,19 +39,19 @@ locals {
 
   #epoch_millis                    = time_static.epoch.unix * 1000
 
-  cbci_s3_prefix        = "cbci"
-  cbci_s3_location      = "${module.cbci_s3_bucket.s3_bucket_arn}/${local.cbci_s3_prefix}"
-  fluentbit_s3_location = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
-  velero_s3_location    = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
-  s3_objects_expiration_days  = 90
-  s3_onezone_ia = 30
-  s3_glacier  = 60
+  cbci_s3_prefix             = "cbci"
+  cbci_s3_location           = "${module.cbci_s3_bucket.s3_bucket_arn}/${local.cbci_s3_prefix}"
+  fluentbit_s3_location      = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
+  velero_s3_location         = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
+  s3_objects_expiration_days = 90
+  s3_onezone_ia              = 30
+  s3_glacier                 = 60
 
   cloudwatch_logs_expiration_days = 7
 
-  aws_backup_schedule = "cron(0 12 * * ? *)" # Daily at 12:00 UTC
-  aws_backup_cold_storage_after = 30 # Move to cold storage after 30 days
-  aws_backup_delete_after       = 365 # Delete after 365 days
+  aws_backup_schedule           = "cron(0 12 * * ? *)" # Daily at 12:00 UTC
+  aws_backup_cold_storage_after = 30                   # Move to cold storage after 30 days
+  aws_backup_delete_after       = 365                  # Delete after 365 days
 
   efs_transition_to_ia                    = "AFTER_30_DAYS"
   efs_transition_to_archive               = "AFTER_90_DAYS"
@@ -363,7 +363,7 @@ module "efs" {
     transition_to_primary_storage_class = local.efs_transition_to_primary_storage_class
   }
 
-  #Creating a separate backup plan for EFS to set lifecycle policies 
+  #Creating a separate backup plan for EFS to set lifecycle policies
   enable_backup_policy = false
 
   tags = var.tags
@@ -526,9 +526,9 @@ resource "aws_backup_vault" "efs_backup_vault" {
 }
 
 resource "aws_backup_selection" "efs_backup_selection" {
-  name          = "efs-backup-selection"
-  iam_role_arn  = aws_iam_role.backup_role.arn
-  plan_id       = aws_backup_plan.efs_backup_plan.id
+  name         = "efs-backup-selection"
+  iam_role_arn = aws_iam_role.backup_role.arn
+  plan_id      = aws_backup_plan.efs_backup_plan.id
 
   resources = [module.efs.arn]
 }
