@@ -174,13 +174,13 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_iam_role" "s3" {
   count              = local.create_pi_s3 ? 1 : 0
-  name               = "cbci-bp02-webminar-iam_role_s3" #TODO: Change to a more generic name in local
+  name               = "${var.pi_s3_eks_cluster_name}_role_s3"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy" "s3_policy" {
   count = local.create_pi_s3 ? 1 : 0
-  name = "cbci-bp02-webminar-iam_inline_policy" #TODO: Change to a more generic name in local
+  name = "${var.pi_s3_eks_cluster_name}_policy_s3"
   role = aws_iam_role.s3[0].id
   policy = jsonencode(
     {
@@ -195,16 +195,16 @@ resource "aws_iam_role_policy" "s3_policy" {
             "s3:GetObject",
             "s3:DeleteObject"
           ],
-          "Resource" : "${var.cbci_s3_location}/*"
+          "Resource" : "${var.pi_s3_bucket_arn}/${var.pi_s3_bucket_cbci_prefix}/*"
         },
         {
           "Sid" : "cbciS3BucketList",
           "Effect" : "Allow",
           "Action" : "s3:ListBucket",
-          "Resource" : var.cbci_s3_arn,
+          "Resource" : var.pi_s3_bucket_arn,
           "Condition" : {
             "StringLike" : {
-              "s3:prefix" : "${var.cbci_s3_prefix}/*"
+              "s3:prefix" : "${var.pi_s3_bucket_cbci_prefix}/*"
             }
           }
         }
@@ -215,16 +215,18 @@ resource "aws_iam_role_policy" "s3_policy" {
 
 resource "aws_eks_pod_identity_association" "oc_s3" {
   count           = local.create_pi_s3 ? 1 : 0
-  cluster_name    = var.eks_cluster_name
-  namespace       = kubernetes_namespace.cbci[0].metadata[0].name
+
+  cluster_name    = var.pi_s3_eks_cluster_name
+  namespace       = helm_release.cloudbees_ci.namespace
   service_account = "cjoc"
   role_arn        = aws_iam_role.s3[0].arn
 }
 
 resource "aws_eks_pod_identity_association" "controllers_s3" {
   count           = local.create_pi_s3 ? 1 : 0
-  cluster_name    = var.eks_cluster_name
-  namespace       = kubernetes_namespace.cbci[0].metadata[0].name
+
+  cluster_name    = var.pi_s3_eks_cluster_name
+  namespace       = helm_release.cloudbees_ci.namespace
   service_account = "jenkins"
   role_arn        = aws_iam_role.s3[0].arn
 }

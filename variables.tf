@@ -124,46 +124,36 @@ variable "create_pi_s3" {
   type        = bool
 }
 
-variable "cbci_s3_location" {
-  description = "S3 bucket location for Backups and/or Workspace Cache."
+variable "pi_s3_bucket_arn" {
+  description = "S3 bucket arn for CBCI Backups and/or Workspace Cache"
   type        = string
   default     = ""
   validation {
-    condition     = length(trimspace(var.cbci_s3_location)) > 0
-    error_message = "The cbci_s3_location must not be an empty string."
+    condition     = can(regex("^arn:aws:s3:", var.pi_s3_bucket_arn))
+    error_message = "The pi_s3_bucket_arn should be a valid S3 certificate ARN."
+  }
+  validation {
+    condition     = length(trimspace(var.pi_s3_bucket_arn)) > 0
+    error_message = "The pi_s3_bucket_arn must not be an empty string."
   }
 }
 
-variable "cbci_s3_arn" {
-  description = "S3 bucket arn for Backups and/or Workspace Cache"
+variable "pi_s3_bucket_cbci_prefix" {
+  description = "S3 bucket path prefix for CBCI Backups and/or Workspace Cache"
   type        = string
   default     = ""
   validation {
-    condition     = can(regex("^arn:aws:s3:", var.cbci_s3_arn))
-    error_message = "The cbci_s3_arn should be a valid S3 certificate ARN."
-  }
-  validation {
-    condition     = length(trimspace(var.cbci_s3_arn)) > 0
-    error_message = "The cbci_s3_arn must not be an empty string."
+    condition     = length(trimspace(var.pi_s3_bucket_cbci_prefix)) > 0
+    error_message = "The pi_s3_bucket_cbci_prefix must not be an empty string."
   }
 }
 
-variable "cbci_s3_prefix" {
-  description = "S3 bucket prefix for Backups and/or Workspace Cache"
+variable "pi_s3_eks_cluster_name" {
+  description = "EKS cluster name for CBCI s3 Pod Identity."
   type        = string
   default     = ""
   validation {
-    condition     = length(trimspace(var.cbci_s3_prefix)) > 0
-    error_message = "The cbci_s3_prefix must not be an empty string."
-  }
-}
-
-variable "eks_cluster_name" {
-  description = "EKS cluster name for CloudBees CI."
-  type        = string
-  default     = ""
-  validation {
-    condition     = length(trimspace(var.eks_cluster_name)) > 0
-    error_message = "The eks_cluster_name must not be an empty string."
+    condition     = length(trimspace(var.pi_s3_eks_cluster_name)) > 0
+    error_message = "The pi_s3_eks_cluster_name must not be an empty string."
   }
 }

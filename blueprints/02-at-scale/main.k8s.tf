@@ -94,11 +94,10 @@ module "eks_blueprints_addon_cbci" {
   create_prometheus_target = true
   prometheus_target_ns = local.observability_ns
 
-  create_pi_s3 = true # TODO: Encapsulate in a Object
-  cbci_s3_location = local.cbci_s3_location
-  cbci_s3_arn      = module.cbci_s3_bucket.s3_bucket_arn
-  cbci_s3_prefix   = local.cbci_s3_prefix
-  eks_cluster_name = module.eks.cluster_name
+  create_pi_s3 = true
+  pi_s3_bucket_arn = module.cbci_s3_bucket.s3_bucket_arn
+  pi_s3_bucket_cbci_prefix = local.cbci_s3_prefix
+  pi_s3_eks_cluster_name = module.eks.cluster_name
 
 }
 
