@@ -40,7 +40,7 @@ locals {
   }
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
-  create_pi_s3 = alltrue([var.create_pi_s3, length(var.cbci_s3_location) > 0, length(var.cbci_s3_arn) > 0, length(var.cbci_s3_prefix) > 0, length(var.eks_cluster_name) > 0])
+  create_pi_s3 = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_arn) > 0, length(var.pi_s3_bucket_cbci_prefix) > 0, length(var.pi_s3_eks_cluster_name) > 0])
 }
 
 # It is required to be separted to purge correctly the cloudbees-ci release
