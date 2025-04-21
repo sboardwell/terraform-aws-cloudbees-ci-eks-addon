@@ -102,7 +102,7 @@ variable "reg_secret_auth" {
   }
 }
 
-variable "prometheus_target" {
+variable "create_prometheus_target" {
   description = "Creates a service monitor to discover the CloudBees CI Prometheus target dynamically. It is designed to be enabled with the AWS EKS Terraform Addon Kube Prometheus Stack."
   default     = false
   type        = bool
@@ -115,5 +115,55 @@ variable "prometheus_target_ns" {
   validation {
     condition     = length(trimspace(var.prometheus_target_ns)) > 0
     error_message = "Prometheus target namespace must not be an empty string."
+  }
+}
+
+variable "create_pi_s3" {
+  description = "Create Pod Identity for s3. It requires the EKS Pod Identity agent running."
+  default     = false
+  type        = bool
+}
+
+variable "cbci_s3_location" {
+  description = "S3 bucket location for Backups and/or Workspace Cache."
+  type        = string
+  default     = ""
+  validation {
+    condition     = length(trimspace(var.cbci_s3_location)) > 0
+    error_message = "The cbci_s3_location must not be an empty string."
+  }
+}
+
+variable "cbci_s3_arn" {
+  description = "S3 bucket arn for Backups and/or Workspace Cache"
+  type        = string
+  default     = ""
+  validation {
+    condition     = can(regex("^arn:aws:s3:", var.cbci_s3_arn))
+    error_message = "The cbci_s3_arn should be a valid S3 certificate ARN."
+  }
+  validation {
+    condition     = length(trimspace(var.cbci_s3_arn)) > 0
+    error_message = "The cbci_s3_arn must not be an empty string."
+  }
+}
+
+variable "cbci_s3_prefix" {
+  description = "S3 bucket prefix for Backups and/or Workspace Cache"
+  type        = string
+  default     = ""
+  validation {
+    condition     = length(trimspace(var.cbci_s3_prefix)) > 0
+    error_message = "The cbci_s3_prefix must not be an empty string."
+  }
+}
+
+variable "eks_cluster_name" {
+  description = "EKS cluster name for CloudBees CI."
+  type        = string
+  default     = ""
+  validation {
+    condition     = length(trimspace(var.eks_cluster_name)) > 0
+    error_message = "The eks_cluster_name must not be an empty string."
   }
 }

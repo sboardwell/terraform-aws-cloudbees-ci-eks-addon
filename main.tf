@@ -33,12 +33,14 @@ locals {
     LicEmail     = var.trial_license["email"]
     LicCompany   = var.trial_license["company"]
   }
+  
+  create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
   prometheus_sm_labels = {
     "cloudbees.prometheus" = "true"
   }
-
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
+  create_pi_s3 = alltrue([var.create_pi_s3, length(var.cbci_s3_location) > 0, length(var.cbci_s3_arn) > 0, length(var.cbci_s3_prefix) > 0, length(var.eks_cluster_name) > 0])
 }
 
 # It is required to be separted to purge correctly the cloudbees-ci release
@@ -56,6 +58,10 @@ resource "time_sleep" "wait_30_seconds" {
 
   destroy_duration = "30s"
 }
+
+################################################################################
+# Secrets
+################################################################################
 
 # Kubernetes Secrets to be passed to Casc
 # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#kubernetes-secrets
@@ -100,8 +106,12 @@ resource "kubernetes_secret" "cbci_sec_reg" {
   }
 }
 
+################################################################################
+# Prometheus ServiceMonitor
+################################################################################
+
 resource "kubectl_manifest" "service_monitor_cb_controllers" {
-  count = var.prometheus_target ? 1 : 0
+  count = local.create_prometheus_target ? 1 : 0
 
   yaml_body = <<YAML
 apiVersion: monitoring.coreos.com/v1
@@ -127,7 +137,7 @@ YAML
 }
 
 resource "kubernetes_labels" "oc_sm_label" {
-  count = var.prometheus_target ? 1 : 0
+  count = local.create_prometheus_target ? 1 : 0
 
   api_version = "v1"
   kind        = "Service"
@@ -142,9 +152,90 @@ resource "kubernetes_labels" "oc_sm_label" {
   labels = local.prometheus_sm_labels
 }
 
+################################################################################
+# Pod Identity
+################################################################################
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession"
+    ]
+  }
+}
+
+resource "aws_iam_role" "s3" {
+  count              = local.create_pi_s3 ? 1 : 0
+  name               = "cbci-bp02-webminar-iam_role_s3" #TODO: Change to a more generic name in local
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+resource "aws_iam_role_policy" "s3_policy" {
+  count = local.create_pi_s3 ? 1 : 0
+  name = "cbci-bp02-webminar-iam_inline_policy" #TODO: Change to a more generic name in local
+  role = aws_iam_role.s3[0].id
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
+      "Statement" : [
+        {
+          "Sid" : "cbciS3BucketputGetDelete",
+          "Effect" : "Allow",
+          "Action" : [
+            "s3:PutObject",
+            "s3:GetObject",
+            "s3:DeleteObject"
+          ],
+          "Resource" : "${var.cbci_s3_location}/*"
+        },
+        {
+          "Sid" : "cbciS3BucketList",
+          "Effect" : "Allow",
+          "Action" : "s3:ListBucket",
+          "Resource" : var.cbci_s3_arn,
+          "Condition" : {
+            "StringLike" : {
+              "s3:prefix" : "${var.cbci_s3_prefix}/*"
+            }
+          }
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_eks_pod_identity_association" "oc_s3" {
+  count           = local.create_pi_s3 ? 1 : 0
+  cluster_name    = var.eks_cluster_name
+  namespace       = kubernetes_namespace.cbci[0].metadata[0].name
+  service_account = "cjoc"
+  role_arn        = aws_iam_role.s3[0].arn
+}
+
+resource "aws_eks_pod_identity_association" "controllers_s3" {
+  count           = local.create_pi_s3 ? 1 : 0
+  cluster_name    = var.eks_cluster_name
+  namespace       = kubernetes_namespace.cbci[0].metadata[0].name
+  service_account = "jenkins"
+  role_arn        = aws_iam_role.s3[0].arn
+}
+
+################################################################################
+# Helm Release
+################################################################################
+
 resource "helm_release" "cloudbees_ci" {
   name                       = try(var.helm_config.name, "cloudbees-ci")
-  namespace                  = try(var.helm_config.namespace, "cbci")
+  namespace                  = try(var.helm_config.namespace, kubernetes_namespace.cbci[0].metadata[0].name)
   create_namespace           = false
   description                = try(var.helm_config.description, null)
   chart                      = "cloudbees-core"

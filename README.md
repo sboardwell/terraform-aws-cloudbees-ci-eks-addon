@@ -105,6 +105,9 @@ The CloudBees CI add-on uses `helms release` for its resources definition, makin
 | hosted_zone | Amazon Route 53 hosted zone name. | `string` | n/a | yes |
 | trial_license | CloudBees CI trial license details for evaluation. | `map(string)` | n/a | yes |
 | casc_secrets_file | Secrets .yml file path containing the names: values secrets. It is required when create_casc_secrets is enabled. | `string` | `"secrets-values.yml"` | no |
+| cbci_s3_arn | S3 bucket arn for Backups and/or Workspace Cache | `string` | `""` | no |
+| cbci_s3_location | S3 bucket location for Backups and/or Workspace Cache | `string` | `""` | no |
+| cbci_s3_prefix | S3 bucket prefix for Backups and/or Workspace Cache | `string` | `""` | no |
 | create_casc_secrets | Create a Kubernetes basic secret for CloudBees CasC (cbci-sec-casc) and mount it into the operations center (/var/run/secrets/cbci). | `bool` | `false` | no |
 | create_reg_secret | Create a Kubernetes dockerconfigjson secret for container registry authentication (cbci-sec-reg) for CI builds agents. | `bool` | `false` | no |
 | helm_config | CloudBees CI Helm chart configuration. | `any` | <pre>{<br>  "values": [<br>    ""<br>  ]<br>}</pre> | no |

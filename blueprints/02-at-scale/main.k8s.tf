@@ -54,8 +54,8 @@ resource "random_string" "global_pass_string" {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.21450.0"
+  source     = "../../"
+  #version = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
@@ -91,8 +91,14 @@ module "eks_blueprints_addon_cbci" {
     email    = var.dh_reg_secret_auth["email"]
   }
 
-  prometheus_target    = true
+  create_prometheus_target = true
   prometheus_target_ns = local.observability_ns
+
+  create_pi_s3 = true # TODO: Encapsulate in a Object
+  cbci_s3_location = local.cbci_s3_location
+  cbci_s3_arn      = module.cbci_s3_bucket.s3_bucket_arn
+  cbci_s3_prefix   = local.cbci_s3_prefix
+  eks_cluster_name = module.eks.cluster_name
 
 }
 
@@ -418,81 +424,6 @@ resource "kubernetes_storage_class_v1" "efs" {
   mount_options = [
     "iam"
   ]
-}
-
-################################################################################
-# Pod Identity
-################################################################################
-
-data "aws_iam_policy_document" "assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["pods.eks.amazonaws.com"]
-    }
-
-    actions = [
-      "sts:AssumeRole",
-      "sts:TagSession"
-    ]
-  }
-}
-
-resource "aws_iam_role" "s3" {
-  name               = local.cbci_iam_role_s3
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
-}
-
-resource "aws_iam_role_policy" "s3_policy" {
-  name = "${local.name}-iam_inline_policy"
-  role = aws_iam_role.s3.id
-  policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
-      "Statement" : [
-        {
-          "Sid" : "cbciS3BucketputGetDelete",
-          "Effect" : "Allow",
-          "Action" : [
-            "s3:PutObject",
-            "s3:GetObject",
-            "s3:DeleteObject"
-          ],
-          "Resource" : "${local.cbci_s3_location}/*"
-        },
-        {
-          "Sid" : "cbciS3BucketList",
-          "Effect" : "Allow",
-          "Action" : "s3:ListBucket",
-          "Resource" : module.cbci_s3_bucket.s3_bucket_arn,
-          "Condition" : {
-            "StringLike" : {
-              "s3:prefix" : "${local.cbci_s3_prefix}/*"
-            }
-          }
-        }
-      ]
-    }
-  )
-}
-
-resource "aws_eks_pod_identity_association" "oc_s3" {
-  depends_on      = [module.eks_blueprints_addon_cbci]
-  cluster_name    = module.eks.cluster_name
-  namespace       = module.eks_blueprints_addon_cbci.cbci_namespace
-  service_account = "cjoc"
-  role_arn        = aws_iam_role.s3.arn
-}
-
-resource "aws_eks_pod_identity_association" "controllers_s3" {
-  depends_on      = [module.eks_blueprints_addon_cbci]
-  cluster_name    = module.eks.cluster_name
-  namespace       = module.eks_blueprints_addon_cbci.cbci_namespace
-  service_account = "jenkins"
-  role_arn        = aws_iam_role.s3.arn
 }
 
 ################################################################################
