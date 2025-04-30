@@ -105,13 +105,14 @@ The CloudBees CI add-on uses `helms release` for its resources definition, makin
 | hosted_zone | Amazon Route 53 hosted zone name. | `string` | n/a | yes |
 | trial_license | CloudBees CI trial license details for evaluation. | `map(string)` | n/a | yes |
 | casc_secrets_file | Secrets .yml file path containing the names: values secrets. It is required when create_casc_secrets is enabled. | `string` | `"secrets-values.yml"` | no |
-| cbci_s3_arn | S3 bucket arn for Backups and/or Workspace Cache | `string` | `""` | no |
-| cbci_s3_location | S3 bucket location for Backups and/or Workspace Cache | `string` | `""` | no |
-| cbci_s3_prefix | S3 bucket prefix for Backups and/or Workspace Cache | `string` | `""` | no |
 | create_casc_secrets | Create a Kubernetes basic secret for CloudBees CasC (cbci-sec-casc) and mount it into the operations center (/var/run/secrets/cbci). | `bool` | `false` | no |
+| create_pi_s3 | Create Pod Identity for s3. It requires the EKS Pod Identity agent running. | `bool` | `false` | no |
+| create_prometheus_target | Creates a service monitor to discover the CloudBees CI Prometheus target dynamically. It is designed to be enabled with the AWS EKS Terraform Addon Kube Prometheus Stack. | `bool` | `false` | no |
 | create_reg_secret | Create a Kubernetes dockerconfigjson secret for container registry authentication (cbci-sec-reg) for CI builds agents. | `bool` | `false` | no |
 | helm_config | CloudBees CI Helm chart configuration. | `any` | <pre>{<br>  "values": [<br>    ""<br>  ]<br>}</pre> | no |
-| prometheus_target | Creates a service monitor to discover the CloudBees CI Prometheus target dynamically. It is designed to be enabled with the AWS EKS Terraform Addon Kube Prometheus Stack. | `bool` | `false` | no |
+| pi_s3_bucket_arn | S3 bucket arn for CBCI Backups and/or Workspace Cache | `string` | `""` | no |
+| pi_s3_bucket_cbci_prefix | S3 bucket path prefix for CBCI Backups and/or Workspace Cache | `string` | `""` | no |
+| pi_s3_eks_cluster_name | EKS cluster name for CBCI s3 Pod Identity. | `string` | `""` | no |
 | prometheus_target_ns | Prometheus target namespace, designed to be enabled with the AWS EKS Terraform Addon Kube Prometheus Stack. It is required when prometheus_target is enabled. | `string` | `"observability"` | no |
 | reg_secret_auth | Registry server authentication details for cbci-sec-reg secret. It is required when create_reg_secret is enabled. | `map(string)` | <pre>{<br>  "email": "foo.bar@acme.com",<br>  "password": "changeme1234",<br>  "server": "my-registry.acme:5000",<br>  "username": "foo"<br>}</pre> | no |
 | reg_secret_ns | Agent namespace to allocate the cbci-sec-reg secret. It is required when create_reg_secret is enabled. | `string` | `"cbci"` | no |
