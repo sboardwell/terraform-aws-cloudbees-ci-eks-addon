@@ -27,7 +27,7 @@ locals {
   cbci_admin_user         = "admin_cbci_a"
   cbci_agents_ns          = "cbci-agents"
   # K8S agent template name from the CasC bundle
-  cbci_agent_linuxtempl   = "linux-mavenAndKaniko-"
+  cbci_agent_linuxtempl   = "linux-mavenandkaniko"
   cbci_agent_windowstempl = "windows-powershell"
 
   vault_ns               = "vault"
@@ -94,10 +94,14 @@ module "eks_blueprints_addon_cbci" {
   create_prometheus_target = true
   prometheus_target_ns = local.observability_ns
 
+  pi_eks_cluster_name = module.eks.cluster_name
+
   create_pi_s3 = true
   pi_s3_bucket_arn = module.cbci_s3_bucket.s3_bucket_arn
   pi_s3_bucket_cbci_prefix = local.cbci_s3_prefix
-  pi_s3_eks_cluster_name = module.eks.cluster_name
+  
+  create_pi_ecr = true
+  pi_ecr_cbci_agents_ns = local.cbci_agents_ns
 
 }
 

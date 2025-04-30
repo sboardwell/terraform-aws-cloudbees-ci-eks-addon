@@ -148,12 +148,28 @@ variable "pi_s3_bucket_cbci_prefix" {
   }
 }
 
-variable "pi_s3_eks_cluster_name" {
-  description = "EKS cluster name for CBCI s3 Pod Identity."
+variable "pi_eks_cluster_name" {
+  description = "EKS cluster name for Pod Identity."
   type        = string
   default     = ""
   validation {
-    condition     = length(trimspace(var.pi_s3_eks_cluster_name)) > 0
-    error_message = "The pi_s3_eks_cluster_name must not be an empty string."
+    condition     = length(trimspace(var.pi_eks_cluster_name)) > 0
+    error_message = "The pi_eks_cluster_name must not be an empty string."
+  }
+}
+
+variable "create_pi_ecr" {
+  description = "Create Pod Identity for ECR. It requires the EKS Pod Identity agent running."
+  default     = false
+  type        = bool
+}
+
+variable "pi_ecr_cbci_agents_ns" {
+  description = "Kubernetes namespace for CloudBees CI ephemeral agents."
+  type        = string
+  default     = "cbci-agents"
+  validation {
+    condition     = length(trimspace(var.pi_ecr_cbci_agents_ns)) > 0
+    error_message = "The CloudBees CI agents namespace must not be an empty string."
   }
 }

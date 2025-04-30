@@ -204,8 +204,6 @@ module "eks" {
         role = "build-linux-l"
         size = "2x"
       }
-      create_iam_role            = false
-      iam_role_arn               = aws_iam_role.managed_ng_ecr.arn
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"
       enable_bootstrap_user_data = true
@@ -224,8 +222,6 @@ module "eks" {
         role = "build-linux-xl"
         size = "4x"
       }
-      create_iam_role            = false
-      iam_role_arn               = aws_iam_role.managed_ng_ecr.arn
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"
       enable_bootstrap_user_data = true
@@ -257,75 +253,6 @@ module "eks" {
   cloudwatch_log_group_retention_in_days = local.cloudwatch_logs_expiration_days
 
   tags = local.tags
-}
-
-# AWS Instance Permissions
-
-data "aws_iam_policy_document" "managed_ng_assume_role_policy" {
-  statement {
-    sid = "EKSWorkerAssumeRole"
-
-    actions = [
-      "sts:AssumeRole",
-    ]
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role" "managed_ng_ecr" {
-  name                  = local.cbci_iam_role_ecr
-  description           = "EKS Managed Node group IAM Role ECR"
-  assume_role_policy    = data.aws_iam_policy_document.managed_ng_assume_role_policy.json
-  path                  = "/"
-  force_detach_policies = true
-  # Mandatory for EKS Managed Node Group
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  ]
-  # Additional Permissions for for EKS Managed Node Group per https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html
-  inline_policy {
-    name = local.cbci_inline_policy_ecr
-    policy = jsonencode(
-      {
-        "Version" : "2012-10-17",
-        "Statement" : [
-          {
-            "Sid" : "ecrKaniko",
-            "Effect" : "Allow",
-            "Action" : [
-              "ecr:GetDownloadUrlForLayer",
-              "ecr:GetAuthorizationToken",
-              "ecr:InitiateLayerUpload",
-              "ecr:UploadLayerPart",
-              "ecr:CompleteLayerUpload",
-              "ecr:PutImage",
-              "ecr:BatchGetImage",
-              "ecr:BatchCheckLayerAvailability"
-            ],
-            "Resource" : "*"
-          }
-        ]
-      }
-    )
-  }
-  tags = var.tags
-}
-
-resource "aws_iam_instance_profile" "managed_ng_ecr" {
-  name = local.cbci_instance_profile_ecr
-  role = aws_iam_role.managed_ng_ecr.name
-  path = "/"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  tags = var.tags
 }
 
 ################################################################################
@@ -522,6 +449,7 @@ resource "aws_backup_vault" "efs_backup_vault" {
   name = "efs-backup-vault"
 
   kms_key_arn = aws_kms_key.backup_key.arn
+  force_destroy = true
   tags        = var.tags
 }
 
