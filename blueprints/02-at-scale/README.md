@@ -41,14 +41,13 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
 
 This blueprint divides scalable node groups for different types of workloads:
 
-- Shared node group services (role: `shared`): For common/shared workloads using [Amazon EKS-Optimized Amazon Linux 2023](https://aws.amazon.com/blogs/containers/amazon-eks-optimized-amazon-linux-2023-amis-now-available/) Amazon Machine Image (AMI) type.
+- Shared node group services (role: `shared`): For common/shared workloads using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type for x86 arch.
 - CloudBees CI node groups:
   - CI services (role: `cb-apps`):
     - Services instance type: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type.
     - Regarding storage classes, no HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)) or HA/HS controller `efs`.
   - CI agents (ephemeral):
     - Linux: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type and includes on-demand (role: `build-linux`) and Spot (role: `build-linux-spot`) capacity types. The Spot agent node groups follow the principles described in [Building for Cost Optimization and Resilience for EKS with Spot Instances](https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/).
-      - Amazon Elastic Container Registry (Amazon ECR) authentication is done via [instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html) connected to `build-linux-spot` node pools.
     - Windows (role: `build-windows`): Windows 2019 AMI type.
 - Storage configuration follows best practices for Cost Optimization:
   - EBS: `gp3` is set as the default storage class.
@@ -63,10 +62,18 @@ This blueprint divides scalable node groups for different types of workloads:
 
 ![K8sApps](img/at-scale.k8s.drawio.svg)
 
-CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) adquire permissions to operate with an AWS s3 services for backup, restore and cache operations.
+CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) adquire permissions to operate with in diffetrent namespaces:
+
+- `cbci`: S3 services for backup, restore and cache operations.
+- `cbci-agents`: ECR services for private CI/CD container images management.
 
 > [!IMPORTANT]
 > Known issues: Operation Center pod requires to be recreated to get injected AWS credentials.
+
+CloudBees CI uses a couple of Kubernetes secrets for different purposes depending
+
+- `cbci`: for masking secrets for CasC configuration.
+- `cbci-agents`: Dockerhub services for public CI/CD container images management.
 
 ## Terraform documentation
 
