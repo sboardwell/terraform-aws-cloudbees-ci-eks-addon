@@ -6,16 +6,12 @@ data "aws_availability_zones" "available" {}
 
 locals {
 
-  name                      = var.suffix == "" ? "cbci-bp02" : "cbci-bp02-${var.suffix}"
-  vpc_name                  = "${local.name}-vpc"
-  cluster_name              = "${local.name}-eks"
-  efs_name                  = "${local.name}-efs"
-  resource_group_name       = "${local.name}-rg"
-  bucket_name               = "${local.name}-s3"
-  cbci_instance_profile_ecr = "${local.name}-instance_profile_ecr"
-  cbci_iam_role_ecr         = "${local.name}-iam_role_ecr"
-  cbci_inline_policy_ecr    = "${local.name}-iam_inline_policy_ecr"
-  cbci_iam_role_s3          = "${local.name}-iam_role_s3"
+  name                = var.suffix == "" ? "cbci-bp02" : "cbci-bp02-${var.suffix}"
+  vpc_name            = "${local.name}-vpc"
+  cluster_name        = "${local.name}-eks"
+  efs_name            = "${local.name}-efs"
+  resource_group_name = "${local.name}-rg"
+  bucket_name         = "${local.name}-s3"
 
   vpc_cidr = "10.0.0.0/16"
 
@@ -40,7 +36,6 @@ locals {
   #epoch_millis                    = time_static.epoch.unix * 1000
 
   cbci_s3_prefix             = "cbci"
-  cbci_s3_location           = "${module.cbci_s3_bucket.s3_bucket_arn}/${local.cbci_s3_prefix}"
   fluentbit_s3_location      = "${module.cbci_s3_bucket.s3_bucket_arn}/fluentbit"
   velero_s3_location         = "${module.cbci_s3_bucket.s3_bucket_arn}/velero"
   s3_objects_expiration_days = 90
@@ -448,9 +443,9 @@ resource "aws_backup_plan" "efs_backup_plan" {
 resource "aws_backup_vault" "efs_backup_vault" {
   name = "efs-backup-vault"
 
-  kms_key_arn = aws_kms_key.backup_key.arn
+  kms_key_arn   = aws_kms_key.backup_key.arn
   force_destroy = true
-  tags        = var.tags
+  tags          = var.tags
 }
 
 resource "aws_backup_selection" "efs_backup_selection" {

@@ -33,14 +33,14 @@ locals {
     LicEmail     = var.trial_license["email"]
     LicCompany   = var.trial_license["company"]
   }
-  
+
   create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
   prometheus_sm_labels = {
     "cloudbees.prometheus" = "true"
   }
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
-  create_pi_s3 = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_arn) > 0, length(var.pi_s3_bucket_cbci_prefix) > 0, length(var.pi_eks_cluster_name) > 0])
+  create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_arn) > 0, length(var.pi_s3_bucket_cbci_prefix) > 0, length(var.pi_eks_cluster_name) > 0])
   create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0, length(var.pi_eks_cluster_name) > 0])
 }
 
@@ -177,7 +177,7 @@ data "aws_iam_policy_document" "assume_role_eks_pod" {
 # S3
 
 resource "aws_iam_role" "role_s3" {
-  count              = local.create_pi_s3 ? 1 : 0
+  count = local.create_pi_s3 ? 1 : 0
 
   name               = "${var.pi_eks_cluster_name}_role_s3"
   assume_role_policy = data.aws_iam_policy_document.assume_role_eks_pod.json
@@ -185,7 +185,7 @@ resource "aws_iam_role" "role_s3" {
 
 resource "aws_iam_role_policy" "s3_policy" {
   count = local.create_pi_s3 ? 1 : 0
-  
+
   name = "${var.pi_eks_cluster_name}_policy_s3"
   role = aws_iam_role.role_s3[0].id
   policy = jsonencode(
@@ -269,14 +269,14 @@ resource "aws_iam_role_policy" "ecr_policy" {
             "ecr:BatchCheckLayerAvailability"
           ],
           "Resource" : "*"
-          }
-        ]
-      }
+        }
+      ]
+    }
   )
 }
 
 resource "aws_eks_pod_identity_association" "agent_ecr" {
-  count = local.create_pi_ecr ? 1 : 0
+  count      = local.create_pi_ecr ? 1 : 0
   depends_on = [helm_release.cloudbees_ci]
 
   cluster_name    = var.pi_eks_cluster_name
