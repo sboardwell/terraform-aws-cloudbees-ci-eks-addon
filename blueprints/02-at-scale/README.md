@@ -39,22 +39,30 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
 
 ## Architecture
 
-This blueprint divides scalable node groups for different types of workloads:
+This blueprint divides scalable node groups for different types of workloads using different Scaling Engines.
 
-- Shared node group services (role: `shared`): For common/shared workloads using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type for x86 arch.
-- CloudBees CI node groups:
-  - CI services (role: `cb-apps`):
-    - Services instance type: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type.
-    - Regarding storage classes, no HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)) or HA/HS controller `efs`.
-  - CI agents (ephemeral):
-    - Linux: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type and includes on-demand (role: `build-linux`) and Spot (role: `build-linux-spot`) capacity types. The Spot agent node groups follow the principles described in [Building for Cost Optimization and Resilience for EKS with Spot Instances](https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/).
-    - Windows (role: `build-windows`): Windows 2019 AMI type.
-- Storage configuration follows best practices for Cost Optimization:
+- **Cluster Autoscaler**: For services workloads using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type.
+  - Shared node groups (role: `shared`) `x86` arch.
+  - CloudBees CI Services (role: `cb-apps`) [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) `arm64` arch.
+- **Karpenter**: For ephemeral workloads using at least 5º generation of instances types:
+  - Linux (role: `linux-builds`): Using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) with preferences for [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and `spot` capcacity type. But ready for fallback to other types
+  - Windows (role: `windows-builds`): Using Windows 2019 or 2022 AMI type and `amd64` arch with preferences for `spot` capcacity type but ready for fallback to on-demand instances.
+
+Storage configuration follows best practices for Cost Optimization:
   - EBS: `gp3` is set as the default storage class.
-  - Intelligent tiering definition for EFS, S3 and AWS Backups
+  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)) or HA/HS controller `efs`.
+  - Intelligent tiering definition for EFS, S3 and AWS Backups.
 
 > [!IMPORTANT]
 > The launch time for Linux containers is faster than Windows containers. This can be improved by using a cache container image strategy. Refer to [Speeding up Windows container launch times with EC2 Image builder and image cache strategy](https://aws.amazon.com/blogs/containers/speeding-up-windows-container-launch-times-with-ec2-image-builder-and-image-cache-strategy/) and more about [Windows Container Best Practices](https://aws.github.io/aws-eks-best-practices/windows/docs/ami/). Another potential alternative is to use Windows VMs with a [shared agent](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/shared-agents).
+
+> [!NOTE]
+> The minimun required of managed node groups is one to place Karpenter controlles and CoreDNS. Then, services workloads included CloudBees CI can be migrated to Karpenter NodeClass/NodeGroups to avoid services disruptions by Karpenter there are different strategies:
+> - For services with one replica only: Defining `consolidationPolicy: WhenEmpty` for NodePools and/or using `karpenter.sh/do-not-disrupt: "true"` labels for Pods.
+> - For services with multiple replicas: Use PodDisruptionBudgets (PDBs) to limit the number of pods that can be disrupted at any given time. This can be interesting in combination with spot capacity type.
+
+> [!TIP]
+> For more infoon karpenter patterns/scenarios, refer to [AWS Karpenter Blueprints](https://github.com/aws-samples/karpenter-blueprints)
 
 ![Architecture](img/at-scale.architect.drawio.svg)
 
