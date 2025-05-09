@@ -38,6 +38,8 @@ locals {
   grafana_hostname = "grafana.${var.hosted_zone}"
   grafana_url      = "https://${local.grafana_hostname}"
 
+  node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
+
 }
 
 resource "random_string" "global_pass_string" {
@@ -75,7 +77,7 @@ module "eks_blueprints_addon_cbci" {
   create_casc_secrets = true
   casc_secrets_file = templatefile("k8s/secrets-values.yml", {
     global_password = local.global_password
-    s3bucketName    = local.bucket_name
+    s3bucketName    = module.cbci_s3_bucket.s3_bucket_id
     awsRegion       = var.aws_region
     adminMail       = var.trial_license["email"]
     grafana_url     = local.grafana_url
@@ -136,6 +138,8 @@ module "eks_blueprints_addons" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   cluster_version   = module.eks.cluster_version
 
+  create_delay_dependencies = [for prof in module.eks.eks_managed_node_groups : prof.node_group_arn]
+
   eks_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
@@ -145,27 +149,19 @@ module "eks_blueprints_addons" {
           controller = {
             extraVolumeTags = local.tags
           }
-          # Deploy on the nodes that need Amazon EBS storage
-          node = {
-            nodeSelector = {
-              storage = "enabled"
-            }
-          }
         }
       )
     }
-    coredns = {
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
-    }
+    coredns    = { most_recent = true }
+
     vpc-cni = {
-      configuration_values = jsonencode(
-        {
-          enableWindowsIpam = "true"
+      configuration_values = jsonencode({
+        enableWindowsIpam = "true"
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
         }
-      )
+      })
     }
     kube-proxy             = {}
     eks-pod-identity-agent = {}
@@ -244,7 +240,7 @@ module "eks_blueprints_addons" {
       cert_arn         = module.acm.acm_certificate_arn
     })]
   }
-  # It enables /aws/containerinsights/${local.cluster_name}/performance which is required for CloudWatch Insights metrics
+  # It enables /aws/containerinsights/${local.name}/performance which is required for CloudWatch Insights metrics
   enable_aws_cloudwatch_metrics = true
   aws_cloudwatch_metrics = {
     namespace        = local.observability_ns
@@ -255,7 +251,7 @@ module "eks_blueprints_addons" {
     })]
   }
   enable_aws_for_fluentbit = true
-  # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
+  # Saved by default in /aws/eks/${local.name}/aws-fluentbit-logs-<timestamp>
   aws_for_fluentbit_cw_log_group = {
     create    = true
     retention = local.cloudwatch_logs_expiration_days
@@ -283,6 +279,10 @@ module "eks_blueprints_addons" {
       {
         name  = "dnsPolicy"
         value = "ClusterFirstWithHostNet"
+      },
+      {
+        name  = "cloudWatchLogs.region"
+        value = var.aws_region
       }
     ]
     values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
@@ -292,6 +292,17 @@ module "eks_blueprints_addons" {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
     })]
+  }
+  enable_karpenter = true
+  karpenter = {
+    chart_version       = "1.0.2"
+    repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+    repository_password = data.aws_ecrpublic_authorization_token.token.password
+  }
+  karpenter_enable_spot_termination          = true
+  karpenter_enable_instance_profile_creation = true
+  karpenter_node = {
+    iam_role_use_name_prefix = false
   }
   helm_releases = {
     openldap-stack = {
@@ -353,6 +364,26 @@ module "eks_blueprints_addons" {
     }
   }
   tags = local.tags
+}
+
+module "aws_auth" {
+  source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
+  version = "~> 20.0"
+
+  manage_aws_auth_configmap = true
+
+# Windows Nodes requires "eks:kube-proxy-windows"
+# https://github.com/aws/karpenter-provider-aws/issues/5099#issuecomment-1820242937
+# https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html#enable-windows-support
+# https://github.com/aws/karpenter-provider-aws/pull/5132/files
+
+  aws_auth_roles = [
+    {
+      rolearn  = module.eks_blueprints_addons.karpenter.node_iam_role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups   = ["system:bootstrappers", "system:nodes", "eks:kube-proxy-windows"]
+    },
+  ]
 }
 
 ################################################################################

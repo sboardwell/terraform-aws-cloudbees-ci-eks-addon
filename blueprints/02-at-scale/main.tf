@@ -1,20 +1,22 @@
+data "aws_ecrpublic_authorization_token" "token" {
+  provider = aws.virginia
+}
+
 data "aws_route53_zone" "this" {
   name = var.hosted_zone
 }
 
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}
 
 locals {
-
   name                = var.suffix == "" ? "cbci-bp02" : "cbci-bp02-${var.suffix}"
-  vpc_name            = "${local.name}-vpc"
-  cluster_name        = "${local.name}-eks"
-  efs_name            = "${local.name}-efs"
-  resource_group_name = "${local.name}-rg"
-  bucket_name         = "${local.name}-s3"
 
   vpc_cidr = "10.0.0.0/16"
-
   #It assumes that AZ as named as "a", "b", "c" consecutively.
   azs              = slice(data.aws_availability_zones.available.names, 0, 3)
   route53_zone_id  = data.aws_route53_zone.this.id
@@ -69,15 +71,17 @@ locals {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.17.1"
+  version = "20.23.0"
 
-  cluster_name                   = local.cluster_name
+  cluster_name                   = local.name
   cluster_endpoint_public_access = true
   #vK8#
   cluster_version = "1.31"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
+
+  enable_cluster_creator_admin_permissions = true
 
   # Security groups based on the best practices doc https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html.
   #   So, by default the security groups are restrictive. Users needs to enable rules for specific ports required for App requirement or Add-ons
@@ -132,7 +136,7 @@ module "eks" {
     disk_size     = 50
   }
   eks_managed_node_groups = {
-    # Note: Openldap is the only shared services that it is not compatible with Bottlerocket or Graviton.
+    # Note: Openldap requires x86_64 architecture
     shared_apps = {
       node_group_name = "shared"
       instance_types  = ["m7a.2xlarge"]
@@ -143,7 +147,6 @@ module "eks" {
       desired_size    = 1
       labels = {
         role    = "shared"
-        storage = "enabled"
       }
     }
     #For Controllers using EFS or EBS
@@ -156,7 +159,6 @@ module "eks" {
       taints          = [local.mng["cbci_apps"]["taints"]]
       labels = {
         role    = local.mng["cbci_apps"]["labels"].role
-        storage = "enabled"
       }
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"
@@ -175,7 +177,6 @@ module "eks" {
       taints          = [local.mng["cbci_apps"]["taints"]]
       labels = {
         role    = local.mng["cbci_apps"]["labels"].role
-        storage = "enabled"
       }
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"
@@ -183,44 +184,6 @@ module "eks" {
       bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
       disk_size                  = 100
       subnet_ids                 = [module.vpc.private_subnets[0]]
-    }
-    # https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/
-    # https://www.eksworkshop.com/docs/fundamentals/managed-node-groups/spot/instance-diversification
-    cb_agents_lin_2x = {
-      node_group_name = "agent-lin-2x"
-      # ec2-instance-selector --vcpus 2 --memory 8 --region us-east-1 --deny-list 't.*' --current-generation -a arm64 --gpus 0 --usage-class spot
-      instance_types = ["im4gn.large", "m6g.large", "m6gd.large", "m7g.large", "m7gd.large"] #Graviton
-      capacity_type  = "SPOT"
-      min_size       = 1
-      max_size       = 3
-      desired_size   = 1
-      taints         = [{ key = "dedicated", value = "build-linux-l", effect = "NO_SCHEDULE" }]
-      labels = {
-        role = "build-linux-l"
-        size = "2x"
-      }
-      ami_type                   = "BOTTLEROCKET_ARM_64"
-      platform                   = "bottlerocket"
-      enable_bootstrap_user_data = true
-      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
-    }
-    cb_agents_lin_4x = {
-      node_group_name = "agent-lin-4x"
-      # ec2-instance-selector --vcpus 4 --memory 16 --region us-east-1 --deny-list 't.*' --current-generation -a arm64 --gpus 0 --usage-class spot
-      instance_types = ["im4gn.xlarge", "m6g.xlarge", "m6gd.xlarge", "m7g.xlarge", "m7gd.xlarge"] #Graviton
-      capacity_type  = "SPOT"
-      min_size       = 1
-      max_size       = 3
-      desired_size   = 1
-      taints         = [{ key = "dedicated", value = "build-linux-xl", effect = "NO_SCHEDULE" }]
-      labels = {
-        role = "build-linux-xl"
-        size = "4x"
-      }
-      ami_type                   = "BOTTLEROCKET_ARM_64"
-      platform                   = "bottlerocket"
-      enable_bootstrap_user_data = true
-      bootstrap_extra_args       = local.bottlerocket_bootstrap_extra_args
     }
     cb_agents_win = {
       node_group_name = "agent-win-4x"
@@ -233,38 +196,69 @@ module "eks" {
       # ec2-instance-selector --vcpus 4 --memory 16 --region us-east-1 --deny-list 't.*' --current-generation -a amd64 --gpus 0 --usage-class spot
       instance_types = ["m5.xlarge", "m5a.xlarge", "m5d.xlarge", "m5dn.xlarge", "m5n.xlarge", "m5zn.xlarge", "m6a.xlarge", "m6i.xlarge", "m6id.xlarge", "m6idn.xlarge", "m6in.xlarge", "m7a.xlarge", "m7i.xlarge"]
       capacity_type  = "SPOT"
-      taints         = [{ key = "dedicated", value = "build-windows", effect = "NO_SCHEDULE" }]
+      taints         = [{ key = "dedicated", value = "build-windows-mg", effect = "NO_SCHEDULE" }]
       labels = {
-        role = "build-windows"
+        role = "build-windows-mg"
       }
     }
   }
 
   # https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
   # https://aws.amazon.com/blogs/containers/understanding-and-cost-optimizing-amazon-eks-control-plane-logs/
-  # Saved by default in /aws/eks/${local.cluster_name}/cluster
+  # Saved by default in /aws/eks/${local.name}/cluster
   create_cloudwatch_log_group            = true
   cluster_enabled_log_types              = ["audit", "api", "authenticator", "controllerManager", "scheduler"]
   cloudwatch_log_group_retention_in_days = local.cloudwatch_logs_expiration_days
 
-  tags = local.tags
+  tags = merge(local.tags, {
+    "karpenter.sh/discovery" = local.name
+  })
 }
 
 ################################################################################
 # Supported Resources
 ################################################################################
 
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.12.1"
+
+  name = local.name
+  cidr = local.vpc_cidr
+
+  azs             = local.azs
+  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
+  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
+
+  enable_nat_gateway = true
+  single_nat_gateway = true
+
+  #https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
+  #https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = 1
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = 1
+    # Tags subnets for Karpenter auto-discovery
+    "karpenter.sh/discovery" = local.name
+  }
+
+  tags = local.tags
+
+}
 module "efs" {
   source  = "terraform-aws-modules/efs/aws"
   version = "1.6.4"
 
-  creation_token = local.efs_name
-  name           = local.efs_name
+  creation_token = local.name
+  name           = local.name
 
   mount_targets = {
     for k, v in zipmap(local.azs, module.vpc.private_subnets) : k => { subnet_id = v }
   }
-  security_group_description = "${local.efs_name} EFS security group"
+  security_group_description = "${local.name} EFS security group"
   security_group_vpc_id      = module.vpc.vpc_id
   security_group_rules = {
     vpc = {
@@ -308,36 +302,8 @@ module "acm" {
   tags = local.tags
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.5.2"
-
-  name = local.vpc_name
-  cidr = local.vpc_cidr
-
-  azs             = local.azs
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
-
-  #https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
-  #https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
-  }
-
-  tags = local.tags
-
-}
-
 resource "aws_resourcegroups_group" "bp_rg" {
-  name = local.resource_group_name
+  name = local.name
 
   resource_query {
     query = <<JSON
@@ -360,7 +326,7 @@ module "cbci_s3_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "4.0.1"
 
-  bucket = local.bucket_name
+  bucket = local.name
 
   # Allow deletion of non-empty bucket
   # NOTE: This is enabled for example usage only, you should not enable this for production workloads
