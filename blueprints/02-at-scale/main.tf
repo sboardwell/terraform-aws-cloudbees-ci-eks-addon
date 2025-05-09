@@ -185,22 +185,6 @@ module "eks" {
       disk_size                  = 100
       subnet_ids                 = [module.vpc.private_subnets[0]]
     }
-    cb_agents_win = {
-      node_group_name = "agent-win-4x"
-      min_size        = 1
-      max_size        = 3
-      desired_size    = 1
-      platform        = "windows"
-      ami_type        = "WINDOWS_CORE_2019_x86_64"
-      use_name_prefix = true
-      # ec2-instance-selector --vcpus 4 --memory 16 --region us-east-1 --deny-list 't.*' --current-generation -a amd64 --gpus 0 --usage-class spot
-      instance_types = ["m5.xlarge", "m5a.xlarge", "m5d.xlarge", "m5dn.xlarge", "m5n.xlarge", "m5zn.xlarge", "m6a.xlarge", "m6i.xlarge", "m6id.xlarge", "m6idn.xlarge", "m6in.xlarge", "m7a.xlarge", "m7i.xlarge"]
-      capacity_type  = "SPOT"
-      taints         = [{ key = "dedicated", value = "build-windows-mg", effect = "NO_SCHEDULE" }]
-      labels = {
-        role = "build-windows-mg"
-      }
-    }
   }
 
   # https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
