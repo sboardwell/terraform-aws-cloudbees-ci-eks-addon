@@ -236,7 +236,7 @@ resource "aws_eks_pod_identity_association" "controllers_s3" {
   namespace       = helm_release.cloudbees_ci.namespace
   service_account = "jenkins"
   role_arn        = aws_iam_role.role_s3[0].arn
-  
+
 }
 
 # ECR

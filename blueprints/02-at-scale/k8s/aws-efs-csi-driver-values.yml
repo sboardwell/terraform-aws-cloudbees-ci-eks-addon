@@ -5,4 +5,3 @@
 controller:
   nodeSelector:
     kubernetes.io/os: linux
-

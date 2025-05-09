@@ -14,7 +14,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  name                = var.suffix == "" ? "cbci-bp02" : "cbci-bp02-${var.suffix}"
+  name = var.suffix == "" ? "cbci-bp02" : "cbci-bp02-${var.suffix}"
 
   vpc_cidr = "10.0.0.0/16"
   #It assumes that AZ as named as "a", "b", "c" consecutively.
@@ -146,7 +146,7 @@ module "eks" {
       max_size        = 3
       desired_size    = 1
       labels = {
-        role    = "shared"
+        role = "shared"
       }
     }
     #For Controllers using EFS or EBS
@@ -158,7 +158,7 @@ module "eks" {
       desired_size    = 1
       taints          = [local.mng["cbci_apps"]["taints"]]
       labels = {
-        role    = local.mng["cbci_apps"]["labels"].role
+        role = local.mng["cbci_apps"]["labels"].role
       }
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"
@@ -176,7 +176,7 @@ module "eks" {
       desired_size    = 1
       taints          = [local.mng["cbci_apps"]["taints"]]
       labels = {
-        role    = local.mng["cbci_apps"]["labels"].role
+        role = local.mng["cbci_apps"]["labels"].role
       }
       ami_type                   = "BOTTLEROCKET_ARM_64"
       platform                   = "bottlerocket"

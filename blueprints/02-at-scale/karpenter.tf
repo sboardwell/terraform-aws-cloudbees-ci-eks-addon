@@ -62,7 +62,7 @@ spec:
         - key: "dedicated"
           value: "linux-builds"
           effect: NoSchedule
-      
+
       # Recycle nodes after $expireAfter so they have latest updates
       # Give the pods $terminationGracePeriod time to complete after the node is about to be recycled
       expireAfter: 720h
@@ -90,16 +90,16 @@ spec:
         name: bottlerocket
         group: karpenter.k8s.aws
         kind: EC2NodeClass
-  
+
   # Priority given to the NodePool when the scheduler considers which NodePool
   # to select. Higher weights indicate higher priority when comparing NodePools.
   # Specifying no weight is equivalent to specifying a weight of 0.
   weight: 100
-  
+
   limits:
     cpu: 500
     memory: 1000Gi
-  
+
   # Disruption section which describes the ways in which Karpenter can disrupt and replace Nodes
   # Configuration in this section constrains how aggressive Karpenter can be with performing operations
   # like rolling Nodes due to them hitting their maximum lifetime (expiry) or scaling down nodes to reduce cluster cost
@@ -112,7 +112,7 @@ spec:
     # Omitting the field Budgets will cause the field to be defaulted to one Budget with Nodes: 10%.
     budgets:
     - nodes: 100%
-      reasons: 
+      reasons:
       - "Empty"
       - "Drifted"
 
@@ -210,17 +210,17 @@ spec:
           values: ["5"]
 
   weight: 100
-  
+
   limits:
     cpu: 500
     memory: 1000Gi
-  
+
   disruption:
     consolidationPolicy: WhenEmpty
     consolidateAfter: 5m
     budgets:
     - nodes: 100%
-      reasons: 
+      reasons:
       - "Empty"
 
 YAML
@@ -323,7 +323,7 @@ spec:
     consolidateAfter: 5m
     budgets:
     - nodes: 100%
-      reasons: 
+      reasons:
       - "Empty"
 
 YAML
@@ -331,4 +331,3 @@ YAML
     kubectl_manifest.karpenter_windows_2019_ec2_node_class
   ]
 }
-

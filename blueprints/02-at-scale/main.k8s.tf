@@ -152,7 +152,7 @@ module "eks_blueprints_addons" {
         }
       )
     }
-    coredns    = { most_recent = true }
+    coredns = { most_recent = true }
 
     vpc-cni = {
       configuration_values = jsonencode({
@@ -372,10 +372,10 @@ module "aws_auth" {
 
   manage_aws_auth_configmap = true
 
-# Windows Nodes requires "eks:kube-proxy-windows"
-# https://github.com/aws/karpenter-provider-aws/issues/5099#issuecomment-1820242937
-# https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html#enable-windows-support
-# https://github.com/aws/karpenter-provider-aws/pull/5132/files
+  # Windows Nodes requires "eks:kube-proxy-windows"
+  # https://github.com/aws/karpenter-provider-aws/issues/5099#issuecomment-1820242937
+  # https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html#enable-windows-support
+  # https://github.com/aws/karpenter-provider-aws/pull/5132/files
 
   aws_auth_roles = [
     {
