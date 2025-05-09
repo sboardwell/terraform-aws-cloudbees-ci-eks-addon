@@ -194,7 +194,7 @@ items:
                 timeout(time: 1, unit: 'HOURS')
               }
               agent {
-                  label 'windows-powershell'
+                  label 'windows'
               }
               stages {
                 stage('Test') {

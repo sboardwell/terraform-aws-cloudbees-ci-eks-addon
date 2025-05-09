@@ -13,7 +13,6 @@ export TF_LOG=DEBUG
 declare -a BLUEPRINTS=(
     "01-getting-started"
     "02-at-scale"
-    "03-karpenter"
   )
 
 INFO () {
@@ -104,6 +103,7 @@ tf-destroy () {
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
+  #TODO: Run only when terraform output is present
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
     aws_region=$(tf-output "$root" aws_region)
     eks_cluster_name=$(tf-output "$root" eks_cluster_name)
@@ -167,7 +167,7 @@ probes () {
       eval "$(tf-output "$root" cbci_controllers_pods)" && INFO "All Controllers Pods are Ready."
     until [ "$(eval "$(tf-output "$root" cbci_agent_windowstempl_events)" | grep -c 'Allocated Resource vpc.amazonaws.com')" -ge 1 ]; do sleep $wait && echo "Waiting for Windows Template Pod to allocate resource vpc.amazonaws.com"; done ;\
       eval "$(tf-output "$root" cbci_agent_windowstempl_events)" && INFO "Windows Template Example is OK."
-    until [ "$(eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" | grep -c 'Created container maven')" -ge 2 ]; do sleep $wait && echo "Waiting for both Linux Template Pods (On demand and Spot) to create maven container"; done ;\
+    until [ "$(eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" | grep -c 'Created container: maven')" -ge 2 ]; do sleep $wait && echo "Waiting for both Linux Template Pods to create maven container"; done ;\
       eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" && INFO "Linux Template Example is OK."
     until [ "$(eval "$(tf-output "$root" s3_list_objects)" | grep -c 'cbci/')" -ge 2 ]; do sleep $wait && echo "Waiting for WS Cache and Artifacts to be uploaded into s3 cbci"; done ;\
       eval "$(tf-output "$root" s3_list_objects)" | grep 'cbci/' && INFO "CBCI s3 Permissions are configured correctly."
