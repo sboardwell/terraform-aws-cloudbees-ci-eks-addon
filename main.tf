@@ -40,8 +40,8 @@ locals {
   }
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
-  create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_arn) > 0, length(var.pi_s3_bucket_cbci_prefix) > 0, length(var.pi_eks_cluster_name) > 0])
-  create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0, length(var.pi_eks_cluster_name) > 0])
+  create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_cbci_prefix) > 0])
+  create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0])
 }
 
 ################################################################################
@@ -226,6 +226,7 @@ resource "aws_eks_pod_identity_association" "oc_s3" {
   namespace       = helm_release.cloudbees_ci.namespace
   service_account = "cjoc"
   role_arn        = aws_iam_role.role_s3[0].arn
+
 }
 
 resource "aws_eks_pod_identity_association" "controllers_s3" {
@@ -235,6 +236,7 @@ resource "aws_eks_pod_identity_association" "controllers_s3" {
   namespace       = helm_release.cloudbees_ci.namespace
   service_account = "jenkins"
   role_arn        = aws_iam_role.role_s3[0].arn
+  
 }
 
 # ECR
