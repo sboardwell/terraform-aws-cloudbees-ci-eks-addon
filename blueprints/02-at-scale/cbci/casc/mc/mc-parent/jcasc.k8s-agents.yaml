@@ -2,7 +2,7 @@ kube:
   podTemplatesConfiguration:
     templates:
     - name: "linux-mavenAndKaniko-L"
-      label: "linux-mavenAndKaniko-L"
+      label: "linux-mavenAndKaniko-L linux"
       nodeUsageMode: "NORMAL"
       yaml: |-
         apiVersion: "v1"
@@ -56,7 +56,7 @@ kube:
             operator: "Equal"
             value: "linux-builds"
     - name: "linux-mavenAndKaniko-XL"
-      label: "linux-mavenAndKaniko-XL"
+      label: "linux-mavenAndKaniko-XL linux"
       nodeUsageMode: "NORMAL"
       yaml: |-
         apiVersion: "v1"
@@ -123,7 +123,7 @@ kube:
             operator: "Equal"
             value: "linux-builds"
     - name: "windows-powershell-2019"
-      label: "windows-powershell-2019"
+      label: "windows-powershell-2019 windows"
       yaml: |-
         apiVersion: v1
         kind: Pod
@@ -161,7 +161,7 @@ kube:
             operator: "Equal"
             value: "windows-builds-2019"
     - name: "windows-powershell-2022"
-      label: "windows-powershell-2022"
+      label: "windows-powershell-2022 windows"
       yaml: |-
         apiVersion: v1
         kind: Pod
