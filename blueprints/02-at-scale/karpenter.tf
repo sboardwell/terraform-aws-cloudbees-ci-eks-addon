@@ -198,7 +198,6 @@ spec:
         - key: kubernetes.io/os
           operator: In
           values: ["windows"]
-        # Karpenter supposed to use Spot instances first (because they are cheaper), switching to On-demand only if there are no Spot instances available
         - key: karpenter.sh/capacity-type
           operator: In
           values: ["spot", "on-demand"]
@@ -305,7 +304,6 @@ spec:
         - key: kubernetes.io/os
           operator: In
           values: ["windows"]
-        # Karpenter supposed to use Spot instances first, switching to On-demand only if there are no Spot instances available
         - key: karpenter.sh/capacity-type
           operator: In
           values: ["spot", "on-demand"]
