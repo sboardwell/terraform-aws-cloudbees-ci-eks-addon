@@ -118,6 +118,16 @@ variable "prometheus_target_ns" {
   }
 }
 
+variable "pi_eks_cluster_name" {
+  description = "EKS cluster name for Pod Identity."
+  type        = string
+  default     = ""
+  validation {
+    condition     = length(trimspace(var.pi_eks_cluster_name)) > 0
+    error_message = "The pi_eks_cluster_name must not be an empty string."
+  }
+}
+
 variable "create_pi_s3" {
   description = "Create Pod Identity for s3. It requires the EKS Pod Identity agent running."
   default     = false
@@ -148,13 +158,13 @@ variable "pi_s3_bucket_cbci_prefix" {
   }
 }
 
-variable "pi_eks_cluster_name" {
-  description = "EKS cluster name for Pod Identity."
-  type        = string
-  default     = ""
+variable "pi_s3_sa_controllers" {
+  description = "List of service account names for controllers that need S3 pod identity. Defaults to ['cjoc'] if not provided."
+  type        = list(string)
+  default     = ["cjoc"]
   validation {
-    condition     = length(trimspace(var.pi_eks_cluster_name)) > 0
-    error_message = "The pi_eks_cluster_name must not be an empty string."
+    condition     = length(var.pi_s3_sa_controllers) > 0
+    error_message = "The controller service accounts list must not be empty."
   }
 }
 

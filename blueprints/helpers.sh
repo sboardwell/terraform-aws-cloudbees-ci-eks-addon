@@ -137,7 +137,7 @@ probes () {
   OC_URL=$(tf-output "$root" cbci_oc_url)
   until eval "$(tf-output "$root" cbci_liveness_probe_ext)"; do sleep $wait && echo "Waiting for Operation Center Service to pass Health Check from outside the clustery..."; done ;\
     INFO "Operation Center Service passed Health Check outside the cluster. It is available at $OC_URL."
-  if [ "$root" == "${BLUEPRINTS[0]}" ] || [ "$root" == "${BLUEPRINTS[2]}" ]; then
+  if [ "$root" == "${BLUEPRINTS[0]}" ] ; then
     INITIAL_PASS=$(eval "$(tf-output "$root" cbci_initial_admin_password)"); \
       INFO "Initial Admin Password: $INITIAL_PASS."
   fi
@@ -214,7 +214,8 @@ set-kube-env () {
     # shellcheck disable=SC2154
     find "$SCRIPTDIR/$bp" -type f -name "*.tf" -print0 \
       | xargs -0 sed -i -e "/#vK8#/{n;s/\".*\"/\"$vK8\"/;}" \
-                        -e "/#vEKSBpAddonsTFMod#/{n;s/\".*\"/\"$vEKSBpAddonsTFMod\"/;}"
+                        -e "/#vEKSBpAddonsTFMod#/{n;s/\".*\"/\"$vEKSBpAddonsTFMod\"/;}" \
+                        -e "/#vEKSTFMod#/{n;s/\".*\"/\"$vEKSTFMod\"/;}"
   done
 }
 

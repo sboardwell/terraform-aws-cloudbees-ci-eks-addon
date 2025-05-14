@@ -107,12 +107,13 @@ module "eks_blueprints_addons" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.17.1"
+  #vEKSTFMod#
+  version = "20.23.0"
 
   cluster_name                   = local.cluster_name
   cluster_endpoint_public_access = true
   #vK8#
-  cluster_version = "1.31"
+  cluster_version = "1.32"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -257,7 +258,7 @@ module "acm" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.5.2"
+  version = "5.12.1"
 
   name = local.vpc_name
   cidr = local.vpc_cidr
