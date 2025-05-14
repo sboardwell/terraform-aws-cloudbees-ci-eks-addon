@@ -50,11 +50,6 @@ This blueprint divides scalable node groups for different types of workloads usi
   - Linux (role: `linux-builds`): Using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) with preferences for [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and `spot` capacity type. But ready for fallback to other types.
   - Windows (role: `windows-builds`): Using Windows 2019 or 2022 AMI type and `amd64` arch with preferences for `spot` capAcacity type but ready for fallback to on-demand instances.
 
-Storage configuration follows best practices for Cost Optimization:
-  - EBS: `gp3` is set as the default storage class.
-  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)).
-  - Intelligent tiering definition for EFS, S3 and AWS Backups.
-
 > [!IMPORTANT]
 > The launch time for Linux containers is faster than Windows containers. This can be improved by using a cache container image strategy. Refer to [Speeding up Windows container launch times with EC2 Image builder and image cache strategy](https://aws.amazon.com/blogs/containers/speeding-up-windows-container-launch-times-with-ec2-image-builder-and-image-cache-strategy/) and more about [Windows Container Best Practices](https://aws.github.io/aws-eks-best-practices/windows/docs/ami/). Another potential alternative is to use Windows VMs with a [shared agent](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/shared-agents).
 
@@ -65,6 +60,11 @@ Storage configuration follows best practices for Cost Optimization:
 
 > [!TIP]
 > For more info on karpenter patterns/scenarios, refer to [AWS Karpenter Blueprints](https://github.com/aws-samples/karpenter-blueprints)
+
+Storage configuration follows best practices for Cost Optimization:
+  - EBS: `gp3` is set as the default storage class.
+  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)).
+  - Intelligent tiering definition for EFS, S3 and AWS Backups.
 
 ![Architecture](img/at-scale.architect.drawio.svg)
 
@@ -195,7 +195,7 @@ If the command is successful, no output is returned.
    eval $(terraform output --raw global_password)
    ```
 
-   There are differences in CloudBees CI permissions and folder restrictions when signed in as a user of the Admin group versus the Development group. For example, only Admin users have access to the agent validation jobs.
+   There are differences in CloudBees CI permissions and folder restrictions when signed in as a user of the Admin group versus the Development group. For example, only Admin users have access to the validation jobs.
 
 #### Configuration as Code (CasC)
 
@@ -357,15 +357,14 @@ Steps:
 
 #### Back up and restore
 
-For backup and restore operations, you can use the [preconfigured CloudBees CI Cluster Operations job](#create-daily-backups-using-a-cloudbees-ci-cluster-operations-job) to automatically perform a daily backup, which can be used for Amazon EFS and Amazon EBS storage.
+For backup and restore operations, you can use the [preconfigured CloudBees CI Cluster Operations job](#cloudbees-ci-backup) to automatically perform a daily backup, which can be used for Amazon EFS and Amazon EBS storage.
 
-[Velero](#create-a-velero-backup-schedule) is an alternative for services only for controllers using Amazon EBS. Velero commands and configuration in this blueprint follow [Using Velero back up and restore Kubernetes cluster resources](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/velero-dr).
+[Velero](#create-a-velero-backup-schedule) is an alternative for services only for controllers using Amazon EBS. Velero commands and configuration in this blueprint follow [Using Velero back up and restore Kubernetes cluster resources](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/velero-dr). There is no alternative for services using Amazon EFS storage. Although [AWS Backup](https://aws.amazon.com/backup/) includes the Amazon EFS drive as a protected resource, there is not currently a best practice to dynamically restore Amazon EFS PVCs. For more information, refer to [Issue 39](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/39).
 
 > [!NOTE]
 > - An installation that has been completely converted to CasC may not need traditional backups; a restore operation could consist simply of running a CasC bootstrap script. This is only an option if you have translated every significant system setting and job configuration to CasC. Even then, it may be desirable to perform a filesystem-level restore from backup to preserve transient data, such as build history.
-> - There is no alternative for services using Amazon EFS storage. Although [AWS Backup](https://aws.amazon.com/backup/) includes the Amazon EFS drive as a protected resource, there is not currently a best practice to dynamically restore Amazon EFS PVCs. For more information, refer to [Issue 39](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/39).
 
-##### Create daily backups using a CloudBees CI Cluster Operations job
+##### CloudBees CI Backup
 
 The [CloudBees Backup plugin](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/cloudbees-backup-plugin) is enabled for all controllers and the operations center using [Amazon S3 as storage](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/cloudbees-backup-plugin#_amazon_s3). The preconfigured **backup-all-controllers** [Cluster Operations](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/cluster-operations) job is scheduled to run daily from the operations center to back up all controllers.
 
@@ -375,9 +374,9 @@ To view the **backup-all-controllers** job:
 1. From the operations center dashboard, select **All** to view all folders on the operations center.
 1. Navigate to the **admin** folder, and then select the **backup-all-controllers** Cluster Operations job.
 
-Restore operations can be done on-demand at the controller level from the preconfigured restore job.
+For restore operations, download the backup point and follow [Rescue Pod](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/kubernetes#_use_a_rescue_pod) methodology.
 
-##### Create a Velero backup schedule
+##### Velero
 
 Issue the following command to create a Velero backup schedule for selected controller `team-b` (this can also be applied to `team-a`):
 
@@ -385,18 +384,14 @@ Issue the following command to create a Velero backup schedule for selected cont
    eval $(terraform output --raw velero_backup_schedule)
    ```
 
-##### Take an on-demand Velero backup
+Issue the following command to take an on-demand Velero backup for a specific point in time for `team-b` based on the schedule definition:
 
 >[!NOTE]
 > When using this CloudBees CI add-on, you must [create at least one Velero backup schedule](#create-a-velero-backup-schedule) prior to taking an on-demand Velero backup.
 
-Issue the following command to take an on-demand Velero backup for a specific point in time for `team-b` based on the schedule definition:
-
    ```sh
    eval $(terraform output --raw velero_backup_on_demand)
    ```
-
-##### Restore from a Velero on-demand backup
 
 Issue the following command to restore the controller from the last backup:
 

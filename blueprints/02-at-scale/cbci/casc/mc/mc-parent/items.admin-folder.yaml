@@ -38,22 +38,6 @@ items:
           build job: JOB_NAME, wait: false
     description: 'It emulates workload in a controller see https://plugins.jenkins.io/mock-load-builder/.'
     displayName: loadTest
-  - kind: backupAndRestore
-    name: restore
-    label: linux-mavenAndKaniko-XL
-    buildersList:
-    - restoreBuilder:
-        ignoreConfirmationFile: true
-        preserveJenkinsHome: false
-        ignoreDigestCheck: false
-        store:
-          s3Store:
-            bucketName: "${sec_s3bucketName}"
-            sse: true
-            bucketFolder: "${s3bucketPreffix}/backup"
-            region: "${sec_awsRegion}"
-    description: 'Validates the restore functionality of the CloudBees Backup plugin.'
-    displayName: restore
   - kind: folder
     name: validations
     description: 'Contains validations for integrations tests.'
