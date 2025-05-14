@@ -4,7 +4,9 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
 
 - An [Amazon Elastic File System (Amazon EFS) drive](https://aws.amazon.com/efs/) that is required by CloudBees CI High Availability/Horizontal Scalability (HA/HS) controllers and is optional for non-HA/HS controllers.
 - An [Amazon Simple Storage Service (Amazon S3) bucket](https://aws.amazon.com/s3/) to store assets from applications like CloudBees CI, Velero, and Fluent Bit.
-- [Amazon Elastic Kubernetes Service (Amazon EKS) managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html) for different workloads: shared services, CI applications, CI Linux on-demand agents, CI Linux Spot agents, and CI Microsoft Windows on-demand agents.
+- [Amazon Elastic Kubernetes Service (Amazon EKS) managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html) for different workloads: shared services and CBCI applications.
+- [Amazon Container Registry (Amazon ECR)](https://aws.amazon.com/ecr/) acts as a private container registry for CloudBees CI artifacts.
+- [Amazon Backup](https://aws.amazon.com/backup/) to back up the Amazon EFS drive.
 - [Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) to explode control plane logs and Fluent Bit logs.
 - The following [Amazon EKS blueprints add-ons](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/):
 
@@ -12,7 +14,8 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
   |-------------------------------|-------------|
   | [AWS EFS CSI Driver](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-efs-csi-driver/)| Connects the Amazon Elastic File System (Amazon EFS) drive to the Amazon EKS cluster. |
   | [AWS for Fluent Bit](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-for-fluentbit/)| Acts as an applications log router for log observability in CloudWatch. |
-  | [Cluster Autoscaler](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/cluster-autoscaler/) | Watches Amazon EKS managed node groups to accomplish [CloudBees CI auto-scaling nodes on EKS](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/eks-auto-scaling-nodes). |
+  | [Cluster Autoscaler](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/cluster-autoscaler/) | Watches Amazon EKS managed node groups to accomplish [CloudBees CI auto-scaling nodes on EKS](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/eks-auto-scaling-nodes) for Services |
+  | [Karpenter](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/karpenter/) | Manages NodePools for Epheral Agents |
   | [Kube Prometheus Stack](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/kube-prometheus-stack/) | Observability backbone.|
   | [Metrics Server](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/metrics-server/) | This is a requirement for CloudBees CI HA/HS controllers for horizontal pod autoscaling.|
   | [Velero](https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/velero/)| Backs up and restores Kubernetes resources and volume snapshots. It is only compatible with Amazon Elastic Block Store (Amazon EBS).|
@@ -23,7 +26,6 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
   | Helm Chart | Description |
   |-------------------------------|-------------|
   | [Helm Openldap](https://github.com/jp-gouin/helm-openldap/tree/master) | LDAP server for Kubernetes. |
-  | [AWS Node Termination Handler](https://github.com/aws/aws-node-termination-handler) | Gracefully handles EC2 instance shutdown within Kubernetes. Note that this add-on is not compatible with managed instance groups. For more information, refer to [issue #23](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/23). |
   | [Hashicorp Vault](https://github.com/hashicorp/vault-helm) | Secrets management system that is integrated via [CloudBees HashiCorp Vault Plugin](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-secure-guide/hashicorp-vault-plugin). |
   | [OTEL collector](https://grafana.com/oss/tempo/) | The collector for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/) observability data. |
   | [Grafana Tempo](https://grafana.com/oss/tempo/) | Provides tracing backend for [Jenkins OpenTelemetry](https://plugins.jenkins.io/opentelemetry/). |
@@ -39,20 +41,30 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
 
 ## Architecture
 
-This blueprint divides scalable node groups for different types of workloads:
+This blueprint divides scalable node groups for different types of workloads using different Scaling Engines.
 
-- Shared node group services (role: `shared`): For common/shared workloads using [Amazon EKS-Optimized Amazon Linux 2023](https://aws.amazon.com/blogs/containers/amazon-eks-optimized-amazon-linux-2023-amis-now-available/) Amazon Machine Image (AMI) type.
-- CloudBees CI node groups:
-  - CI services (role: `cb-apps`):
-    - Services instance type: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type.
-    - Regarding storage classes, no HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)) or HA/HS controller `efs`.
-  - CI agents (ephemeral):
-    - Linux: [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type and includes on-demand (role: `build-linux`) and Spot (role: `build-linux-spot`) capacity types. The Spot agent node groups follow the principles described in [Building for Cost Optimization and Resilience for EKS with Spot Instances](https://aws.amazon.com/blogs/compute/cost-optimization-and-resilience-eks-with-spot-instances/).
-      - Amazon Elastic Container Registry (Amazon ECR) authentication is done via [instance profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html) connected to `build-linux-spot` node pools.
-    - Windows (role: `build-windows`): Windows 2019 AMI type.
+- **Cluster Autoscaler**: For services workloads using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) AMI type.
+  - Shared node groups (role: `shared`) `x86` arch.
+  - CloudBees CI Services (role: `cb-apps`) [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) `arm64` arch.
+- **Karpenter**: For ephemeral workloads
+  - Linux (role: `linux-builds`): Using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) with preferences for [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and `spot` capacity type. But ready for fallback to other types.
+  - Windows (role: `windows-builds`): Using Windows 2019 or 2022 AMI type and `amd64` arch with preferences for `spot` capAcacity type but ready for fallback to on-demand instances.
 
 > [!IMPORTANT]
 > The launch time for Linux containers is faster than Windows containers. This can be improved by using a cache container image strategy. Refer to [Speeding up Windows container launch times with EC2 Image builder and image cache strategy](https://aws.amazon.com/blogs/containers/speeding-up-windows-container-launch-times-with-ec2-image-builder-and-image-cache-strategy/) and more about [Windows Container Best Practices](https://aws.github.io/aws-eks-best-practices/windows/docs/ami/). Another potential alternative is to use Windows VMs with a [shared agent](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/shared-agents).
+
+> [!NOTE]
+> The minimum required of managed node groups is one to place Karpenter controllers and CoreDNS. The rest of the services workloads, including CloudBees CI, can be migrated to Karpenter NodeGroups. In order to avoid services disruptions by Karpenter consolidation, there are different strategies to be considered:
+> - For services with one replica only: Defining `consolidationPolicy: WhenEmpty` for NodePools and/or using `karpenter.sh/do-not-disrupt: "true"` labels for Pods.
+> - For services with multiple replicas: Use [PodDisruptionBudgets (PDBs)](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets) to limit the number of pods that can be disrupted at any given time. This option can be interesting in combination with spot capacity type.
+
+> [!TIP]
+> For more info on karpenter patterns/scenarios, refer to [AWS Karpenter Blueprints](https://github.com/aws-samples/karpenter-blueprints)
+
+Storage configuration follows best practices for Cost Optimization:
+  - EBS: `gp3` is set as the default storage class.
+  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)).
+  - Intelligent tiering definition for EFS, S3 and AWS Backups.
 
 ![Architecture](img/at-scale.architect.drawio.svg)
 
@@ -60,10 +72,18 @@ This blueprint divides scalable node groups for different types of workloads:
 
 ![K8sApps](img/at-scale.k8s.drawio.svg)
 
-CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) adquire permissions to operate with an AWS s3 services for backup, restore and cache operations.
+CloudBees CI uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) to acquire different AWS permissions per namespaces and service accounts:
+
+- `services_s3`: S3 services for backup, restore and cache operations.
+- `agent_ecr`: ECR services for private CI/CD container images management.
 
 > [!IMPORTANT]
 > Known issues: Operation Center pod requires to be recreated to get injected AWS credentials.
+
+CloudBees CI uses a couple of Kubernetes secrets for different purposes depending
+
+- `cbci`: for masking secrets for CasC configuration.
+- `cbci-agents`: Dockerhub services for public CI/CD container images management.
 
 ## Terraform documentation
 
@@ -175,7 +195,7 @@ If the command is successful, no output is returned.
    eval $(terraform output --raw global_password)
    ```
 
-   There are differences in CloudBees CI permissions and folder restrictions when signed in as a user of the Admin group versus the Development group. For example, only Admin users have access to the agent validation jobs.
+   There are differences in CloudBees CI permissions and folder restrictions when signed in as a user of the Admin group versus the Development group. For example, only Admin users have access to the validation jobs.
 
 #### Configuration as Code (CasC)
 
@@ -218,7 +238,7 @@ DockerHub authentication is stored as Kubernetes secrets (`cbci-agent-sec-reg`) 
 ```
 
 > [!NOTE]
-> Amazon Elastic Container Registry (Amazon ECR) authentication is done via an instance profile connected to `build-linux-spot` node pools.
+> Amazon Elastic Container Registry (Amazon ECR) authentication is done via pod identity  `agent_ecr`.
 
 ##### HashiCorp Vault
 
@@ -285,25 +305,23 @@ HashiCorp Vault is used as a credential provider for CloudBees CI Pipelines in t
 
       Once the second build is complete, you can find the read cache operation at the beginning of the build logs and the write cache operation at the end of the build logs.
 
-      The `linux-mavenAndKaniko-L` agent template is deployed over on-demand Linux nodes that have smaller instance types versus the `linux-mavenAndKaniko-XL` template that is deployed over Spot Linux nodes that have defined larger instance types.
-
    - For Windows node pool use:
 
       ```sh
       eval $(terraform output --raw cbci_controller_c_windows_node_build)
       ```
 
-      It triggers the `windows-build-nodes` Pipeline from the `team-c-ha` controller.
+      It triggers the `windows` builds Pipeline from the `team-c-ha` controller.
 
       Note that the first build for a new Windows image container can take up to 10 minutes to run; subsequent builds should take seconds to run. This behavior can be improved, as explained in the section [Architecture](#architecture).
 
-1. Right after triggering the builds, issue the following to validate pod agent provisioning to build the Pipeline code:
+2. Right after triggering the builds, issue the following to validate pod agent provisioning to build the Pipeline code:
 
    ```sh
    eval $(terraform output --raw cbci_agents_pods)
    ```
 
-1. Check build logs by signing in to the `team-b` and `team-c-ha` controllers, respectively. Navigate to the Pipeline jobs and select the first build, indicated by the `#1` build number. [CloudBees Pipeline Explorer](https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-pipeline-explorer-plugin) is enabled by default.
+3. Check build logs by signing in to the `team-b` and `team-c-ha` controllers, respectively. Navigate to the Pipeline jobs and select the first build, indicated by the `#1` build number. [CloudBees Pipeline Explorer](https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-pipeline-explorer-plugin) is enabled by default.
 
 ##### Container Registry
 
@@ -322,17 +340,31 @@ This blueprint use a couple of container registries for different purposes:
 > [!NOTE]
 > Besides Kaniko, there are [other alternative tools](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/using-kaniko#_alternatives) for building images in K8s.
 
+##### Pipeline Governance
+
+A [Jenkins Shared Library](https://www.jenkins.io/doc/book/pipeline/shared-libraries/) is define [here](./cbci/shared-lib/) to collect functions, resources, and steps following best practices that can be reused across the organization.
+
+Additionally, [CloudBees Pipeline Policies](https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/pipeline-policies) are enable to ensure pipelines are compliant with the organization’s policies.
+
+- For All controllers: timeout and retry policies are configured.
+- For HA controllers: HA compatible steps are configured.
+
+Steps:
+
+1. In the CloudBees CI UI, sign in to the `team-b` or `team-c-ha` controllers with admin or developer access.
+2. Navigate to the **admin > validations** and run one build for any of the pipelines
+3. Check  `Pipeline Policies Overview` for the build view.
+
 #### Back up and restore
 
-For backup and restore operations, you can use the [preconfigured CloudBees CI Cluster Operations job](#create-daily-backups-using-a-cloudbees-ci-cluster-operations-job) to automatically perform a daily backup, which can be used for Amazon EFS and Amazon EBS storage.
+For backup and restore operations, you can use the [preconfigured CloudBees CI Cluster Operations job](#cloudbees-ci-backup) to automatically perform a daily backup, which can be used for Amazon EFS and Amazon EBS storage.
 
-[Velero](#create-a-velero-backup-schedule) is an alternative for services only for controllers using Amazon EBS. Velero commands and configuration in this blueprint follow [Using Velero back up and restore Kubernetes cluster resources](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/velero-dr).
+[Velero](#create-a-velero-backup-schedule) is an alternative for services only for controllers using Amazon EBS. Velero commands and configuration in this blueprint follow [Using Velero back up and restore Kubernetes cluster resources](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/velero-dr). There is no alternative for services using Amazon EFS storage. Although [AWS Backup](https://aws.amazon.com/backup/) includes the Amazon EFS drive as a protected resource, there is not currently a best practice to dynamically restore Amazon EFS PVCs. For more information, refer to [Issue 39](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/39).
 
 > [!NOTE]
 > - An installation that has been completely converted to CasC may not need traditional backups; a restore operation could consist simply of running a CasC bootstrap script. This is only an option if you have translated every significant system setting and job configuration to CasC. Even then, it may be desirable to perform a filesystem-level restore from backup to preserve transient data, such as build history.
-> - There is no alternative for services using Amazon EFS storage. Although [AWS Backup](https://aws.amazon.com/backup/) includes the Amazon EFS drive as a protected resource, there is not currently a best practice to dynamically restore Amazon EFS PVCs. For more information, refer to [Issue 39](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/39).
 
-##### Create daily backups using a CloudBees CI Cluster Operations job
+##### CloudBees CI Backup
 
 The [CloudBees Backup plugin](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/cloudbees-backup-plugin) is enabled for all controllers and the operations center using [Amazon S3 as storage](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/cloudbees-backup-plugin#_amazon_s3). The preconfigured **backup-all-controllers** [Cluster Operations](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/cluster-operations) job is scheduled to run daily from the operations center to back up all controllers.
 
@@ -342,9 +374,9 @@ To view the **backup-all-controllers** job:
 1. From the operations center dashboard, select **All** to view all folders on the operations center.
 1. Navigate to the **admin** folder, and then select the **backup-all-controllers** Cluster Operations job.
 
-Restore operations can be done on-demand at the controller level from the preconfigured restore job.
+For restore operations, download the backup point and follow [Rescue Pod](https://docs.cloudbees.com/docs/cloudbees-ci/latest/backup-restore/kubernetes#_use_a_rescue_pod) methodology.
 
-##### Create a Velero backup schedule
+##### Velero
 
 Issue the following command to create a Velero backup schedule for selected controller `team-b` (this can also be applied to `team-a`):
 
@@ -352,18 +384,14 @@ Issue the following command to create a Velero backup schedule for selected cont
    eval $(terraform output --raw velero_backup_schedule)
    ```
 
-##### Take an on-demand Velero backup
+Issue the following command to take an on-demand Velero backup for a specific point in time for `team-b` based on the schedule definition:
 
 >[!NOTE]
 > When using this CloudBees CI add-on, you must [create at least one Velero backup schedule](#create-a-velero-backup-schedule) prior to taking an on-demand Velero backup.
 
-Issue the following command to take an on-demand Velero backup for a specific point in time for `team-b` based on the schedule definition:
-
    ```sh
    eval $(terraform output --raw velero_backup_on_demand)
    ```
-
-##### Restore from a Velero on-demand backup
 
 Issue the following command to restore the controller from the last backup:
 
@@ -376,7 +404,9 @@ Issue the following command to restore the controller from the last backup:
 > [!IMPORTANT]
 > Regarding the observability stack described in the following sections, note that the CloudBees Prometheus plugin is a CloudBees Tier 1 plugin, while the Jenkins OpenTelemetry plugin is a Tier 3 plugin. For more information, refer to the  [CloudBees plugin support policies](https://docs.cloudbees.com/docs/cloudbees-common/latest/plugin-support-policies).
 
-#### Metrics
+#### Datasources
+
+##### Metrics
 
 Prometheus is used to store metrics that are retrieved from the [Jenkins Metrics plugin](https://plugins.jenkins.io/metrics/) and the [Jenkins OpenTelemetry plugin](https://github.com/jenkinsci/opentelemetry-plugin/blob/main/docs/monitoring-metrics.md).
 
@@ -402,10 +432,6 @@ Grafana imports Prometheus as a datasource and provides metrics dashboards for C
    eval $(terraform output --raw grafana_url)
    ```
 
-1. To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI**, and then select the controller pod to view the metrics. The following image shows metrics for `team-b`:
-
-   ![CloudBees CI Metrics Dashboard](img/observability/cbci-metrics-dashboard.png)
-
 Additionally, [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) for all your containerized applications and microservices.
 
 >[!NOTE]
@@ -418,8 +444,6 @@ Tempo is used as the Tracing/APM backend for Jenkins tracing data via the Jenkin
 Grafana imports Tempo as a datasource and provides tracing dashboards per a CI/CD pipeline Trace ID.
 
 In CloudBees CI, the Jenkins OpenTelemetry plugin is configured to use Grafana as a visualization backend. Then, it offers a **View pipeline with Grafana** link for every pipeline run, which redirects to Grafana Explorer using Tempo as a datasource and passing a Trace ID. Other system traces can be visualized in Grafana Explorer as well.
-
-![CloudBees CI Tracing Tempo](img/observability/cbci-tracing-tempo.png)
 
 ##### Logs
 
@@ -442,17 +466,25 @@ Fluent Bit acts as a router for container logs.
    eval $(terraform output --raw aws_logstreams_fluentbit) | jq '.[] '
    ```
 
-   The following image shows an example of `team b` controller logs:
-
-   ![CloudBees CI logs from CloudWatch](img/observability/cbci-logs-cloudwatch.png)
-
   - CloudWatch log group: Stores control plane logs in `/aws/eks/CLUSTER_NAME>/cluster`.
 
   - [Loki](https://grafana.com/oss/loki/):  In Grafana, navigate to the **Explore** section, select **Loki** as the datasource, filter by `com_cloudbees_cje_tenants`, and then select a CloudBees CI application log.
 
-    ![CloudBees CI logs from Loki](img/observability/cbci-logs-loki.png)
-
 - Long-term logs are stored in an Amazon S3 bucket under the `fluentbit` path.
+
+###### Audit logs
+
+[Audit Trail plugin](https://plugins.jenkins.io/audit-trail/) is enabled for all controllers and the operations center to track updates via the UI and REST API. Observability Grafana Dashboards includes a widget for audit logs.
+
+#### Dashboards
+
+To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI** folder. There are 2 Dashboards templates available with different filters. When running a controller in HA mode, requests to API pull-based endpoints may return information about the controller replica that responds to the API request instead of aggregated information about all the controller replicas part of the HA cluster (see [HA and REST-API endpoints](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints))
+
+- **CloudBees CI - Service Health Dashboard**: Provides a high-level overview of the health of the CloudBees CI services. Template filter based on service or pod (replicas) depending on the widget.
+- **CloudBees CI - Build Performance Dashboard**: Provides build performance metrics. Template filter based on service.
+
+>[!NOTE]
+> Run the `admin/load-test` Pipeline on team-b or team-c-ha to populate build metrics.
 
 ## Destroy
 

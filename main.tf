@@ -2,7 +2,7 @@
 
 locals {
   #vCBCI_Helm#
-  cbci_version           = "3.21450.0+3eb0dca20e40"
+  cbci_version           = "3.22670.0+59d995985b9d"
   cbci_ns                = "cbci"
   cbci_sec_casc_name     = "cbci-sec-casc"
   cbci_sec_registry_name = "cbci-sec-reg"
@@ -33,22 +33,27 @@ locals {
     LicEmail     = var.trial_license["email"]
     LicCompany   = var.trial_license["company"]
   }
+
+  create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
   prometheus_sm_labels = {
     "cloudbees.prometheus" = "true"
   }
-
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
+  create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_cbci_prefix) > 0])
+  create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0])
 }
+
+################################################################################
+# Namespace
+################################################################################
 
 # It is required to be separted to purge correctly the cloudbees-ci release
 resource "kubernetes_namespace" "cbci" {
-
   count = try(var.helm_config.create_namespace, true) ? 1 : 0
   metadata {
     name = try(var.helm_config.namespace, local.cbci_ns)
   }
-
 }
 
 resource "time_sleep" "wait_30_seconds" {
@@ -56,6 +61,10 @@ resource "time_sleep" "wait_30_seconds" {
 
   destroy_duration = "30s"
 }
+
+################################################################################
+# Secrets
+################################################################################
 
 # Kubernetes Secrets to be passed to Casc
 # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#kubernetes-secrets
@@ -70,7 +79,6 @@ resource "kubernetes_secret" "cbci_sec_casc" {
   type = "Opaque"
 
   data = yamldecode(var.casc_secrets_file)
-
 }
 
 # Kubernetes Secrets to authenticate with DockerHub
@@ -100,8 +108,12 @@ resource "kubernetes_secret" "cbci_sec_reg" {
   }
 }
 
+################################################################################
+# Prometheus ServiceMonitor
+################################################################################
+
 resource "kubectl_manifest" "service_monitor_cb_controllers" {
-  count = var.prometheus_target ? 1 : 0
+  count = local.create_prometheus_target ? 1 : 0
 
   yaml_body = <<YAML
 apiVersion: monitoring.coreos.com/v1
@@ -127,7 +139,7 @@ YAML
 }
 
 resource "kubernetes_labels" "oc_sm_label" {
-  count = var.prometheus_target ? 1 : 0
+  count = local.create_prometheus_target ? 1 : 0
 
   api_version = "v1"
   kind        = "Service"
@@ -142,9 +154,135 @@ resource "kubernetes_labels" "oc_sm_label" {
   labels = local.prometheus_sm_labels
 }
 
+################################################################################
+# Pod Identity
+################################################################################
+
+data "aws_iam_policy_document" "assume_role_eks_pod" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession"
+    ]
+  }
+}
+
+# S3
+
+resource "aws_iam_role" "role_s3" {
+  count = local.create_pi_s3 ? 1 : 0
+
+  name               = "${var.pi_eks_cluster_name}_role_s3"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_eks_pod.json
+}
+
+resource "aws_iam_role_policy" "s3_policy" {
+  count = local.create_pi_s3 ? 1 : 0
+
+  name = "${var.pi_eks_cluster_name}_policy_s3"
+  role = aws_iam_role.role_s3[0].id
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
+      "Statement" : [
+        {
+          "Sid" : "cbciS3BucketputGetDelete",
+          "Effect" : "Allow",
+          "Action" : [
+            "s3:PutObject",
+            "s3:GetObject",
+            "s3:DeleteObject"
+          ],
+          "Resource" : "${var.pi_s3_bucket_arn}/${var.pi_s3_bucket_cbci_prefix}/*"
+        },
+        {
+          "Sid" : "cbciS3BucketList",
+          "Effect" : "Allow",
+          "Action" : "s3:ListBucket",
+          "Resource" : var.pi_s3_bucket_arn,
+          "Condition" : {
+            "StringLike" : {
+              "s3:prefix" : "${var.pi_s3_bucket_cbci_prefix}/*"
+            }
+          }
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_eks_pod_identity_association" "services_s3" {
+  for_each = local.create_pi_s3 ? toset(var.pi_s3_sa_controllers) : []
+
+  cluster_name    = var.pi_eks_cluster_name
+  namespace       = helm_release.cloudbees_ci.namespace
+  service_account = each.key
+  role_arn        = aws_iam_role.role_s3[0].arn
+}
+
+# ECR
+
+resource "aws_iam_role" "role_ecr" {
+  count = local.create_pi_ecr ? 1 : 0
+
+  name               = "${var.pi_eks_cluster_name}_role_ecr"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_eks_pod.json
+}
+
+resource "aws_iam_role_policy" "ecr_policy" {
+  count = local.create_pi_ecr ? 1 : 0
+
+  name = "${var.pi_eks_cluster_name}_policy_ecr"
+  role = aws_iam_role.role_ecr[0].id
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "ecrKaniko",
+          "Effect" : "Allow",
+          "Action" : [
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:GetAuthorizationToken",
+            "ecr:InitiateLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:CompleteLayerUpload",
+            "ecr:PutImage",
+            "ecr:BatchGetImage",
+            "ecr:BatchCheckLayerAvailability"
+          ],
+          "Resource" : "*"
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_eks_pod_identity_association" "agent_ecr" {
+  count      = local.create_pi_ecr ? 1 : 0
+  depends_on = [helm_release.cloudbees_ci]
+
+  cluster_name    = var.pi_eks_cluster_name
+  namespace       = var.pi_ecr_cbci_agents_ns
+  service_account = "jenkins-agents"
+  role_arn        = aws_iam_role.role_ecr[0].arn
+}
+
+################################################################################
+# Helm Release
+################################################################################
+
 resource "helm_release" "cloudbees_ci" {
   name                       = try(var.helm_config.name, "cloudbees-ci")
-  namespace                  = try(var.helm_config.namespace, "cbci")
+  namespace                  = try(var.helm_config.namespace, kubernetes_namespace.cbci[0].metadata[0].name)
   create_namespace           = false
   description                = try(var.helm_config.description, null)
   chart                      = "cloudbees-core"
@@ -206,5 +344,4 @@ resource "helm_release" "cloudbees_ci" {
   }
 
   depends_on = [time_sleep.wait_30_seconds]
-
 }

@@ -2,7 +2,7 @@ kube:
   podTemplatesConfiguration:
     templates:
     - name: "linux-mavenAndKaniko-L"
-      label: "linux-mavenAndKaniko-L"
+      label: "linux-mavenAndKaniko-L linux"
       nodeUsageMode: "NORMAL"
       yaml: |-
         apiVersion: "v1"
@@ -48,15 +48,15 @@ kube:
                       path: config.json
           nodeSelector:
             kubernetes.io/os: linux
-            role: "build-linux-l"
-            size: "2x"
+            role: "linux-builds"
+            provisioner: "karpenter"
           tolerations:
           - effect: "NoSchedule"
             key: "dedicated"
             operator: "Equal"
-            value: "build-linux-l"
+            value: "linux-builds"
     - name: "linux-mavenAndKaniko-XL"
-      label: "linux-mavenAndKaniko-XL"
+      label: "linux-mavenAndKaniko-XL linux"
       nodeUsageMode: "NORMAL"
       yaml: |-
         apiVersion: "v1"
@@ -115,15 +115,15 @@ kube:
                       path: config.json
           nodeSelector:
             kubernetes.io/os: linux
-            role: "build-linux-xl"
-            size: "4x"
+            role: "linux-builds"
+            provisioner: "karpenter"
           tolerations:
           - effect: "NoSchedule"
             key: "dedicated"
             operator: "Equal"
-            value: "build-linux-xl"
-    - name: "windows-powershell"
-      label: "windows-powershell"
+            value: "linux-builds"
+    - name: "windows-powershell-2019"
+      label: "windows-powershell-2019 windows"
       yaml: |-
         apiVersion: v1
         kind: Pod
@@ -152,9 +152,49 @@ kube:
             - 999999
           nodeSelector:
             kubernetes.io/os: windows
-            role: "build-windows"
+            role: "windows-builds"
+            windows: "2019"
+            provisioner: "karpenter"
           tolerations:
           - effect: "NoSchedule"
             key: "dedicated"
             operator: "Equal"
-            value: "build-windows"
+            value: "windows-builds-2019"
+    - name: "windows-powershell-2022"
+      label: "windows-powershell-2022 windows"
+      yaml: |-
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: jnlp
+            image: jenkins/inbound-agent:windowsservercore-ltsc2022
+            resources:
+              limits:
+                memory: "1Gi"
+              requests:
+                memory: "500Mi"
+                cpu: "250m"
+          - name: shell
+            image: mcr.microsoft.com/powershell:preview-windowsservercore-ltsc2022
+            resources:
+              limits:
+                memory: "1Gi"
+              requests:
+                memory: "500Mi"
+                cpu: "250m"
+            command:
+            - powershell
+            args:
+            - Start-Sleep
+            - 999999
+          nodeSelector:
+            kubernetes.io/os: windows
+            role: "windows-builds"
+            windows: "2022"
+            provisioner: "karpenter"
+          tolerations:
+          - effect: "NoSchedule"
+            key: "dedicated"
+            operator: "Equal"
+            value: "windows-builds-2022"

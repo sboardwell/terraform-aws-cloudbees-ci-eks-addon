@@ -1,0 +1,1694 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "New link",
+      "tooltip": "",
+      "type": "link",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 23,
+        "x": 0,
+        "y": 0
+      },
+      "id": 40,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display: flex; align-items: center; background-color: white; padding: 10px; border-radius: 5px; height: 100%;\">\n    <img src=\"https://www.jenkins.io/images/logos/automotive/automotive.png\" \n         alt=\"Jenkins Automotive\" \n         width=\"80\" height=\"80\"\n         style=\"margin-right: 20px;\">\n    <h2 style=\"color: black; margin: 20; font-size: 20px;\">BUILD PERFORMANCE per Service</h2>\n</div>",
+        "mode": "html"
+      },
+      "pluginVersion": "11.1.4",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 39,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Comparison of build completion status' within specified time interval.\n\nSuccess: The Build has no errors, and completed.\n\nFailure: The Build had a fatal error, and did not complete.\n\nAborted: The Build was interrupted before it reaches its expected end. For example, the user has stopped it manually or there was a time-out.\n\nUnstable: The Build had some errors but they were not fatal. The build completed.\n\nNot Built: The Build was scheduled but cancelled and not started. This could be due to manual intervention or concurrent builds are not allowed.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failure"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Aborted"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Not Built"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unstable"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 9,
+        "x": 0,
+        "y": 5
+      },
+      "id": 32,
+      "options": {
+        "displayLabels": [
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_unstable_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Unstable",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_aborted_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Aborted",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_success_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Success",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_failure_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Failure",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum (increase(jenkins_runs_not_built_total{service=\"$service\"}[$__range]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Not Built",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Build Completion Status",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Number of builds during the time period.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 9,
+        "y": 5
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "/^Value$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "avg (increase(jenkins_runs_total_total{service=\"$service\"}[$__range]))",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Builds",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Total number of jobs",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 3000
+              },
+              {
+                "color": "red",
+                "value": 5000
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 14,
+        "y": 5
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "expr": "avg(jenkins_job_count_value{service=\"$service\"})",
+          "instant": false,
+          "legendFormat": "ALL",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Jobs",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 41,
+      "panels": [],
+      "title": "Trends",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Prometheus Build Performance data resets all metrics back to 0 when a controller restarts.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failure"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Unstable"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Aborted"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Not Built"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Success"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 22,
+        "x": 0,
+        "y": 20
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [
+            "delta"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_runs_success_total{service=\"$service\"})",
+          "instant": false,
+          "legendFormat": "Success",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_runs_failure_total{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Failure",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_runs_unstable_total{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Unstable",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(jenkins_runs_aborted_total{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Aborted",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "sum(jenkins_runs_not_built_total{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Not Built",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "Build Status",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Average time spent in the building.\n\nBuild: Total time spent executing the build.\n\nTotal: Time spent in the queue as well as completing the build.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Blocked"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Buildable"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Waiting"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Building"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 22,
+        "x": 0,
+        "y": 28
+      },
+      "id": 37,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_job_total_duration{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Total",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_job_building_duration{service=\"$service\"})",
+          "instant": false,
+          "legendFormat": "Building",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Average Build Time",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Number of Builds per hour",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "points",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 22,
+        "x": 0,
+        "y": 39
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "expr": "avg(rate(jenkins_runs_total_total{service=\"$service\"}[$__range])) * 3600",
+          "instant": false,
+          "legendFormat": "{{controller_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Build Rate (per 1h)",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Average time spent in the queue.\n\nQueuing: Total time spent in the queue before build starting.\n\nWaiting: Time spent in the quiet period.\n\nBlocked: Cause could be target label is busy, target node is offline, target node is busy, target label is offline.\n",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Blocked"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Buildable"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Waiting"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Queuing"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 22,
+        "x": 0,
+        "y": 48
+      },
+      "id": 38,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_job_queuing_duration{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Queuing",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_job_waiting_duration{service=\"$service\"})",
+          "instant": false,
+          "legendFormat": "Waiting",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "avg(jenkins_job_blocked_duration{service=\"$service\"})",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Blocked",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Average Queue Time",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      },
+      "id": 43,
+      "panels": [],
+      "title": "Tracing",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempoDatasource"
+      },
+      "description": "Filtered table of the slowest builds that have a longer duration than 1 second. Sorted by longest at the top.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "pattern": "/^(https?:\\/\\/[^/]+\\/)/",
+                "result": {
+                  "index": 0,
+                  "text": "/"
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 60
+      },
+      "id": 42,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Duration"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempoDatasource"
+          },
+          "filters": [
+            {
+              "id": "a4c2a25f",
+              "operator": "=",
+              "scope": "resource"
+            },
+            {
+              "id": "service-name",
+              "operator": "=",
+              "scope": "resource",
+              "tag": "service.name",
+              "value": [],
+              "valueType": "string"
+            },
+            {
+              "id": "span-name",
+              "operator": "=~",
+              "scope": "span",
+              "tag": "name",
+              "value": [
+                ".*BUILD.*"
+              ],
+              "valueType": "string"
+            }
+          ],
+          "limit": 20,
+          "query": "{resource.tenant = \"$service\" && name=~\".*BUILD.*\" && duration > 1s}",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "traces"
+        }
+      ],
+      "title": "Top Slowest Builds (>1s)*",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Duration": false,
+              "Name": false,
+              "Service": true,
+              "Start time": true,
+              "Trace ID": false,
+              "Trace Service": true,
+              "nested": true,
+              "service.name": true,
+              "traceIdHidden": false
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Duration": 8,
+              "Name": 0,
+              "Span ID": 6,
+              "Start time": 7,
+              "Trace Name": 5,
+              "Trace Service": 4,
+              "ci.pipeline.id": 1,
+              "jenkins.url": 2,
+              "service.name": 9,
+              "traceIdHidden": 3
+            },
+            "renameByName": {
+              "Duration": "",
+              "Name": "",
+              "ci.pipeline.id": "Pipeline Name",
+              "com.cloudbees.cje.tenant": "Controller",
+              "jenkins.url": "Controller"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Duration"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempoDatasource"
+      },
+      "description": "Filtered table of the number of executed builds that have more than 1 records. Sorted by more recurrent at the top.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "pattern": "/^(https?:\\/\\/[^/]+\\/)/",
+                "result": {
+                  "index": 0,
+                  "text": "/"
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Pipeline Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 469
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Controller"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 60
+      },
+      "id": 45,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Trace ID (count)"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempoDatasource"
+          },
+          "limit": 20,
+          "query": "{resource.tenant = \"$service\" && name=~\".*BUILD.*\"}",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "traces"
+        }
+      ],
+      "title": "Top Executed Pipelines (> 1 record) *",
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Duration"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Duration": true,
+              "Service": true,
+              "Start time": true,
+              "nested": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Duration": 2,
+              "Name": 0,
+              "Span ID": 7,
+              "Start time": 1,
+              "Trace Name": 5,
+              "Trace Service": 4,
+              "ci.pipeline.name": 8,
+              "com.cloudbees.cje.tenant": 6,
+              "service.name": 9,
+              "traceIdHidden": 3
+            },
+            "renameByName": {
+              "Name": "",
+              "Start time": "",
+              "ci.pipeline.id": "Pipeline Name",
+              "com.cloudbees.cje.tenant": "Controller",
+              "jenkins.url": "Controller"
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Controller": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "groupby"
+              },
+              "Controller URL": {
+                "aggregations": [
+                  "first"
+                ],
+                "operation": "groupby"
+              },
+              "Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Pipeline Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Span ID": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "Trace ID": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "ci.pipeline.name": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "groupby"
+              },
+              "com.cloudbees.cje.tenant": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Trace ID (count)"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greater",
+                  "options": {
+                    "value": 1
+                  }
+                },
+                "fieldName": "Trace ID (count)"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 68
+      },
+      "id": 47,
+      "panels": [],
+      "title": "Auditing",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "lokiDatasource"
+      },
+      "description": "Auditing updates on the configuration",
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 69
+      },
+      "id": 46,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "11.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "lokiDatasource"
+          },
+          "editorMode": "builder",
+          "expr": "{tenant=\"$service\"} |= `[Audit]` |= `Started by`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Audit Trail - Configuration Updates (by Service)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true,
+              "labelTypes": true,
+              "labels": true,
+              "tsNs": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "labels": ""
+            }
+          }
+        }
+      ],
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [
+    "jenkins",
+    "cloudbees",
+    "ci",
+    "builds",
+    "prometheus",
+    "opentelemetry"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": false,
+        "current": {
+          "selected": true,
+          "text": "team-b",
+          "value": "team-b"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "query_result(up{container=\"jenkins\"})",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Service",
+        "multi": false,
+        "name": "service",
+        "options": [],
+        "query": {
+          "query": "query_result(up{container=\"jenkins\"})",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": ".*service=\"(.*?)\".*",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "CloudBees CI - Build Performance",
+  "uid": "f22bb554-2024-45e2-9795-af2ca85aea87",
+  "version": 1,
+  "weekStart": ""
+}

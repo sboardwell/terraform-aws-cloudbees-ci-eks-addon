@@ -27,7 +27,7 @@ locals {
   cbci_admin_user         = "admin_cbci_a"
   cbci_agents_ns          = "cbci-agents"
   # K8S agent template name from the CasC bundle
-  cbci_agent_linuxtempl   = "linux-mavenAndKaniko-"
+  cbci_agent_linuxtempl   = "linux-mavenandkaniko"
   cbci_agent_windowstempl = "windows-powershell"
 
   vault_ns               = "vault"
@@ -37,6 +37,8 @@ locals {
   observability_ns = "observability"
   grafana_hostname = "grafana.${var.hosted_zone}"
   grafana_url      = "https://${local.grafana_hostname}"
+
+  node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
 
 }
 
@@ -54,8 +56,8 @@ resource "random_string" "global_pass_string" {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.21450.0"
+  source = "../../"
+  #version = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
@@ -75,7 +77,7 @@ module "eks_blueprints_addon_cbci" {
   create_casc_secrets = true
   casc_secrets_file = templatefile("k8s/secrets-values.yml", {
     global_password = local.global_password
-    s3bucketName    = local.bucket_name
+    s3bucketName    = module.cbci_s3_bucket.s3_bucket_id
     awsRegion       = var.aws_region
     adminMail       = var.trial_license["email"]
     grafana_url     = local.grafana_url
@@ -91,8 +93,16 @@ module "eks_blueprints_addon_cbci" {
     email    = var.dh_reg_secret_auth["email"]
   }
 
-  prometheus_target    = true
-  prometheus_target_ns = local.observability_ns
+  create_prometheus_target = true
+  prometheus_target_ns     = local.observability_ns
+
+  pi_eks_cluster_name      = module.eks.cluster_name
+  create_pi_s3             = true
+  pi_s3_bucket_arn         = module.cbci_s3_bucket.s3_bucket_arn
+  pi_s3_bucket_cbci_prefix = local.cbci_s3_prefix
+  pi_s3_sa_controllers     = ["cjoc", "team-b", "team-c-ha"]
+  create_pi_ecr            = true
+  pi_ecr_cbci_agents_ns    = local.cbci_agents_ns
 
 }
 
@@ -127,6 +137,8 @@ module "eks_blueprints_addons" {
   oidc_provider_arn = module.eks.oidc_provider_arn
   cluster_version   = module.eks.cluster_version
 
+  create_delay_dependencies = [for prof in module.eks.eks_managed_node_groups : prof.node_group_arn]
+
   eks_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
@@ -136,27 +148,19 @@ module "eks_blueprints_addons" {
           controller = {
             extraVolumeTags = local.tags
           }
-          # Deploy on the nodes that need Amazon EBS storage
-          node = {
-            nodeSelector = {
-              storage = "enabled"
-            }
-          }
         }
       )
     }
-    coredns = {
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
-    }
+    coredns = { most_recent = true }
+
     vpc-cni = {
-      configuration_values = jsonencode(
-        {
-          enableWindowsIpam = "true"
+      configuration_values = jsonencode({
+        enableWindowsIpam = "true"
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
         }
-      )
+      })
     }
     kube-proxy             = {}
     eks-pod-identity-agent = {}
@@ -235,7 +239,7 @@ module "eks_blueprints_addons" {
       cert_arn         = module.acm.acm_certificate_arn
     })]
   }
-  # It enables /aws/containerinsights/${local.cluster_name}/performance which is required for CloudWatch Insights metrics
+  # It enables /aws/containerinsights/${local.name}/performance which is required for CloudWatch Insights metrics
   enable_aws_cloudwatch_metrics = true
   aws_cloudwatch_metrics = {
     namespace        = local.observability_ns
@@ -246,7 +250,7 @@ module "eks_blueprints_addons" {
     })]
   }
   enable_aws_for_fluentbit = true
-  # Saved by default in /aws/eks/${local.cluster_name}/aws-fluentbit-logs-<timestamp>
+  # Saved by default in /aws/eks/${local.name}/aws-fluentbit-logs-<timestamp>
   aws_for_fluentbit_cw_log_group = {
     create    = true
     retention = local.cloudwatch_logs_expiration_days
@@ -274,6 +278,10 @@ module "eks_blueprints_addons" {
       {
         name  = "dnsPolicy"
         value = "ClusterFirstWithHostNet"
+      },
+      {
+        name  = "cloudWatchLogs.region"
+        value = var.aws_region
       }
     ]
     values = [templatefile("k8s/aws-for-fluent-bit-values.yml", {
@@ -283,6 +291,17 @@ module "eks_blueprints_addons" {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
     })]
+  }
+  enable_karpenter = true
+  karpenter = {
+    chart_version       = "1.0.2"
+    repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+    repository_password = data.aws_ecrpublic_authorization_token.token.password
+  }
+  karpenter_enable_spot_termination          = true
+  karpenter_enable_instance_profile_creation = true
+  karpenter_node = {
+    iam_role_use_name_prefix = false
   }
   helm_releases = {
     openldap-stack = {
@@ -344,6 +363,26 @@ module "eks_blueprints_addons" {
     }
   }
   tags = local.tags
+}
+
+module "aws_auth" {
+  source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
+  version = "~> 20.0"
+
+  manage_aws_auth_configmap = true
+
+  # Windows Nodes requires "eks:kube-proxy-windows"
+  # https://github.com/aws/karpenter-provider-aws/issues/5099#issuecomment-1820242937
+  # https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html#enable-windows-support
+  # https://github.com/aws/karpenter-provider-aws/pull/5132/files
+
+  aws_auth_roles = [
+    {
+      rolearn  = module.eks_blueprints_addons.karpenter.node_iam_role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups   = ["system:bootstrappers", "system:nodes", "eks:kube-proxy-windows"]
+    },
+  ]
 }
 
 ################################################################################
@@ -418,81 +457,6 @@ resource "kubernetes_storage_class_v1" "efs" {
   mount_options = [
     "iam"
   ]
-}
-
-################################################################################
-# Pod Identity
-################################################################################
-
-data "aws_iam_policy_document" "assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["pods.eks.amazonaws.com"]
-    }
-
-    actions = [
-      "sts:AssumeRole",
-      "sts:TagSession"
-    ]
-  }
-}
-
-resource "aws_iam_role" "s3" {
-  name               = local.cbci_iam_role_s3
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
-}
-
-resource "aws_iam_role_policy" "s3_policy" {
-  name = "${local.name}-iam_inline_policy"
-  role = aws_iam_role.s3.id
-  policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
-      "Statement" : [
-        {
-          "Sid" : "cbciS3BucketputGetDelete",
-          "Effect" : "Allow",
-          "Action" : [
-            "s3:PutObject",
-            "s3:GetObject",
-            "s3:DeleteObject"
-          ],
-          "Resource" : "${local.cbci_s3_location}/*"
-        },
-        {
-          "Sid" : "cbciS3BucketList",
-          "Effect" : "Allow",
-          "Action" : "s3:ListBucket",
-          "Resource" : module.cbci_s3_bucket.s3_bucket_arn,
-          "Condition" : {
-            "StringLike" : {
-              "s3:prefix" : "${local.cbci_s3_prefix}/*"
-            }
-          }
-        }
-      ]
-    }
-  )
-}
-
-resource "aws_eks_pod_identity_association" "oc_s3" {
-  depends_on      = [module.eks_blueprints_addon_cbci]
-  cluster_name    = module.eks.cluster_name
-  namespace       = module.eks_blueprints_addon_cbci.cbci_namespace
-  service_account = "cjoc"
-  role_arn        = aws_iam_role.s3.arn
-}
-
-resource "aws_eks_pod_identity_association" "controllers_s3" {
-  depends_on      = [module.eks_blueprints_addon_cbci]
-  cluster_name    = module.eks.cluster_name
-  namespace       = module.eks_blueprints_addon_cbci.cbci_namespace
-  service_account = "jenkins"
-  role_arn        = aws_iam_role.s3.arn
 }
 
 ################################################################################

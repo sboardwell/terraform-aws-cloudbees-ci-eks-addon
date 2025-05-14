@@ -5,7 +5,3 @@
 controller:
   nodeSelector:
     kubernetes.io/os: linux
-
-node:
-  nodeSelector:
-    storage: enabled

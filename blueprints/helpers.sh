@@ -13,7 +13,6 @@ export TF_LOG=DEBUG
 declare -a BLUEPRINTS=(
     "01-getting-started"
     "02-at-scale"
-    "03-karpenter"
   )
 
 INFO () {
@@ -104,6 +103,7 @@ tf-destroy () {
   retry 3 "terraform -chdir=$SCRIPTDIR/$root destroy -target=module.eks -auto-approve"
   INFO "Destroy target module.eks completed."
   #Prevent Issue #165
+  #TODO: Run only when terraform output is present
   if [ "$root" == "${BLUEPRINTS[1]}" ]; then
     aws_region=$(tf-output "$root" aws_region)
     eks_cluster_name=$(tf-output "$root" eks_cluster_name)
@@ -137,7 +137,7 @@ probes () {
   OC_URL=$(tf-output "$root" cbci_oc_url)
   until eval "$(tf-output "$root" cbci_liveness_probe_ext)"; do sleep $wait && echo "Waiting for Operation Center Service to pass Health Check from outside the clustery..."; done ;\
     INFO "Operation Center Service passed Health Check outside the cluster. It is available at $OC_URL."
-  if [ "$root" == "${BLUEPRINTS[0]}" ] || [ "$root" == "${BLUEPRINTS[2]}" ]; then
+  if [ "$root" == "${BLUEPRINTS[0]}" ] ; then
     INITIAL_PASS=$(eval "$(tf-output "$root" cbci_initial_admin_password)"); \
       INFO "Initial Admin Password: $INITIAL_PASS."
   fi
@@ -167,7 +167,7 @@ probes () {
       eval "$(tf-output "$root" cbci_controllers_pods)" && INFO "All Controllers Pods are Ready."
     until [ "$(eval "$(tf-output "$root" cbci_agent_windowstempl_events)" | grep -c 'Allocated Resource vpc.amazonaws.com')" -ge 1 ]; do sleep $wait && echo "Waiting for Windows Template Pod to allocate resource vpc.amazonaws.com"; done ;\
       eval "$(tf-output "$root" cbci_agent_windowstempl_events)" && INFO "Windows Template Example is OK."
-    until [ "$(eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" | grep -c 'Created container maven')" -ge 2 ]; do sleep $wait && echo "Waiting for both Linux Template Pods (On demand and Spot) to create maven container"; done ;\
+    until [ "$(eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" | grep -c 'Created container: maven')" -ge 2 ]; do sleep $wait && echo "Waiting for both Linux Template Pods to create maven container"; done ;\
       eval "$(tf-output "$root" cbci_agent_linuxtempl_events)" && INFO "Linux Template Example is OK."
     until [ "$(eval "$(tf-output "$root" s3_list_objects)" | grep -c 'cbci/')" -ge 2 ]; do sleep $wait && echo "Waiting for WS Cache and Artifacts to be uploaded into s3 cbci"; done ;\
       eval "$(tf-output "$root" s3_list_objects)" | grep 'cbci/' && INFO "CBCI s3 Permissions are configured correctly."
@@ -214,7 +214,8 @@ set-kube-env () {
     # shellcheck disable=SC2154
     find "$SCRIPTDIR/$bp" -type f -name "*.tf" -print0 \
       | xargs -0 sed -i -e "/#vK8#/{n;s/\".*\"/\"$vK8\"/;}" \
-                        -e "/#vEKSBpAddonsTFMod#/{n;s/\".*\"/\"$vEKSBpAddonsTFMod\"/;}"
+                        -e "/#vEKSBpAddonsTFMod#/{n;s/\".*\"/\"$vEKSBpAddonsTFMod\"/;}" \
+                        -e "/#vEKSTFMod#/{n;s/\".*\"/\"$vEKSTFMod\"/;}"
   done
 }
 
@@ -231,8 +232,8 @@ set-cbci-location () {
   sed -i "s|cascBranch: .*|cascBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
   sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
   sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
-  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/prometheus-plugin-db.json|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/prometheus-plugin-db.json|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
-  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/opentelemetry-plugin-db.json|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/opentelemetry-plugin-db.json|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
+  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/grafana-db-builds|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/grafana-db-builds|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
+  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/grafana-db-application|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/grafana-db-application|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
 }
 
 zip-all-casc-bundles () {

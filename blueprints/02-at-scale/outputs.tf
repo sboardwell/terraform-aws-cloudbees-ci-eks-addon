@@ -5,7 +5,7 @@ output "kubeconfig_export" {
 
 output "kubeconfig_add" {
   description = "Adds kubeconfig to the local configuration to access the Kubernetes API."
-  value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${local.cluster_name}"
+  value       = "aws eks update-kubeconfig --region ${var.aws_region} --name ${module.eks.cluster_name}"
 }
 
 output "cbci_helm" {
@@ -123,7 +123,7 @@ output "eks_cluster_arn" {
 #not using module.eks.cluster_name because we need to get this value after the cluster is destroyed
 output "eks_cluster_name" {
   description = "Amazon EKS cluster name."
-  value       = local.cluster_name
+  value       = module.eks.cluster_name
 }
 
 output "s3_cbci_arn" {
@@ -133,12 +133,12 @@ output "s3_cbci_arn" {
 
 output "s3_cbci_name" {
   description = "CloudBees CI Amazon S3 bucket name. It is required by CloudBees CI for workspace caching and artifact management."
-  value       = local.bucket_name
+  value       = module.cbci_s3_bucket.s3_bucket_id
 }
 
 output "s3_list_objects" {
   description = "Recursively lists all objects stored in the Amazon S3 bucket."
-  value       = "aws s3 ls s3://${local.bucket_name}/ --recursive"
+  value       = "aws s3 ls s3://${module.cbci_s3_bucket.s3_bucket_id}/ --recursive"
 }
 
 output "efs_arn" {
@@ -159,7 +159,7 @@ output "aws_backup_efs_protected_resource" {
 # Note: name aws fluent bit  log streams is not consistent, it has a random suffix
 # output "aws_logstreams_fluentbit" {
 #   description = "AWS CloudWatch log streams from Fluent Bit."
-#   value       = "aws logs describe-log-streams --log-group-name /aws/eks/${local.cluster_name}/aws-fluentbit-logs --order-by LastEventTime --no-descending --query 'logStreams[?creationTime > `${local.epoch_millis}` ]' --region ${var.aws_region}"
+#   value       = "aws logs describe-log-streams --log-group-name /aws/eks/${local.name}/aws-fluentbit-logs --order-by LastEventTime --no-descending --query 'logStreams[?creationTime > `${local.epoch_millis}` ]' --region ${var.aws_region}"
 # }
 
 output "velero_backup_schedule" {

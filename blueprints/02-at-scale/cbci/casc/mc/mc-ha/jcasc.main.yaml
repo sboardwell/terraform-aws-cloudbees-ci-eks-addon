@@ -18,3 +18,11 @@ unclassified:
                     depth: 1
                     noTags: false
                     shallow: true
+cloudbees-pipeline-policies:
+  config:
+    policies:
+    - action: "warning"
+      customMessage: "Use steps compatible with HA/HS controllers"
+      name: "HA - Controllers"
+      rules:
+      - "hARule"
