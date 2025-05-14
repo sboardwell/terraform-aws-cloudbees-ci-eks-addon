@@ -197,8 +197,8 @@ grafana:
         token: ""
     grafana-dashboards-cloudbees:
       prometheus-plugin-applications:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/restore/blueprints/02-at-scale/k8s/grafana-db-application.json
+        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/develop/blueprints/02-at-scale/k8s/grafana-db-application.json
         token: ""
       prometheus-plugin-builds:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/restore/blueprints/02-at-scale/k8s/grafana-db-builds.json
+        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/develop/blueprints/02-at-scale/k8s/grafana-db-builds.json
         token: ""
