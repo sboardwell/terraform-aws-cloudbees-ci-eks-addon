@@ -2,7 +2,7 @@
 
 locals {
   #vCBCI_Helm#
-  cbci_version           = "3.21450.0+3eb0dca20e40"
+  cbci_version           = "3.22670.0+59d995985b9d"
   cbci_ns                = "cbci"
   cbci_sec_casc_name     = "cbci-sec-casc"
   cbci_sec_registry_name = "cbci-sec-reg"
@@ -219,24 +219,13 @@ resource "aws_iam_role_policy" "s3_policy" {
   )
 }
 
-resource "aws_eks_pod_identity_association" "oc_s3" {
-  count = local.create_pi_s3 ? 1 : 0
+resource "aws_eks_pod_identity_association" "services_s3" {
+  for_each = local.create_pi_s3 ? toset(var.pi_s3_sa_controllers) : []
 
   cluster_name    = var.pi_eks_cluster_name
   namespace       = helm_release.cloudbees_ci.namespace
-  service_account = "cjoc"
+  service_account = each.key
   role_arn        = aws_iam_role.role_s3[0].arn
-
-}
-
-resource "aws_eks_pod_identity_association" "controllers_s3" {
-  count = local.create_pi_s3 ? 1 : 0
-
-  cluster_name    = var.pi_eks_cluster_name
-  namespace       = helm_release.cloudbees_ci.namespace
-  service_account = "jenkins"
-  role_arn        = aws_iam_role.role_s3[0].arn
-
 }
 
 # ECR
