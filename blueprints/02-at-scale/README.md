@@ -72,7 +72,7 @@ Storage configuration follows best practices for Cost Optimization:
 
 ![K8sApps](img/at-scale.k8s.drawio.svg)
 
-CloudBees CI uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) to adquire different AWS permissions per namespaces and service accounts:
+CloudBees CI uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) to acquire different AWS permissions per namespaces and service accounts:
 
 - `services_s3`: S3 services for backup, restore and cache operations.
 - `agent_ecr`: ECR services for private CI/CD container images management.
