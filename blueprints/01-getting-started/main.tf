@@ -106,7 +106,7 @@ module "eks_blueprints_addons" {
 ################################################################################
 
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
+  source = "terraform-aws-modules/eks/aws"
   #vEKSTFMod#
   version = "20.23.0"
 
