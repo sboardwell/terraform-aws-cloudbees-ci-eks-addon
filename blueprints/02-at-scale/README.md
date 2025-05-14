@@ -4,7 +4,7 @@ Once you have familiarized yourself with [CloudBees CI blueprint add-on: Get sta
 
 - An [Amazon Elastic File System (Amazon EFS) drive](https://aws.amazon.com/efs/) that is required by CloudBees CI High Availability/Horizontal Scalability (HA/HS) controllers and is optional for non-HA/HS controllers.
 - An [Amazon Simple Storage Service (Amazon S3) bucket](https://aws.amazon.com/s3/) to store assets from applications like CloudBees CI, Velero, and Fluent Bit.
-- [Amazon Elastic Kubernetes Service (Amazon EKS) managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html) for different workloads: shared services, CI applications, CI Linux on-demand agents, CI Linux Spot agents, and CI Microsoft Windows on-demand agents.
+- [Amazon Elastic Kubernetes Service (Amazon EKS) managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html) for different workloads: shared services and CBCI applications.
 - [Amazon Container Registry (Amazon ECR)](https://aws.amazon.com/ecr/) acts as a private container registry for CloudBees CI artifacts.
 - [Amazon Backup](https://aws.amazon.com/backup/) to back up the Amazon EFS drive.
 - [Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) to explode control plane logs and Fluent Bit logs.
@@ -47,24 +47,24 @@ This blueprint divides scalable node groups for different types of workloads usi
   - Shared node groups (role: `shared`) `x86` arch.
   - CloudBees CI Services (role: `cb-apps`) [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) `arm64` arch.
 - **Karpenter**: For ephemeral workloads
-  - Linux (role: `linux-builds`): Using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) with preferences for [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and `spot` capcacity type. But ready for fallback to other types.
+  - Linux (role: `linux-builds`): Using [Bottlerocket OS](https://aws.amazon.com/bottlerocket/) with preferences for [AWS Graviton Processor](https://aws.amazon.com/ec2/graviton/) and `spot` capacity type. But ready for fallback to other types.
   - Windows (role: `windows-builds`): Using Windows 2019 or 2022 AMI type and `amd64` arch with preferences for `spot` capAcacity type but ready for fallback to on-demand instances.
 
 Storage configuration follows best practices for Cost Optimization:
   - EBS: `gp3` is set as the default storage class.
-  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)) or HA/HS controller `efs`.
+  - No HA/HS controllers use `gp3-aza` (an Amazon EBS type which is tightened to Availability Zone A to avoid issue [#195](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/issues/195)).
   - Intelligent tiering definition for EFS, S3 and AWS Backups.
 
 > [!IMPORTANT]
 > The launch time for Linux containers is faster than Windows containers. This can be improved by using a cache container image strategy. Refer to [Speeding up Windows container launch times with EC2 Image builder and image cache strategy](https://aws.amazon.com/blogs/containers/speeding-up-windows-container-launch-times-with-ec2-image-builder-and-image-cache-strategy/) and more about [Windows Container Best Practices](https://aws.github.io/aws-eks-best-practices/windows/docs/ami/). Another potential alternative is to use Windows VMs with a [shared agent](https://docs.cloudbees.com/docs/cloudbees-ci/latest/cloud-admin-guide/shared-agents).
 
 > [!NOTE]
-> The minimun required of managed node groups is one to place Karpenter controlles and CoreDNS. On the other hand, services workloads, including CloudBees CI, can be migrated to Karpenter NodeGroups. In order to avoid services disruptions by Karpenter concilation, there are different strategies to be considered:
+> The minimun required of managed node groups is one to place Karpenter controllers and CoreDNS. The rest of the services workloads, including CloudBees CI, can be migrated to Karpenter NodeGroups. In order to avoid services disruptions by Karpenter consolidation, there are different strategies to be considered:
 > - For services with one replica only: Defining `consolidationPolicy: WhenEmpty` for NodePools and/or using `karpenter.sh/do-not-disrupt: "true"` labels for Pods.
-> - For services with multiple replicas: Use PodDisruptionBudgets (PDBs) to limit the number of pods that can be disrupted at any given time. This option can be interesting in combination with spot capacity type.
+> - For services with multiple replicas: Use [PodDisruptionBudgets (PDBs)](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets) to limit the number of pods that can be disrupted at any given time. This option can be interesting in combination with spot capacity type.
 
 > [!TIP]
-> For more infoon karpenter patterns/scenarios, refer to [AWS Karpenter Blueprints](https://github.com/aws-samples/karpenter-blueprints)
+> For more info on karpenter patterns/scenarios, refer to [AWS Karpenter Blueprints](https://github.com/aws-samples/karpenter-blueprints)
 
 ![Architecture](img/at-scale.architect.drawio.svg)
 
@@ -72,10 +72,10 @@ Storage configuration follows best practices for Cost Optimization:
 
 ![K8sApps](img/at-scale.k8s.drawio.svg)
 
-CloudBees CI Services uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) to adquire AWS permissions to operate in different namespaces:
+CloudBees CI uses [Pod identity](https://aws.amazon.com/blogs/aws/amazon-eks-pod-identity-simplifies-iam-permissions-for-applications-on-amazon-eks-clusters/) to adquire different AWS permissions per namespaces and service accounts:
 
-- `cbci`: S3 services for backup, restore and cache operations.
-- `cbci-agents`: ECR services for private CI/CD container images management.
+- `services_s3`: S3 services for backup, restore and cache operations.
+- `agent_ecr`: ECR services for private CI/CD container images management.
 
 > [!IMPORTANT]
 > Known issues: Operation Center pod requires to be recreated to get injected AWS credentials.
@@ -238,7 +238,7 @@ DockerHub authentication is stored as Kubernetes secrets (`cbci-agent-sec-reg`) 
 ```
 
 > [!NOTE]
-> Amazon Elastic Container Registry (Amazon ECR) authentication is done via an instance profile connected to `build-linux-spot` node pools.
+> Amazon Elastic Container Registry (Amazon ECR) authentication is done via pod identity  `agent_ecr`.
 
 ##### HashiCorp Vault
 

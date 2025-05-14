@@ -48,7 +48,7 @@ resource "kubectl_manifest" "karpenter_linux_node_pool" {
 apiVersion: karpenter.sh/v1
 kind: NodePool
 metadata:
-  name: linux-builds-spot
+  name: linux-builds
   annotations:
     kubernetes.io/description: "Nodes running Linux Bottlerocket"
 spec:
