@@ -2,12 +2,12 @@
 
 FROM alpine:3.22.0
 
-ENV TF_VERSION=1.12.2 \
-    KUBECTL_VERSION=1.33.2 \
+ENV TF_VERSION=1.9.8 \
+    KUBECTL_VERSION=1.31.2 \
     VELERO_VERSION=1.16.1 \
     EKSCTL_VERSION=0.210.0 \
-    USER=bp-agent \
-    ARCH=amd64
+    ARCH=amd64 \
+    USER=bp-agent
 
 RUN apk add --update --no-cache \
     bash \
@@ -22,6 +22,7 @@ RUN apk add --update --no-cache \
 RUN curl -sLO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_${ARCH}.zip && \
     unzip terraform_${TF_VERSION}_linux_${ARCH}.zip && \
     mv terraform /usr/bin/terraform && \
+    chmod +x /usr/bin/terraform && \
     rm terraform_${TF_VERSION}_linux_${ARCH}.zip
 
 RUN curl -sLO https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl && \
