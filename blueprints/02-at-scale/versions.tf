@@ -13,8 +13,8 @@ terraform {
     }
     helm = {
       source = "hashicorp/helm"
-      # >v3.x breaks compatibility with this blueprint
-      version = "= 2.17.0"
+      # v3.0.2 breaks compatibility with this blueprint
+      version = ">= 2.17.0, < 3.0.2"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
