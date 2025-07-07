@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Building ENV Block with latets versions..."
+echo "Building ENV Block with latest versions..."
 echo "======================================="
 
 TF_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq -r '.tag_name' | sed 's/v//')
