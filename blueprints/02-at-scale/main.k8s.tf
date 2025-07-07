@@ -56,7 +56,7 @@ resource "random_string" "global_pass_string" {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "../../"
+  source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 

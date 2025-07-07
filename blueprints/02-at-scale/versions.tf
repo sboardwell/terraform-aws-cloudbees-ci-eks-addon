@@ -3,7 +3,7 @@ terraform {
 
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
       # >v6.00 breaks compatibility with this blueprint
       version = "= 5.100.0"
     }
@@ -12,7 +12,7 @@ terraform {
       version = ">= 2.24"
     }
     helm = {
-      source  = "hashicorp/helm"
+      source = "hashicorp/helm"
       # >v3.x breaks compatibility with this blueprint
       version = "= 2.17.0"
     }
