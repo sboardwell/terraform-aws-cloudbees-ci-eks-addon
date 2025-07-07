@@ -16,6 +16,7 @@ RUN apk add --update --no-cache \
     curl \
     git \
     make \
+    pre-commit \
     aws-cli \
     yq \
     jq
