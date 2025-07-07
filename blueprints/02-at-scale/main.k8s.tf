@@ -57,7 +57,6 @@ resource "random_string" "global_pass_string" {
 
 module "eks_blueprints_addon_cbci" {
   source = "../../"
-  #version = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
