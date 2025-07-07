@@ -22,6 +22,7 @@ RUN apk add --update --no-cache \
     git \
     make \
     pre-commit \
+    perl \
     aws-cli \
     yq \
     jq
@@ -55,7 +56,7 @@ RUN curl -sLO "https://github.com/eksctl-io/eksctl/releases/download/v${EKSCTL_V
     chmod +x /usr/bin/eksctl && \
     rm eksctl_Linux_${ARCH}.tar.gz
 
-# Conditionally create user and set up rootless environment. 
+# Conditionally create user and set up rootless environment.
 # Recomendation but not valid for CloudBees.io because it requires root user to operate with the Workspace
 RUN if [ "$CREATE_USER" = "true" ]; then \
         adduser -s /bin/bash -h /${USER} -D ${USER} && \
