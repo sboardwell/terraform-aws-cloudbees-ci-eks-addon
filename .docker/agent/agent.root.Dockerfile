@@ -21,7 +21,7 @@ RUN apk add --update --no-cache \
     jq
 
 RUN curl -sLO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_${ARCH}.zip && \
-    unziphttps://storage.googleapis.com/kubernetes-release/release terraform_${TF_VERSION}_linux_${ARCH}.zip && \
+    unzip https://storage.googleapis.com/kubernetes-release/release/terraform_${TF_VERSION}_linux_${ARCH}.zip && \
     mv terraform /usr/bin/terraform && \
     rm terraform_${TF_VERSION}_linux_${ARCH}.zip
 
