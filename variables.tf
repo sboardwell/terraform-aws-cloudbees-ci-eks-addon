@@ -122,10 +122,6 @@ variable "pi_eks_cluster_name" {
   description = "EKS cluster name for Pod Identity."
   type        = string
   default     = ""
-  validation {
-    condition     = length(trimspace(var.pi_eks_cluster_name)) > 0
-    error_message = "The pi_eks_cluster_name must not be an empty string."
-  }
 }
 
 variable "create_pi_s3" {
@@ -137,14 +133,10 @@ variable "create_pi_s3" {
 variable "pi_s3_bucket_arn" {
   description = "S3 bucket arn for CBCI Backups and/or Workspace Cache"
   type        = string
-  default     = ""
+  default     = "arn:aws:s3:xxx"
   validation {
     condition     = can(regex("^arn:aws:s3:", var.pi_s3_bucket_arn))
     error_message = "The pi_s3_bucket_arn should be a valid S3 certificate ARN."
-  }
-  validation {
-    condition     = length(trimspace(var.pi_s3_bucket_arn)) > 0
-    error_message = "The pi_s3_bucket_arn must not be an empty string."
   }
 }
 
@@ -152,10 +144,6 @@ variable "pi_s3_bucket_cbci_prefix" {
   description = "S3 bucket path prefix for CBCI Backups and/or Workspace Cache"
   type        = string
   default     = ""
-  validation {
-    condition     = length(trimspace(var.pi_s3_bucket_cbci_prefix)) > 0
-    error_message = "The pi_s3_bucket_cbci_prefix must not be an empty string."
-  }
 }
 
 variable "pi_s3_sa_controllers" {
