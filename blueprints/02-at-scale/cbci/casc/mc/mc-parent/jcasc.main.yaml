@@ -14,6 +14,20 @@ appearance:
 unclassified:
   timestamper:
     allPipelines: true
+  audit-trail:
+    displayUserName: true
+    logBuildCause: true
+    logCredentialsUsage: true
+    loggers:
+    - console:
+        dateFormat: "yyyy-MM-dd HH:mm:ss:SSS"
+        logPrefix: "[Audit]"
+        output: STD_OUT
+    - console:
+        dateFormat: "yyyy-MM-dd HH:mm:ss:SSS"
+        logPrefix: "[Audit]"
+        output: STD_ERR
+    pattern: ".*/(?:configSubmit|doDelete|postBuildResult|enable|disable|cancelQueue|stop|toggleLogKeep|doWipeOutWorkspace|createItem|createView|toggleOffline|cancelQuietDown|quietDown|restart|exit|safeExit)/?.*"
   buildDiscarders:
     configuredBuildDiscarders:
       - "jobBuildDiscarder"
