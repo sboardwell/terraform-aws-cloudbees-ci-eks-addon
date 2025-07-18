@@ -52,7 +52,7 @@ items:
           kind: "Service"
           metadata:
             labels:
-              prometheus: true
+              prometheus: "true"
     properties:
       - configurationAsCode:
           bundle: "${cascBranch}/mc-none-ha"
@@ -101,7 +101,7 @@ items:
           kind: "Service"
           metadata:
             labels:
-              prometheus: true
+              prometheus: "true"
     properties:
       - configurationAsCode:
           bundle: "${cascBranch}/mc-ha"
