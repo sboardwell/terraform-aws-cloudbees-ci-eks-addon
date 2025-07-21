@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 39,
+  "id": 44,
   "links": [
     {
       "asDropdown": false,
@@ -1449,6 +1449,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1510,7 +1511,7 @@
         "x": 6,
         "y": 35
       },
-      "id": 65,
+      "id": 64,
       "options": {
         "legend": {
           "calcs": [],
@@ -1531,14 +1532,14 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "100 * (\n  1 - \n  sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m])) \n    / \n  (count(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}) * 5 * 60 * 1000)\n)",
+          "expr": "100 * (1 - sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m]))/(count(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}) * 5 * 60 * 1000))",
           "instant": false,
-          "legendFormat": "Number of Threads",
+          "legendFormat": "GC Time (ms)",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "GC Throughput",
+      "title": "GC Throughput (%)",
       "type": "timeseries"
     },
     {
@@ -1653,7 +1654,6 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1715,7 +1715,7 @@
         "x": 6,
         "y": 40
       },
-      "id": 64,
+      "id": 65,
       "options": {
         "legend": {
           "calcs": [],
@@ -1736,14 +1736,14 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[$__range]))",
+          "expr": "sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m])) / sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m]))",
           "instant": false,
-          "legendFormat": "GC Time (ms)",
+          "legendFormat": "GC Latency (%)",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "GC Time (ms)",
+      "title": "GC Latency (%)",
       "type": "timeseries"
     },
     {
@@ -2074,125 +2074,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "For EFS volumes, use node_filesystem metrics to monitor usage. This panel works with NFS mounts like EFS.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 20,
-        "x": 0,
-        "y": 54
-      },
-      "id": 79,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "node_filesystem_free_bytes{fstype=~\"nfs4|nfs\", node=~\"$node\"} / node_filesystem_size_bytes{fstype=~\"nfs4|nfs\", node=~\"$node\"}",
-          "interval": "1m",
-          "legendFormat": "{{ mountpoint }} - Free %",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "node_filesystem_avail_bytes{fstype=~\"nfs4|nfs\", node=~\"$node\"} / node_filesystem_size_bytes{fstype=~\"nfs4|nfs\", node=~\"$node\"}",
-          "interval": "1m",
-          "legendFormat": "{{ mountpoint }} - Available %",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "EFS Volume Usage",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 54
       },
       "id": 44,
       "panels": [],
@@ -2788,439 +2675,6 @@
         "x": 0,
         "y": 68
       },
-      "id": 73,
-      "panels": [],
-      "title": "K8s | Errors",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "No data is generally a good thing here.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 25,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 9,
-        "x": 0,
-        "y": 69
-      },
-      "id": 75,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Max",
-          "sortDesc": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum(increase(container_oom_events_total{namespace=~\"${namespace}\", pod=\"${pod}\"}[$__rate_interval])) by (namespace, pod) > 0",
-          "interval": "",
-          "legendFormat": "namespace: {{ namespace }} - pod: {{ pod }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "OOM Events by namespace, pod",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "No data is generally a good thing here.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 25,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 11,
-        "x": 9,
-        "y": 69
-      },
-      "id": 76,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Max",
-          "sortDesc": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=~\"${namespace}\", pod=\"${pod}\"}[$__rate_interval])) by (namespace, pod) > 0",
-          "interval": "",
-          "legendFormat": "namespace: {{ namespace }} - pod: {{ pod }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Container Restarts by namespace, pod",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "pps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 9,
-        "x": 0,
-        "y": 76
-      },
-      "id": 77,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum(rate(container_network_receive_errors_total{namespace=~\"$namespace\", pod=~\"${pod}\"}[$__rate_interval]))",
-          "interval": "1m",
-          "legendFormat": "Received",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "- sum(rate(container_network_transmit_errors_total{namespace=~\"${namespace}\", pod=~\"${pod}\"}[$__rate_interval]))",
-          "interval": "1m",
-          "legendFormat": "Transmitted",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Network - Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 11,
-        "x": 9,
-        "y": 76
-      },
-      "id": 78,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum(node_filesystem_device_error{instance=~\".*\", node=~\"$node\"}) by (mountpoint)",
-          "interval": "1m",
-          "legendFormat": "{{ mountpoint }}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "FS - Device Errors",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 84
-      },
       "id": 50,
       "panels": [],
       "title": "Jenkins - Audit Trail | Auditing (by Service)",
@@ -3236,7 +2690,7 @@
         "h": 6,
         "w": 20,
         "x": 0,
-        "y": 85
+        "y": 69
       },
       "id": 51,
       "options": {
@@ -3286,7 +2740,12 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": ["cloudbees", "jenkins", "monitoring", "kubernetes"],
+  "tags": [
+    "cloudbees",
+    "jenkins",
+    "monitoring",
+    "kubernetes"
+  ],
   "templating": {
     "list": [
       {
@@ -3298,11 +2757,6 @@
         "type": "constant"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "ip-10-0-48-207.eu-central-1.compute.internal",
-          "value": "ip-10-0-48-207.eu-central-1.compute.internal"
-        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -3325,11 +2779,6 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "selected": true,
-          "text": "team-b",
-          "value": "team-b"
-        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -3355,11 +2804,6 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "selected": false,
-          "text": "team-b-0",
-          "value": "team-b-0"
-        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -3385,7 +2829,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -3417,6 +2861,6 @@
   "timezone": "browser",
   "title": "CloudBees CI - Infra and Service Check",
   "uid": "deslcahmiuo74dsasa",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
