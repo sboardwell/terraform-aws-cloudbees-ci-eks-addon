@@ -119,7 +119,34 @@ resource "kubectl_manifest" "service_monitor_cb_controllers" {
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: servicemonitor-cbci
+  name: servicemonitor-cbci-controllers
+  namespace: ${var.prometheus_target_ns}
+  labels:
+    release: kube-prometheus-stack
+    app.kubernetes.io/part-of: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - ${helm_release.cloudbees_ci.namespace}
+  selector:
+    matchExpressions:
+      - key: com.cloudbees.cje.type
+        operator: Exists
+  endpoints:
+    - port: http
+      interval: 30s
+      path: /prometheus/
+YAML
+}
+
+resource "kubectl_manifest" "service_monitor_cb_oc" {
+  count = local.create_prometheus_target ? 1 : 0
+
+  yaml_body = <<YAML
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: servicemonitor-cbci-oc
   namespace: ${var.prometheus_target_ns}
   labels:
     release: kube-prometheus-stack
@@ -130,27 +157,13 @@ spec:
       - ${helm_release.cloudbees_ci.namespace}
   selector:
     matchLabels:
-      ${local.prometheus_sm_labels_yaml}
+      "app.kubernetes.io/instance": "cloudbees-ci"
   endpoints:
     - port: http
       interval: 30s
       path: /prometheus/
 YAML
 }
-
-# resource "kubernetes_manifest" "cjoc_service_labels" {
-#   count = local.create_prometheus_target ? 1 : 0
-
-#   manifest = {
-#     apiVersion = "v1"
-#     kind       = "Service"
-#     metadata = {
-#       name      = "cjoc"
-#       namespace = helm_release.cloudbees_ci.namespace
-#       labels    = local.prometheus_sm_labels
-#     }
-#   }
-# }
 
 ################################################################################
 # Pod Identity
