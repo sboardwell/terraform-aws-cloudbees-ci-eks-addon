@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 44,
+  "id": 37,
   "links": [
     {
       "asDropdown": false,
@@ -37,7 +37,7 @@
   "panels": [
     {
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 20,
         "x": 0,
         "y": 0
@@ -49,7 +49,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/jenkins/jenkins.png\"\n      alt=\"Jenkins Logo\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Infrastructure &amp; Service Health Checks \n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a>\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Enterprise Jenkins running on Kubernetes\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Loki</li>\n      <li style=\"white-space: nowrap;\">Metrics: <b><a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://github.com/kubernetes/kube-state-metrics\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">kube-state-metrics</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
+        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/jenkins/jenkins.png\"\n      alt=\"Jenkins Logo\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Infrastructure &amp; Service Health Checks \n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a>\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Enterprise Jenkins running on Kubernetes\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Loki</li>\n      <li style=\"white-space: nowrap;\">Metrics: <b><a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://github.com/kubernetes/kube-state-metrics\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">kube-state-metrics</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Audit logs: <b><a href=\"https://plugins.jenkins.io/audit-trail/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Audit Trail</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
         "mode": "html"
       },
       "pluginVersion": "11.1.4",
@@ -62,7 +62,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 7
       },
       "id": 54,
       "panels": [],
@@ -128,7 +128,7 @@
         "h": 8,
         "w": 10,
         "x": 0,
-        "y": 7
+        "y": 8
       },
       "id": 52,
       "options": {
@@ -198,7 +198,7 @@
         "h": 2,
         "w": 5,
         "x": 10,
-        "y": 7
+        "y": 8
       },
       "id": 53,
       "options": {
@@ -267,7 +267,7 @@
         "h": 2,
         "w": 5,
         "x": 15,
-        "y": 7
+        "y": 8
       },
       "id": 68,
       "options": {
@@ -330,7 +330,7 @@
         "h": 2,
         "w": 5,
         "x": 10,
-        "y": 9
+        "y": 10
       },
       "id": 55,
       "options": {
@@ -403,7 +403,7 @@
         "h": 2,
         "w": 5,
         "x": 15,
-        "y": 9
+        "y": 10
       },
       "id": 69,
       "options": {
@@ -467,7 +467,7 @@
         "h": 2,
         "w": 5,
         "x": 10,
-        "y": 11
+        "y": 12
       },
       "id": 56,
       "options": {
@@ -512,7 +512,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "id": 42,
       "panels": [],
@@ -552,7 +552,7 @@
         "h": 6,
         "w": 3,
         "x": 0,
-        "y": 16
+        "y": 17
       },
       "id": 8,
       "maxDataPoints": 100,
@@ -626,7 +626,7 @@
         "h": 6,
         "w": 3,
         "x": 3,
-        "y": 16
+        "y": 17
       },
       "id": 35,
       "options": {
@@ -741,7 +741,7 @@
         "h": 6,
         "w": 14,
         "x": 6,
-        "y": 16
+        "y": 17
       },
       "id": 43,
       "options": {
@@ -795,7 +795,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 32,
       "panels": [],
@@ -835,7 +835,7 @@
         "h": 6,
         "w": 3,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 15,
       "maxDataPoints": 100,
@@ -905,7 +905,7 @@
         "h": 6,
         "w": 3,
         "x": 3,
-        "y": 23
+        "y": 24
       },
       "id": 58,
       "maxDataPoints": 100,
@@ -1056,7 +1056,7 @@
         "h": 6,
         "w": 14,
         "x": 6,
-        "y": 23
+        "y": 24
       },
       "id": 62,
       "maxDataPoints": 100,
@@ -1172,7 +1172,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "id": 60,
       "options": {
@@ -1273,7 +1273,7 @@
         "h": 6,
         "w": 14,
         "x": 6,
-        "y": 29
+        "y": 30
       },
       "id": 63,
       "maxDataPoints": 100,
@@ -1341,7 +1341,7 @@
         "h": 6,
         "w": 3,
         "x": 0,
-        "y": 34
+        "y": 35
       },
       "id": 39,
       "options": {
@@ -1407,7 +1407,7 @@
         "h": 6,
         "w": 3,
         "x": 3,
-        "y": 34
+        "y": 35
       },
       "id": 61,
       "options": {
@@ -1509,7 +1509,7 @@
         "h": 5,
         "w": 14,
         "x": 6,
-        "y": 35
+        "y": 36
       },
       "id": 64,
       "options": {
@@ -1610,7 +1610,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 5,
       "maxDataPoints": 100,
@@ -1713,7 +1713,7 @@
         "h": 5,
         "w": 14,
         "x": 6,
-        "y": 40
+        "y": 41
       },
       "id": 65,
       "options": {
@@ -1752,11 +1752,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 46
       },
       "id": 57,
       "panels": [],
-      "title": "K8s | File System (by Pod)",
+      "title": "K8s | File System (by Service)",
       "type": "row"
     },
     {
@@ -1823,9 +1823,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
+        "w": 10,
         "x": 0,
-        "y": 46
+        "y": 47
       },
       "id": 70,
       "options": {
@@ -1857,6 +1857,127 @@
         }
       ],
       "title": "Persistent Volumes - Capacity and usage in %",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "avg(jenkins_disk_usage_bytes_byte{tenant=\"team-b\"})"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 10,
+        "y": 47
+      },
+      "id": 73,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(jenkins_disk_usage_bytes_byte{tenant=\"$service\"})",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Jenkins Disk Usage (MB)",
       "type": "timeseries"
     },
     {
@@ -1923,9 +2044,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
-        "x": 6,
-        "y": 46
+        "w": 10,
+        "x": 0,
+        "y": 55
       },
       "id": 71,
       "options": {
@@ -2037,9 +2158,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
-        "x": 13,
-        "y": 46
+        "w": 10,
+        "x": 10,
+        "y": 55
       },
       "id": 72,
       "options": {
@@ -2079,7 +2200,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 63
       },
       "id": 44,
       "panels": [],
@@ -2150,7 +2271,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 55
+        "y": 64
       },
       "id": 36,
       "options": {
@@ -2247,7 +2368,7 @@
         "h": 8,
         "w": 7,
         "x": 6,
-        "y": 55
+        "y": 64
       },
       "id": 41,
       "options": {
@@ -2344,7 +2465,7 @@
         "h": 8,
         "w": 7,
         "x": 13,
-        "y": 55
+        "y": 64
       },
       "id": 37,
       "options": {
@@ -2383,7 +2504,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 72
       },
       "id": 24,
       "panels": [],
@@ -2419,7 +2540,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 64
+        "y": 73
       },
       "id": 33,
       "options": {
@@ -2494,7 +2615,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 64
+        "y": 73
       },
       "id": 28,
       "options": {
@@ -2560,7 +2681,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 64
+        "y": 73
       },
       "id": 29,
       "options": {
@@ -2630,7 +2751,7 @@
         "h": 4,
         "w": 3,
         "x": 9,
-        "y": 64
+        "y": 73
       },
       "id": 34,
       "options": {
@@ -2673,7 +2794,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 77
       },
       "id": 50,
       "panels": [],
@@ -2690,7 +2811,7 @@
         "h": 6,
         "w": 20,
         "x": 0,
-        "y": 69
+        "y": 78
       },
       "id": 51,
       "options": {
@@ -2743,8 +2864,10 @@
   "tags": [
     "cloudbees",
     "jenkins",
-    "monitoring",
-    "kubernetes"
+    "jvm",
+    "http",
+    "storage",
+    "audit"
   ],
   "templating": {
     "list": [
@@ -2757,6 +2880,11 @@
         "type": "constant"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "ip-10-0-48-165.eu-central-1.compute.internal",
+          "value": "ip-10-0-48-165.eu-central-1.compute.internal"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -2779,6 +2907,11 @@
       },
       {
         "allowCustomValue": false,
+        "current": {
+          "selected": false,
+          "text": "cjoc",
+          "value": "cjoc"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -2804,6 +2937,11 @@
       },
       {
         "allowCustomValue": false,
+        "current": {
+          "selected": false,
+          "text": "cjoc-0",
+          "value": "cjoc-0"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -2860,7 +2998,7 @@
   },
   "timezone": "browser",
   "title": "CloudBees CI - Infra and Service Check",
-  "uid": "deslcahmiuo74dsasa",
-  "version": 1,
+  "uid": "aespum3y6d3b4c",
+  "version": 6,
   "weekStart": ""
 }
