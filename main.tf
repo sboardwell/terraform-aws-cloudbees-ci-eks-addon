@@ -36,7 +36,7 @@ locals {
 
   create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
   prometheus_sm_labels = {
-    "cloudbees.prometheus" = "true"
+    prometheus = "true"
   }
   prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
@@ -138,21 +138,19 @@ spec:
 YAML
 }
 
-resource "kubernetes_labels" "oc_sm_label" {
-  count = local.create_prometheus_target ? 1 : 0
+# resource "kubernetes_manifest" "cjoc_service_labels" {
+#   count = local.create_prometheus_target ? 1 : 0
 
-  api_version = "v1"
-  kind        = "Service"
-  # This is true because the resources was already created by the helm_release
-  force = "true"
-
-  metadata {
-    name      = "cjoc"
-    namespace = helm_release.cloudbees_ci.namespace
-  }
-
-  labels = local.prometheus_sm_labels
-}
+#   manifest = {
+#     apiVersion = "v1"
+#     kind       = "Service"
+#     metadata = {
+#       name      = "cjoc"
+#       namespace = helm_release.cloudbees_ci.namespace
+#       labels    = local.prometheus_sm_labels
+#     }
+#   }
+# }
 
 ################################################################################
 # Pod Identity

@@ -53,7 +53,7 @@ resource "random_string" "global_pass_string" {
 # Workloads
 ################################################################################
 
-# CloudBees CI Add-on
+# CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
   source = "../../"
@@ -65,6 +65,8 @@ module "eks_blueprints_addon_cbci" {
   trial_license = var.trial_license
 
   helm_config = {
+    #TODO: It has been only be enabled for Stephan demo
+    version = "3.28226.0+b5bded24682b"
     values = [templatefile("k8s/cbci-values.yml", {
       cbciAppsNodeRole        = local.mng["cbci_apps"]["labels"].role
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
