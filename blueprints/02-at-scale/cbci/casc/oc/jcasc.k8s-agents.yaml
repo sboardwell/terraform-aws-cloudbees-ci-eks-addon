@@ -6,6 +6,8 @@ kube:
       yaml: |-
         apiVersion: "v1"
         kind: "Pod"
+        metadata:
+          namespace: "cbci-agents"
         spec:
           containers:
           - args:
