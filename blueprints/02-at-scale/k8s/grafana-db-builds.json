@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 36,
+  "id": 37,
   "links": [],
   "panels": [
     {
@@ -35,7 +35,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/automotive/automotive.png\"\n      alt=\"Jenkins Automotive\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Build Performance\n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a>\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Enterprise Jenkins running on Kubernetes\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Tempo</li>\n      <li style=\"white-space: nowrap;\">Metrics: <b><a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
+        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/automotive/automotive.png\"\n      alt=\"Jenkins Automotive\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Build Performance\n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a>\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Enterprise Jenkins running on Kubernetes\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Tempo</li>\n      <li style=\"white-space: nowrap;\">Metrics: <a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Tracing: <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
         "mode": "html"
       },
       "pluginVersion": "11.1.4",
@@ -585,7 +585,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "avg (increase(jenkins_runs_total_total{service=\"$service\"}[$__range]))",
+          "expr": "avg(increase(jenkins_runs_total_total{service=\"$service\"}[$__range]))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1402,7 +1402,7 @@
       },
       "id": 43,
       "panels": [],
-      "title": "Opentelemetry | Tracing (By Service)",
+      "title": "Opentelemetry | Pipelines (By Pod)",
       "type": "row"
     },
     {
@@ -1410,7 +1410,7 @@
         "type": "tempo",
         "uid": "tempoDatasource"
       },
-      "description": "Filtered table of the slowest builds that have a longer duration than 1 second. Sorted by longest at the top.",
+      "description": "Filtered table of the slowest builds that have a longer duration than 1 minute. Sorted by longest at the top.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1511,13 +1511,13 @@
             }
           ],
           "limit": 20,
-          "query": "{resource.tenant = \"$service\" && name=~\".*BUILD.*\" && duration > 1s}",
+          "query": "{resource.k8s.pod.name = \"$pod\" && name=~\".*BUILD.*\" && duration > 60s}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "traces"
         }
       ],
-      "title": "Top Slowest Builds (>1s)*",
+      "title": "Top Slowest Builds (>1m)",
       "transformations": [
         {
           "id": "organize",
@@ -1535,16 +1535,12 @@
             },
             "includeByName": {},
             "indexByName": {
-              "Duration": 8,
+              "Duration": 3,
               "Name": 0,
-              "Span ID": 6,
-              "Start time": 7,
-              "Trace Name": 5,
-              "Trace Service": 4,
-              "ci.pipeline.id": 1,
-              "jenkins.url": 2,
-              "service.name": 9,
-              "traceIdHidden": 3
+              "Service": 4,
+              "Start time": 1,
+              "Trace ID": 2,
+              "nested": 5
             },
             "renameByName": {
               "Duration": "",
@@ -1662,12 +1658,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Trace ID (count)"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.1.4",
       "targets": [
@@ -1677,13 +1668,13 @@
             "uid": "tempoDatasource"
           },
           "limit": 20,
-          "query": "{resource.tenant = \"$service\" && name=~\".*BUILD.*\"}",
+          "query": "{resource.k8s.pod.name = \"$pod\" && name=~\".*BUILD.*\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "traces"
         }
       ],
-      "title": "Top Executed Pipelines (> 1 record) *",
+      "title": "Top Executed Pipelines (> 1 record)",
       "transformations": [
         {
           "id": "sortBy",
@@ -1818,7 +1809,7 @@
         "type": "tempo",
         "uid": "tempoDatasource"
       },
-      "description": "Filtered table of the slowest stages that have a longer duration than 1 second. Sorted by longest at the top.",
+      "description": "Filtered table of the slowest stages that have a longer duration than 1 minute. Sorted by longest at the top.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1919,13 +1910,13 @@
             }
           ],
           "limit": 20,
-          "query": "{status=ok && name=~\".*Stage:.*\" && resource.tenant = \"$service\" && duration > 1s}",
+          "query": "{status=ok && name=~\".*Stage:.*\" && resource.k8s.pod.name = \"$pod\" && duration > 1s}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
         }
       ],
-      "title": "Top Slowest Stages (>1s)*",
+      "title": "Top Slowest Stages (>1m)",
       "transformations": [
         {
           "id": "organize",
@@ -1938,6 +1929,7 @@
               "Trace ID": false,
               "Trace Name": true,
               "Trace Service": true,
+              "k8s.pod.name": true,
               "nested": true,
               "service.name": true,
               "status": true,
@@ -1987,7 +1979,7 @@
         "type": "tempo",
         "uid": "tempoDatasource"
       },
-      "description": "Filtered table of the type of jobs",
+      "description": "Filtered table of the type of jobs with builds",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2088,13 +2080,13 @@
             }
           ],
           "limit": 20,
-          "query": "{span.ci.pipeline.type=~\".*\" && resource.tenant = \"$service\"}",
+          "query": "{span.ci.pipeline.type=~\".*\" && resource.k8s.pod.name = \"$pod\" }",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "spans"
         }
       ],
-      "title": "Job types",
+      "title": "Built job types ",
       "transformations": [
         {
           "id": "organize",
@@ -2141,15 +2133,27 @@
           "id": "groupBy",
           "options": {
             "fields": {
+              "Name": {
+                "aggregations": []
+              },
               "Span ID": {
                 "aggregations": [
                   "count"
-                ],
-                "operation": "aggregate"
+                ]
+              },
+              "Trace Name": {
+                "aggregations": [],
+                "operation": "groupby"
               },
               "ci.pipeline.type": {
                 "aggregations": [],
                 "operation": "groupby"
+              },
+              "traceIdHidden": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
               }
             }
           }
@@ -2344,7 +2348,7 @@
       },
       "id": 46,
       "panels": [],
-      "title": "Opentelemetry | Agents (By Pods)",
+      "title": "Opentelemetry | Agents (By Pod)",
       "type": "row"
     },
     {
@@ -2352,6 +2356,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "Number Agents Total, Online and Ofline",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2465,17 +2470,19 @@
           "refId": "C"
         }
       ],
-      "title": "Agents",
+      "title": "Number Agents",
       "type": "timeseries"
     }
   ],
   "refresh": "10s",
   "schemaVersion": 39,
   "tags": [
+    "cloudbees",
+    "jenkins",
+    "cicd",
     "builds",
-    "ci",
-    "agents",
-    "cloudbees"
+    "pipelines",
+    "agents"
   ],
   "templating": {
     "list": [
@@ -2489,6 +2496,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "Service",
+        "description": "Jenkins controller service name. Selects which controller's builds to display.",
         "multi": false,
         "name": "service",
         "options": [],
@@ -2508,6 +2516,7 @@
         "label": "",
         "name": "namespace",
         "query": "cbci",
+        "description": "Kubernetes namespace for Jenkins controllers. Set as a constant for this dashboard.",
         "skipUrlSync": false,
         "type": "constant"
       },
@@ -2520,6 +2529,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "pod",
+        "description": "Jenkins pod name. Selects which pod's metrics to display.",
         "multi": false,
         "name": "pod",
         "options": [],
@@ -2543,7 +2553,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "CloudBees CI - Build Performance",
-  "uid": "eespicebcz8xsb",
-  "version": 15,
+  "uid": "fess98pegx534f",
+  "version": 6,
   "weekStart": ""
 }
