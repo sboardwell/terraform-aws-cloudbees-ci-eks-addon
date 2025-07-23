@@ -1,4 +1,22 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "Prometheus datasource for metrics",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_TEMPO",
+      "label": "Tempo",
+      "description": "Tempo datasource for traces",
+      "type": "datasource",
+      "pluginId": "tempo",
+      "pluginName": "Tempo"
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,7 +36,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 37,
+  "id": 44,
   "links": [],
   "panels": [
     {
@@ -35,7 +53,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/automotive/automotive.png\"\n      alt=\"Jenkins Automotive\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Build Performance\n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a> | Enterprise Jenkins running on Kubernetes\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Dashboard designed for <a href=\"https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/tree/main/blueprints/02-at-scale\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI EKS At Scale Blueprint</a> \n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Tempo</li>\n      <li style=\"white-space: nowrap;\">Metrics: <a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Tracing: <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
+        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/automotive/automotive.png\"\n      alt=\"Jenkins Automotive\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Build Performance\n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a> | Enterprise Jenkins running on Kubernetes\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Designed and tested for <a href=\"https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/tree/main/blueprints/02-at-scale\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI EKS Blueprint: Jenkins at scale</a>\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Tempo</li>\n      <li style=\"white-space: nowrap;\">Metrics: <a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Tracing: <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
         "mode": "html"
       },
       "pluginVersion": "11.1.4",
@@ -58,7 +76,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Comparison of build completion status' within specified time interval.\n\nSuccess: The Build has no errors, and completed.\n\nFailure: The Build had a fatal error, and did not complete.\n\nAborted: The Build was interrupted before it reaches its expected end. For example, the user has stopped it manually or there was a time-out.\n\nUnstable: The Build had some errors but they were not fatal. The build completed.\n\nNot Built: The Build was scheduled but cancelled and not started. This could be due to manual intervention or concurrent builds are not allowed.",
       "fieldConfig": {
@@ -194,7 +212,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -209,7 +227,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -224,7 +242,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -239,7 +257,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -254,7 +272,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -274,7 +292,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Average time spent in the building.\n\nBuild: Total time spent executing the build.\n\nTotal: Time spent in the queue as well as completing the build.",
       "fieldConfig": {
@@ -329,7 +347,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -343,7 +361,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -361,7 +379,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Average time spent in the queue.\n\nQueuing: Total time spent in the queue before build starting.\n\nWaiting: Time spent in the quiet period.\n\nBlocked: Cause could be target label is busy, target node is offline, target node is busy, target label is offline.\n",
       "fieldConfig": {
@@ -416,7 +434,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -430,7 +448,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -443,7 +461,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -462,7 +480,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Number of Builds per hour",
       "fieldConfig": {
@@ -514,7 +532,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(jenkins_runs_total_total{service=\"$service\"}[$__range])) * 3600",
@@ -531,7 +549,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Number of builds during the time period.",
       "fieldConfig": {
@@ -581,7 +599,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -601,7 +619,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Total number of jobs",
       "fieldConfig": {
@@ -660,7 +678,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_job_count_value{service=\"$service\"})",
@@ -690,7 +708,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Prometheus Build Performance data resets all metrics back to 0 when a controller restarts.",
       "fieldConfig": {
@@ -847,7 +865,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -860,7 +878,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -874,7 +892,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -888,7 +906,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -902,7 +920,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -921,7 +939,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Average time spent in the building.\n\nBuild: Total time spent executing the build.\n\nTotal: Time spent in the queue as well as completing the build.",
       "fieldConfig": {
@@ -1076,7 +1094,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1090,7 +1108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1108,7 +1126,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Number of Builds per hour",
       "fieldConfig": {
@@ -1192,7 +1210,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(jenkins_runs_total_total{service=\"$service\"}[$__range])) * 3600",
@@ -1209,7 +1227,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Average time spent in the queue.\n\nQueuing: Total time spent in the queue before build starting.\n\nWaiting: Time spent in the quiet period.\n\nBlocked: Cause could be target label is busy, target node is offline, target node is busy, target label is offline.\n",
       "fieldConfig": {
@@ -1349,7 +1367,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1363,7 +1381,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1376,7 +1394,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "b3d11a0e-96c0-4e9b-92f7-caa0c668f187"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1408,7 +1426,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "tempoDatasource"
+        "uid": "$dsTempo"
       },
       "description": "Filtered table of the slowest builds that have a longer duration than 1 minute. Sorted by longest at the top.",
       "fieldConfig": {
@@ -1483,7 +1501,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "tempoDatasource"
+            "uid": "$dsTempo"
           },
           "filters": [
             {
@@ -1570,7 +1588,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "tempoDatasource"
+        "uid": "$dsTempo"
       },
       "description": "Filtered table of the number of executed builds that have more than 1 records. Sorted by more recurrent at the top.",
       "fieldConfig": {
@@ -1665,7 +1683,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "tempoDatasource"
+            "uid": "$dsTempo"
           },
           "limit": 20,
           "query": "{resource.k8s.pod.name = \"$pod\" && name=~\".*BUILD.*\"}",
@@ -1807,7 +1825,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "tempoDatasource"
+        "uid": "$dsTempo"
       },
       "description": "Filtered table of the slowest stages that have a longer duration than 1 minute. Sorted by longest at the top.",
       "fieldConfig": {
@@ -1882,7 +1900,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "tempoDatasource"
+            "uid": "$dsTempo"
           },
           "filters": [
             {
@@ -1977,7 +1995,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "tempoDatasource"
+        "uid": "$dsTempo"
       },
       "description": "Filtered table of the type of jobs with builds",
       "fieldConfig": {
@@ -2052,7 +2070,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "tempoDatasource"
+            "uid": "$dsTempo"
           },
           "filters": [
             {
@@ -2165,7 +2183,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "tempoDatasource"
+        "uid": "$dsTempo"
       },
       "description": "Filtered table of the type of errors",
       "fieldConfig": {
@@ -2197,8 +2215,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2240,7 +2257,7 @@
         {
           "datasource": {
             "type": "tempo",
-            "uid": "tempoDatasource"
+            "uid": "$dsTempo"
           },
           "filters": [
             {
@@ -2354,7 +2371,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Number Agents Total, Online and Ofline",
       "fieldConfig": {
@@ -2399,8 +2416,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2434,7 +2450,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "sum(jenkins_agents_total{k8s_pod_name=\"$pod\"})",
@@ -2446,7 +2462,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "sum(jenkins_agents_online{k8s_pod_name=\"$pod\"})",
@@ -2459,7 +2475,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "sum(jenkins_agents_offline{k8s_pod_name=\"$pod\"})",
@@ -2476,27 +2492,63 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": [
-    "cloudbees",
-    "jenkins",
-    "cicd",
-    "builds",
-    "pipelines",
-    "agents"
-  ],
+  "tags": [],
   "templating": {
     "list": [
       {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "description": "Datasource Name for Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "label": "DS Prometheus",
+        "multi": false,
+        "name": "dsPrometheus",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Tempo",
+          "value": "tempoDatasource"
+        },
+        "description": "Datasource Name for Tempo",
+        "hide": 0,
+        "includeAll": false,
+        "label": "DS Tempo",
+        "multi": false,
+        "name": "dsTempo",
+        "options": [],
+        "query": "tempo",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "allowCustomValue": false,
+        "current": {
+          "selected": false,
+          "text": "cjoc",
+          "value": "cjoc"
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "$dsPrometheus"
         },
         "definition": "label_values(up{container=\"jenkins\", namespace=\"$namespace\"},service)",
+        "description": "Jenkins controller service name. Selects which controller's builds to display.",
         "hide": 0,
         "includeAll": false,
         "label": "Service",
-        "description": "Jenkins controller service name. Selects which controller's builds to display.",
         "multi": false,
         "name": "service",
         "options": [],
@@ -2512,24 +2564,29 @@
         "type": "query"
       },
       {
+        "description": "Kubernetes namespace for Jenkins controllers. Set as a constant for this dashboard.",
         "hide": 2,
         "label": "",
         "name": "namespace",
         "query": "cbci",
-        "description": "Kubernetes namespace for Jenkins controllers. Set as a constant for this dashboard.",
         "skipUrlSync": false,
         "type": "constant"
       },
       {
+        "current": {
+          "selected": false,
+          "text": "cjoc-0",
+          "value": "cjoc-0"
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "$dsPrometheus"
         },
         "definition": "label_values({container=\"jenkins\", service=\"$service\", namespace=\"$namespace\"},pod)",
+        "description": "Jenkins pod name. Selects which pod's metrics to display.",
         "hide": 0,
         "includeAll": false,
         "label": "pod",
-        "description": "Jenkins pod name. Selects which pod's metrics to display.",
         "multi": false,
         "name": "pod",
         "options": [],
@@ -2552,8 +2609,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "CloudBees CI - Build Performance",
-  "uid": "fess98pegx534f",
-  "version": 6,
+  "title": "CloudBees CI - Build Performance - v2",
+  "uid": "eestieu7o0lc0f",
+  "version": 2,
   "weekStart": ""
 }

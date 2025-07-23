@@ -1,4 +1,80 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_LOKI",
+      "label": "Loki",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "loki",
+      "pluginName": "Loki"
+    },
+    {
+      "name": "VAR_NAMESPACE",
+      "type": "constant",
+      "label": "namespace",
+      "value": "cbci",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.1.4"
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "loki",
+      "name": "Loki",
+      "version": "1.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -19,7 +95,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 36,
+  "id": null,
   "links": [
     {
       "asDropdown": false,
@@ -49,7 +125,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/fire/256.png\"\n      alt=\"Jenkins Logo\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Infrastructure &amp; Service Health Checks \n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a> | Enterprise Jenkins running on Kubernetes\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Dashboard designed for <a href=\"https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/tree/main/blueprints/02-at-scale\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI EKS At Scale Blueprint</a> \n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Loki</li>\n      <li style=\"white-space: nowrap;\">Metrics: <b><a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://github.com/kubernetes/kube-state-metrics\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">kube-state-metrics</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Audit logs: <b><a href=\"https://plugins.jenkins.io/audit-trail/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Audit Trail</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
+        "content": "<div style=\"display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(90deg, #232526 0%, #414345 100%); padding: 18px 28px; border-radius: 16px; border: 1.5px solid #35373a; box-shadow: 0 4px 24px rgba(0,0,0,0.13); width: 100%; height: 100%;\">\n  <!-- Left: Logo and Titles -->\n  <div style=\"display: flex; align-items: center;\">\n    <img\n      src=\"https://www.jenkins.io/images/logos/fire/256.png\"\n      alt=\"Jenkins Logo\"\n      width=\"110\"\n      height=\"110\"\n      style=\"margin-right: 32px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.13); background: #fff; padding: 10px;\"\n    >\n    <div>\n      <h1 style=\"color: #fff; margin: 0; font-size: 2.3rem; font-weight: 800; letter-spacing: 1.2px; white-space: nowrap;\">\n        Infrastructure &amp; Service Health Checks \n      </h1>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI on Modern</a> | Enterprise Jenkins running on Kubernetes\n      </h3>\n      <h3 style=\"margin: 10px 0 0 0; font-size: 1.22rem; font-weight: 700; letter-spacing: 0.2px; white-space: nowrap;\">\n        Designed and tested for <a href=\"https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/tree/main/blueprints/02-at-scale\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI EKS Blueprint: Jenkins at scale</a>\n      </h3>\n    </div>\n  </div>\n  <!-- Right: Notes Section -->\n  <div style=\"display: flex; flex-direction: column; justify-content: center; min-width: 420px; max-width: 600px; background: rgba(30,32,34,0.92); border-radius: 10px; padding: 22px 36px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);\">\n    <div style=\"border-bottom: 1px solid #444; margin-bottom: 12px; padding-bottom: 7px;\">\n      <h2 style=\"color: #fff; font-size: 1.12rem; font-weight: 700; margin: 0; letter-spacing: 0.6px;\">Notes</h2>\n    </div>\n    <ul style=\"color: #e0e0e0; font-size: 1.08rem; margin: 0; padding-left: 18px; line-height: 2; list-style-position: inside;\">\n      <li style=\"white-space: nowrap;\">Datasources: Prometheus, Loki</li>\n      <li style=\"white-space: nowrap;\">Metrics: <b><a href=\"https://plugins.jenkins.io/metrics/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Jenkins Metrics plugin</a></b> formatted by <a href=\"https://docs.cloudbees.com/docs/release-notes/latest/plugins/cloudbees-prometheus-plugin/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees Prometheus Plugin</a>, <a href=\"https://github.com/kubernetes/kube-state-metrics\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">kube-state-metrics</a>, <a href=\"https://plugins.jenkins.io/opentelemetry/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">OpenTelemetry plugin</a>\n      <li style=\"white-space: nowrap;\">Audit logs: <b><a href=\"https://plugins.jenkins.io/audit-trail/\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">Audit Trail</a>\n      <li style=\"white-space: nowrap;\">The Dashboard is compatible with <a href=\"https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints\" target=\"_blank\" style=\"color: #2196f3; text-decoration: underline; font-weight: 700;\">CloudBees CI HA/HS</a></li>\n    </ul>\n  </div>\n</div>\n",
         "mode": "html"
       },
       "pluginVersion": "11.1.4",
@@ -72,7 +148,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -152,7 +228,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "count(rate(container_cpu_usage_seconds_total{namespace=~\"cbci\", image!=\"\", image!~\"pause\", pod=\"$pod\"}[$__rate_interval])) by (image)",
@@ -169,7 +245,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Shows the node where this pod is running. Click to view node details.",
       "fieldConfig": {
@@ -177,7 +253,7 @@
           "links": [
             {
               "title": "",
-              "url": "/d/k8s_views_nodes/kubernetes-views-nodes?var-datasource=${datasource}&var-node=${__field.labels.node}&${cluster:queryparam}"
+              "url": "/d/k8s_views_nodes/kubernetes-views-nodes?var-datasource=prometheus&var-node=${__field.labels.node}&${cluster:queryparam}"
             }
           ],
           "mappings": [],
@@ -223,7 +299,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -240,7 +316,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -290,7 +366,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -307,7 +383,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -355,7 +431,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -372,7 +448,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -426,7 +502,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -444,7 +520,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -492,7 +568,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -522,7 +598,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -576,7 +652,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_health_check_score{service=~\"$service\"})",
@@ -593,7 +669,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -649,7 +725,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(up{service=~\"$service\"})",
@@ -664,7 +740,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -762,7 +838,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -775,7 +851,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(process_open_fds{service=~\"$service\"}) ",
@@ -792,7 +868,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -872,7 +948,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_disk_usage_bytes_byte{tenant=\"$service\"})",
@@ -901,7 +977,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -955,7 +1031,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_memory_heap_usage {pod=\"$pod\"})",
@@ -971,7 +1047,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1025,7 +1101,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_memory_non_heap_usage{pod=\"$pod\"})",
@@ -1041,7 +1117,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1177,7 +1253,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_memory_non_heap_usage{pod=\"$pod\"})",
@@ -1190,7 +1266,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_memory_heap_usage{pod=\"$pod\"})",
@@ -1207,7 +1283,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1288,7 +1364,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_count{pod=~\"$pod\"})",
@@ -1304,7 +1380,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1394,7 +1470,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_memory_total_used{pod=~\"$pod\"})",
@@ -1411,7 +1487,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1462,7 +1538,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_deadlock_count{pod=~\"$pod\"})",
@@ -1477,7 +1553,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1528,7 +1604,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_blocked_count{pod=~\"$pod\"})",
@@ -1543,7 +1619,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -1625,7 +1701,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "100 * (1 - sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m]))/(count(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}) * 5 * 60 * 1000))",
@@ -1641,7 +1717,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1731,7 +1807,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(vm_cpu_load{pod=~\"$pod\"})",
@@ -1748,7 +1824,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -1829,7 +1905,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m])) / sum(increase(vm_gc_G1_Concurrent_GC_time{pod=\"$pod\"}[5m]))",
@@ -1858,7 +1934,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Panel only works with Block Storage types (e.g. EBS in AWS). kubelet doesn't collect detailed volume statistics for NFS mounts by default (e.g. EFS in AWS). ",
       "fieldConfig": {
@@ -1941,7 +2017,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1958,7 +2034,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Panel only works with Block Storage types (e.g. EBS in AWS). kubelet doesn't collect detailed volume statistics for NFS mounts by default (e.g. EFS in AWS). ",
       "fieldConfig": {
@@ -2041,7 +2117,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -2054,7 +2130,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -2072,7 +2148,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Panel only works with Block Storage types (e.g. EBS in AWS). kubelet doesn't collect detailed volume statistics for NFS mounts by default (e.g. EFS in AWS). ",
       "fieldConfig": {
@@ -2155,7 +2231,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -2185,7 +2261,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "The 99% percentile of HTTP Requests handled by Jenkins masters.",
       "fieldConfig": {
@@ -2267,7 +2343,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(http_requests{pod=~\"$pod\",quantile=\"0.99\"})",
@@ -2282,7 +2358,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "The ratio of ok (200) request out of all requests.",
       "fieldConfig": {
@@ -2364,7 +2440,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(http_responseCodes_ok_total{pod=~\"$pod\"})/ \navg(http_requests_count{pod=~\"$pod\"}) ",
@@ -2379,7 +2455,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "Http Server Errors (500)",
       "fieldConfig": {
@@ -2461,7 +2537,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(http_responseCodes_serverError_total{pod=~\"$pod\"}[1m]))",
@@ -2489,7 +2565,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -2540,7 +2616,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_plugins_failed{service=~\"$service\"})",
@@ -2555,7 +2631,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "description": "",
       "fieldConfig": {
@@ -2615,7 +2691,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_plugins_active{service=\"$service\"})",
@@ -2630,7 +2706,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -2681,7 +2757,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_plugins_withUpdate{service=\"$service\"})",
@@ -2696,7 +2772,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "$dsPrometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -2751,7 +2827,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "$dsPrometheus"
           },
           "editorMode": "code",
           "expr": "avg(jenkins_plugins_inactive{service=\"$service\"})",
@@ -2779,7 +2855,7 @@
     {
       "datasource": {
         "type": "loki",
-        "uid": "lokiDatasource"
+        "uid": "$dsLoki"
       },
       "description": "Auditing updates on the configuration of the System or Jobs.",
       "gridPos": {
@@ -2804,7 +2880,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "lokiDatasource"
+            "uid": "$dsLoki"
           },
           "editorMode": "builder",
           "expr": "{com_cloudbees_cje_tenant=\"$service\"} |= `[Audit]` != `Started by`",
@@ -2847,22 +2923,67 @@
   "templating": {
     "list": [
       {
+        "current": {},
+        "description": "Datasource Name for Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "label": "DS Prometheus",
+        "multi": false,
+        "name": "dsPrometheus",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "description": "Datasource Name for Loki",
+        "hide": 0,
+        "includeAll": false,
+        "label": "DS Loki",
+        "multi": false,
+        "name": "dsLoki",
+        "options": [],
+        "query": "loki",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "description": "Update this constant value with the namespace used to deploy CBCI OC and Controllers ",
         "hide": 2,
         "name": "namespace",
-        "query": "cbci",
+        "query": "${VAR_NAMESPACE}",
         "skipUrlSync": false,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_NAMESPACE}",
+          "text": "${VAR_NAMESPACE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_NAMESPACE}",
+            "text": "${VAR_NAMESPACE}",
+            "selected": false
+          }
+        ]
       },
       {
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "$dsPrometheus"
         },
         "definition": "label_values(kube_pod_info{pod=\"$pod\"}, node)",
+        "description": "Kubernetes node name. Selects which node's metrics to display.",
         "hide": 2,
         "includeAll": false,
-        "description": "Kubernetes node name. Selects which node's metrics to display.",
         "multi": false,
         "name": "node",
         "options": [],
@@ -2878,9 +2999,10 @@
       },
       {
         "allowCustomValue": false,
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "$dsPrometheus"
         },
         "definition": "label_values(up{container=\"jenkins\", namespace=\"$namespace\"},service)",
         "description": "Jenkins controller service name. Selects which controller's metrics to display.",
@@ -2903,15 +3025,16 @@
       },
       {
         "allowCustomValue": false,
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus"
+          "uid": "$dsPrometheus"
         },
         "definition": "label_values(up{container=\"jenkins\", service=\"$service\", namespace=\"$namespace\"},pod)",
+        "description": "Jenkins pod name. Selects which pod's metrics to display.",
         "hide": 0,
         "includeAll": false,
         "label": "Pod",
-        "description": "Jenkins pod name. Selects which pod's metrics to display.",
         "multi": false,
         "name": "pod",
         "options": [],
@@ -2959,8 +3082,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "CloudBees CI - Infra and Service Check",
-  "uid": "cess8hpxbk3y8f",
-  "version": 6,
+  "title": "CloudBees CI - Infra and Service Health Checks",
+  "uid": "destb0la4wi68c",
+  "version": 1,
   "weekStart": ""
 }
