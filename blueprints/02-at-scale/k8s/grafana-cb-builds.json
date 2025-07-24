@@ -3,7 +3,7 @@
     {
       "name": "DS_PROMETHEUS",
       "label": "Prometheus",
-      "description": "Prometheus datasource for metrics",
+      "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
@@ -11,10 +11,74 @@
     {
       "name": "DS_TEMPO",
       "label": "Tempo",
-      "description": "Tempo datasource for traces",
+      "description": "",
       "type": "datasource",
       "pluginId": "tempo",
       "pluginName": "Tempo"
+    },
+    {
+      "name": "VAR_NAMESPACE",
+      "type": "constant",
+      "label": "namespace",
+      "value": "cbci",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.1.4"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "tempo",
+      "name": "Tempo",
+      "version": "11.1.4"
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -36,7 +100,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 44,
+  "id": null,
   "links": [],
   "panels": [
     {
@@ -212,7 +276,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -242,7 +306,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -272,7 +336,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -347,7 +411,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -379,7 +443,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Average time spent in the queue.\n\nQueuing: Total time spent in the queue before build starting.\n\nWaiting: Time spent in the quiet period.\n\nBlocked: Cause could be target label is busy, target node is offline, target node is busy, target label is offline.\n",
       "fieldConfig": {
@@ -448,7 +512,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -480,7 +544,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Number of Builds per hour",
       "fieldConfig": {
@@ -549,7 +613,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Number of builds during the time period.",
       "fieldConfig": {
@@ -619,7 +683,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Total number of jobs",
       "fieldConfig": {
@@ -708,7 +772,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Prometheus Build Performance data resets all metrics back to 0 when a controller restarts.",
       "fieldConfig": {
@@ -878,7 +942,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -906,7 +970,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -939,7 +1003,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Average time spent in the building.\n\nBuild: Total time spent executing the build.\n\nTotal: Time spent in the queue as well as completing the build.",
       "fieldConfig": {
@@ -984,8 +1048,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1108,7 +1171,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1176,8 +1239,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1210,7 +1272,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "avg(rate(jenkins_runs_total_total{service=\"$service\"}[$__range])) * 3600",
@@ -1272,8 +1334,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -1367,7 +1428,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1394,7 +1455,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1458,8 +1519,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1588,7 +1648,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "$dsTempo"
+        "uid": "${DS_TEMPO}"
       },
       "description": "Filtered table of the number of executed builds that have more than 1 records. Sorted by more recurrent at the top.",
       "fieldConfig": {
@@ -1620,8 +1680,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1825,7 +1884,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "$dsTempo"
+        "uid": "${DS_TEMPO}"
       },
       "description": "Filtered table of the slowest stages that have a longer duration than 1 minute. Sorted by longest at the top.",
       "fieldConfig": {
@@ -1857,8 +1916,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1995,7 +2053,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "$dsTempo"
+        "uid": "${DS_TEMPO}"
       },
       "description": "Filtered table of the type of jobs with builds",
       "fieldConfig": {
@@ -2027,8 +2085,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2183,7 +2240,7 @@
     {
       "datasource": {
         "type": "tempo",
-        "uid": "$dsTempo"
+        "uid": "${DS_TEMPO}"
       },
       "description": "Filtered table of the type of errors",
       "fieldConfig": {
@@ -2371,7 +2428,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "$dsPrometheus"
+        "uid": "${DS_PROMETHEUS}"
       },
       "description": "Number Agents Total, Online and Ofline",
       "fieldConfig": {
@@ -2462,7 +2519,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "$dsPrometheus"
+            "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
           "expr": "sum(jenkins_agents_online{k8s_pod_name=\"$pod\"})",
@@ -2492,15 +2549,17 @@
   ],
   "refresh": "10s",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "jenkins",
+    "cloudbees",
+    "cicd",
+    "pipelines",
+    "agents"
+  ],
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "Prometheus",
-          "value": "prometheus"
-        },
+        "current": {},
         "description": "Datasource Name for Prometheus",
         "hide": 0,
         "includeAll": false,
@@ -2515,11 +2574,7 @@
         "type": "datasource"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "Tempo",
-          "value": "tempoDatasource"
-        },
+        "current": {},
         "description": "Datasource Name for Tempo",
         "hide": 0,
         "includeAll": false,
@@ -2535,14 +2590,10 @@
       },
       {
         "allowCustomValue": false,
-        "current": {
-          "selected": false,
-          "text": "cjoc",
-          "value": "cjoc"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "$dsPrometheus"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(up{container=\"jenkins\", namespace=\"$namespace\"},service)",
         "description": "Jenkins controller service name. Selects which controller's builds to display.",
@@ -2568,16 +2619,24 @@
         "hide": 2,
         "label": "",
         "name": "namespace",
-        "query": "cbci",
+        "query": "${VAR_NAMESPACE}",
         "skipUrlSync": false,
-        "type": "constant"
+        "type": "constant",
+        "current": {
+          "value": "${VAR_NAMESPACE}",
+          "text": "${VAR_NAMESPACE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_NAMESPACE}",
+            "text": "${VAR_NAMESPACE}",
+            "selected": false
+          }
+        ]
       },
       {
-        "current": {
-          "selected": false,
-          "text": "cjoc-0",
-          "value": "cjoc-0"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "$dsPrometheus"
@@ -2609,8 +2668,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "CloudBees CI - Build Performance - v2",
+  "title": "CloudBees CI - Build Performance",
   "uid": "eestieu7o0lc0f",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
