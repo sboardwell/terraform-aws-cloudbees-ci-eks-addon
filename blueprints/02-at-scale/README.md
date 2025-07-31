@@ -483,6 +483,8 @@ There are a couple of CloudBees CI dashboards available in [Grafana Labs - Dashb
 - [Infra and Service Health Checks](https://grafana.com/grafana/dashboards/23781-cloudbees-ci-infra-and-service-health-checks/): It is designed to monitor infrastructure and service health, giving visibility into Kubernetes resource usage, JVM behaviour, HTTP traffic, system-level events, and user update auditing.
 - [Build Performance](https://grafana.com/grafana/dashboards/23783-cloudbees-ci-build-performance/): This dashboard provides deep insights into build performance, pipelines, and agent usage. It includes key build KPIs and OpenTelemetry-based pipeline tracing.
 
+Go to the Grafana UI, navigate to the **Dashboards** section, and import the dashboards using their IDs or JSON definition.
+
 >[!NOTE]
 > Run the `admin/load-test` Pipeline on team-b or team-c-ha to populate build metrics.
 
