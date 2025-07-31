@@ -205,7 +205,8 @@ grafana:
         token: ""
     grafana-dashboards-cloudbees:
       cb-health-checks:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/observability/blueprints/02-at-scale/k8s/grafana-cb-health.json
-        token: ""
+        gnetId: 23781
+        datasource: Prometheus
       cb-builds:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/observability/blueprints/02-at-scale/k8s/grafana-cb-builds.json
+        gnetId: 23783
+        datasource: Prometheus
