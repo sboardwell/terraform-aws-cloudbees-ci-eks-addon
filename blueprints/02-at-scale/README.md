@@ -478,10 +478,10 @@ Fluent Bit acts as a router for container logs.
 
 #### Dashboards
 
-To explore Metrics dashboards, navigate to **Home > Dashboards > CloudBees CI** folder. There are 2 Dashboards templates available with different filters. When running a controller in HA mode, requests to API pull-based endpoints may return information about the controller replica that responds to the API request instead of aggregated information about all the controller replicas part of the HA cluster (see [HA and REST-API endpoints](https://docs.cloudbees.com/docs/cloudbees-ci/latest/ha/ha-considerations#_ha_and_rest_api_endpoints))
+There are a couple of CloudBees CI dashboards available in [Grafana Labs - Dashboards](https://grafana.com/grafana/dashboards) designed and tested for this blueprint:
 
-- **CloudBees CI - Service Health Dashboard**: Provides a high-level overview of the health of the CloudBees CI services. Template filter based on service or pod (replicas) depending on the widget.
-- **CloudBees CI - Build Performance Dashboard**: Provides build performance metrics. Template filter based on service.
+- [Infra and Service Health Checks](https://grafana.com/grafana/dashboards/23781-cloudbees-ci-infra-and-service-health-checks/): It is designed to monitor infrastructure and service health, giving visibility into Kubernetes resource usage, JVM behaviour, HTTP traffic, system-level events, and user update auditing.
+- [Build Performance](https://grafana.com/grafana/dashboards/23783-cloudbees-ci-build-performance/): This dashboard provides deep insights into build performance, pipelines, and agent usage. It includes key build KPIs and OpenTelemetry-based pipeline tracing.
 
 >[!NOTE]
 > Run the `admin/load-test` Pipeline on team-b or team-c-ha to populate build metrics.
