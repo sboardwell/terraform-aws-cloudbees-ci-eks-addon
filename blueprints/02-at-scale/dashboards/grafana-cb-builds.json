@@ -6,7 +6,8 @@
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
-      "pluginName": "Prometheus"
+      "pluginName": "Prometheus",
+      "value": "Prometheus"
     },
     {
       "name": "DS_TEMPO",
@@ -14,7 +15,8 @@
       "description": "",
       "type": "datasource",
       "pluginId": "tempo",
-      "pluginName": "Tempo"
+      "pluginName": "Tempo",
+      "value": "Tempo"
     },
     {
       "name": "VAR_NAMESPACE",
