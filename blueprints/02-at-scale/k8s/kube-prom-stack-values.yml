@@ -203,10 +203,3 @@ grafana:
       k8s-views-pods:
         url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
         token: ""
-    grafana-dashboards-cloudbees:
-      cb-health-checks:
-        gnetId: 23781
-        datasource: Prometheus
-      cb-builds:
-        gnetId: 23783
-        datasource: Prometheus

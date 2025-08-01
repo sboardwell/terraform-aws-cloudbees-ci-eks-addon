@@ -35,10 +35,6 @@ locals {
   }
 
   create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
-  prometheus_sm_labels = {
-    prometheus = "true"
-  }
-  prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
   create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_cbci_prefix) > 0])
   create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0])
