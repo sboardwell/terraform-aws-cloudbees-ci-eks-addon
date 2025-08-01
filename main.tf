@@ -35,10 +35,6 @@ locals {
   }
 
   create_prometheus_target = alltrue([var.create_prometheus_target, length(var.prometheus_target_ns) > 0])
-  prometheus_sm_labels = {
-    "cloudbees.prometheus" = "true"
-  }
-  prometheus_sm_labels_yaml = yamlencode(local.prometheus_sm_labels)
 
   create_pi_s3  = alltrue([var.create_pi_s3, length(var.pi_s3_bucket_cbci_prefix) > 0])
   create_pi_ecr = alltrue([var.create_pi_ecr, length(var.pi_ecr_cbci_agents_ns) > 0])
@@ -119,7 +115,34 @@ resource "kubectl_manifest" "service_monitor_cb_controllers" {
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: servicemonitor-cbci
+  name: servicemonitor-cbci-controllers
+  namespace: ${var.prometheus_target_ns}
+  labels:
+    release: kube-prometheus-stack
+    app.kubernetes.io/part-of: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - ${helm_release.cloudbees_ci.namespace}
+  selector:
+    matchExpressions:
+      - key: com.cloudbees.cje.type
+        operator: Exists
+  endpoints:
+    - port: http
+      interval: 30s
+      path: /prometheus/
+YAML
+}
+
+resource "kubectl_manifest" "service_monitor_cb_oc" {
+  count = local.create_prometheus_target ? 1 : 0
+
+  yaml_body = <<YAML
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: servicemonitor-cbci-oc
   namespace: ${var.prometheus_target_ns}
   labels:
     release: kube-prometheus-stack
@@ -130,28 +153,12 @@ spec:
       - ${helm_release.cloudbees_ci.namespace}
   selector:
     matchLabels:
-      ${local.prometheus_sm_labels_yaml}
+      "app.kubernetes.io/instance": "cloudbees-ci"
   endpoints:
     - port: http
       interval: 30s
       path: /prometheus/
 YAML
-}
-
-resource "kubernetes_labels" "oc_sm_label" {
-  count = local.create_prometheus_target ? 1 : 0
-
-  api_version = "v1"
-  kind        = "Service"
-  # This is true because the resources was already created by the helm_release
-  force = "true"
-
-  metadata {
-    name      = "cjoc"
-    namespace = helm_release.cloudbees_ci.namespace
-  }
-
-  labels = local.prometheus_sm_labels
 }
 
 ################################################################################
