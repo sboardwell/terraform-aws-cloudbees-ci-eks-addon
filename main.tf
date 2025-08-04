@@ -2,7 +2,7 @@
 
 locals {
   #vCBCI_Helm#
-  cbci_version           = "3.22670.0+59d995985b9d"
+  cbci_version           = "3.28671.0+c09c0c4c48df"
   cbci_ns                = "cbci"
   cbci_sec_casc_name     = "cbci-sec-casc"
   cbci_sec_registry_name = "cbci-sec-reg"

@@ -72,12 +72,12 @@ locals {
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
   #vEKSTFMod#
-  version = "20.23.0"
+  version = "20.37.2"
 
   cluster_name                   = local.name
   cluster_endpoint_public_access = true
   #vK8#
-  cluster_version = "1.32"
+  cluster_version = "1.33"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
