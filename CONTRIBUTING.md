@@ -5,19 +5,29 @@ This document provides guidelines for contributing to the CloudBees CI add-on fo
 ## Design principles
 
 - It follows the same approach as the [Terraform AWS EKS Blueprints for Terraform Patterns](https://aws-ia.github.io/terraform-aws-eks-blueprints/).
-- The blueprints use a monorepo configuration where additional configuration repositories are included within the same project. This approach is managed using [Spare Checkouts](https://github.blog/open-source/git/bring-your-monorepo-down-to-size-with-sparse-checkout/). For example, the [At scale blueprint](blueprints/02-at-scale) contains the repository for CasC bundles and shared libraries.
-- Submit pull requests against the `develop` branch and release from the `main` branch.
+- The blueprints use a monorepo configuration to ensure that all the components are versioned together. In a production environment, it would be expected to have a single repository for the blueprints, and another repositories for the CloudBees CI configuration as code (CasC) bundles and shared libraries (see [At scale blueprint](blueprints/02-at-scale)). This approach is managed using [Spare Checkouts](https://github.blog/open-source/git/bring-your-monorepo-down-to-size-with-sparse-checkout/).
+  - The make target `CBCI_REPO=https://github.com/example-org/example-repo.git CBCI_BRANCH=new-feat make set-cbci-location` makes possible to switch between branches when you are making updates to the CasC bundles or shared libraries.
+
+## Release process
+
+1. Submit pull requests against the `develop` branch and release from the `main` branch.
+
+  - As pre-requisite to merge against the `main` or `develop` branch, run successfully `make test-all` which includes sequential `deploy`, `validate` and `destroy`  steps for all the blueprints.
   - `main` branch:
     - It is the stable branch and is used for releases.
     - Before merging a pull request, the CloudBees Center of Excellence (CoE) team must validate the changes.
     - Requirements:
-      - The `source` field in the `eks_blueprints_addon_cbci` at blueprints must point to the remote [terraform registry version](https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon/aws/latest) and `version >= "x.x.x"`. It is important for the telemetry in https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon/aws/latest.
+      - The `source` field in the `eks_blueprints_addon_cbci` at blueprints must point to the remote [terraform registry version](https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon/aws/latest) and `version >= "x.y.z"`. `"x.y.z"` matches with the latest release. It is important for the telemetry in https://registry.terraform.io/modules/cloudbees/cloudbees-ci-eks-addon/aws/latest.
       - The CasC bundles SCM configuration must point to the https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon repository and its `main` branch.
   - `develop` branch:
     - It is the integration branch, and is used for testing new features and updates before merging them into the `main` branch.
     - Requirements:
       - The `source` field in the `eks_blueprints_addon_cbci` in the blueprints folder must point to the local root of the [terraform-aws-cloudbees-ci-eks-addon](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon) repository (for example, `source = "../../"`).
       - The CasC bundles SCM configuration must point to the `develop` branch in the [terraform-aws-cloudbees-ci-eks-addon](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon) repository.
+
+2. Once the pull request from `develop` is merged into the `main` branch, make a direct push to the main branch to update `version >= "x.y.z"`. With the values `"x.y.z"` matching with the version of the helm chart of CloudBees Core CI.
+
+3. Publish the draft release in the [Releases](https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/releases) making sure the `tag` and `release title` match the version of the helm chart of CloudBees Core CI.
 
 ## Report bugs and feature requests
 
