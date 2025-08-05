@@ -33,7 +33,7 @@ bpAgent-dRun (){
   local bpAgentLocalImage="local.cloudbees/bp-agent"
 	if [ "$(docker image ls | grep -c "$bpAgentLocalImage")" -eq 0 ]; then \
 		INFO "Building Docker Image local.cloudbees/bp-agent:latest" && \
-		docker build . --file "$SCRIPTDIR/../.docker/agent/agent.rootless.Dockerfile" --tag "$bpAgentLocalImage"; \
+		docker build . --build-arg CREATE_USER=true --file "$SCRIPTDIR/../.docker/agent/agent.Dockerfile" --tag "$bpAgentLocalImage"; \
 		fi
 	docker run --rm -it \
 		-v "$SCRIPTDIR/..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
@@ -232,8 +232,6 @@ set-cbci-location () {
   sed -i "s|cascBranch: .*|cascBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
   sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
   sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
-  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/grafana-db-builds|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/grafana-db-builds|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
-  sed -i "s|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/.*/blueprints/02-at-scale/k8s/grafana-db-application|https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/$branch/blueprints/02-at-scale/k8s/grafana-db-application|g" "$SCRIPTDIR/02-at-scale/k8s/kube-prom-stack-values.yml"
 }
 
 zip-all-casc-bundles () {

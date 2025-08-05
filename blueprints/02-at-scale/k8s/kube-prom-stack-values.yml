@@ -13,6 +13,14 @@ alertmanager:
 prometheus:
   prometheusSpec:
     additionalScrapeConfigs:
+      # - job_name: "cjoc"
+      #   static_configs:
+      #     - targets: ["cjoc.cbci.svc.cluster.local:80"]
+      #       labels:
+      #         container: jenkins
+      #         pod: cjoc-0
+      #         service: cjoc
+      #         namespace: cbci
       - job_name: "otel-collector"
         static_configs:
           #OTEL collector own metrics https://opentelemetry.io/docs/collector/internal-telemetry/
@@ -195,9 +203,3 @@ grafana:
       k8s-views-pods:
         url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
         token: ""
-    grafana-dashboards-cloudbees:
-      prometheus-plugin-applications:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/develop/blueprints/02-at-scale/k8s/grafana-db-application.json
-        token: ""
-      prometheus-plugin-builds:
-        url: https://raw.githubusercontent.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon/develop/blueprints/02-at-scale/k8s/grafana-db-builds.json

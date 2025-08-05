@@ -11,16 +11,12 @@ tolerations:
 - effect: "NoSchedule"
   key: "dedicated"
   operator: "Equal"
-  value: "build-linux-l"
-- effect: "NoSchedule"
-  key: "dedicated"
-  operator: "Equal"
-  value: "build-linux-xl"
+  value: "linux-builds"
 # Note: It is not compatible with Windows nodes by default.
 # - effect: "NoSchedule"
 #   key: "dedicated"
 #   operator: "Equal"
-#   value: "build-windows"
+#   value: "windows-builds-2022"
 
 cloudWatchLogs:
   enabled: true

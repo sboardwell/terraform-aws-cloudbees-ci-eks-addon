@@ -53,11 +53,10 @@ resource "random_string" "global_pass_string" {
 # Workloads
 ################################################################################
 
-# CloudBees CI Add-on
+# CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.22670.0"
+  source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 

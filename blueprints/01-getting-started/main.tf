@@ -31,8 +31,7 @@ locals {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
-  version = ">= 3.22670.0"
+  source = "../../"
 
   depends_on = [module.eks_blueprints_addons]
 
@@ -108,12 +107,12 @@ module "eks_blueprints_addons" {
 module "eks" {
   source = "terraform-aws-modules/eks/aws"
   #vEKSTFMod#
-  version = "20.23.0"
+  version = "20.37.2"
 
   cluster_name                   = local.cluster_name
   cluster_endpoint_public_access = true
   #vK8#
-  cluster_version = "1.32"
+  cluster_version = "1.33"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
