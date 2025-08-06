@@ -112,9 +112,9 @@ The CloudBees CI add-on uses `helms release` for its resources definition, makin
 | create_reg_secret | Create a Kubernetes dockerconfigjson secret for container registry authentication (cbci-sec-reg) for CI builds agents. | `bool` | `false` | no |
 | helm_config | CloudBees CI Helm chart configuration. | `any` | <pre>{<br>  "values": [<br>    ""<br>  ]<br>}</pre> | no |
 | pi_ecr_cbci_agents_ns | Kubernetes namespace for CloudBees CI ephemeral agents. | `string` | `"cbci-agents"` | no |
-| pi_eks_cluster_name | EKS cluster name for Pod Identity. | `string` | `""` | no |
-| pi_s3_bucket_arn | S3 bucket arn for CBCI Backups and/or Workspace Cache | `string` | `"arn:aws:s3:xxx"` | no |
-| pi_s3_bucket_cbci_prefix | S3 bucket path prefix for CBCI Backups and/or Workspace Cache | `string` | `""` | no |
+| pi_eks_cluster_name | EKS cluster name for Pod Identity. | `string` | `"dummy-cluster"` | no |
+| pi_s3_bucket_arn | S3 bucket arn for CBCI Backups and/or Workspace Cache | `string` | `"arn:aws:s3:::dummy-bucket"` | no |
+| pi_s3_bucket_cbci_prefix | S3 bucket path prefix for CBCI Backups and/or Workspace Cache | `string` | `"dummy-prefix"` | no |
 | pi_s3_sa_controllers | List of service account names for controllers that need S3 pod identity. Defaults to ['cjoc'] if not provided. | `list(string)` | <pre>[<br>  "cjoc"<br>]</pre> | no |
 | prometheus_target_ns | Prometheus target namespace, designed to be enabled with the AWS EKS Terraform Addon Kube Prometheus Stack. It is required when prometheus_target is enabled. | `string` | `"observability"` | no |
 | reg_secret_auth | Registry server authentication details for cbci-sec-reg secret. It is required when create_reg_secret is enabled. | `map(string)` | <pre>{<br>  "email": "foo.bar@acme.com",<br>  "password": "changeme1234",<br>  "server": "my-registry.acme:5000",<br>  "username": "foo"<br>}</pre> | no |

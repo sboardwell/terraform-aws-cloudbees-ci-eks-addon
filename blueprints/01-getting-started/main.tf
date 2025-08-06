@@ -31,14 +31,18 @@ locals {
 # CloudBees CI Add-on
 
 module "eks_blueprints_addon_cbci" {
-  source = "../../"
+  source  = "cloudbees/cloudbees-ci-eks-addon/aws"
+  version = ">= 3.22670.0"
 
-  depends_on = [module.eks_blueprints_addons]
-
+  depends_on    = [module.eks_blueprints_addons]
   hosted_zone   = var.hosted_zone
   cert_arn      = module.acm.acm_certificate_arn
   trial_license = var.trial_license
 
+  # Dummy values to satisfy module validation
+  pi_eks_cluster_name      = "dummy-cluster"
+  pi_s3_bucket_arn         = "arn:aws:s3:::dummy-bucket"
+  pi_s3_bucket_cbci_prefix = "dummy-prefix"
 }
 
 # EKS Blueprints Add-ons
