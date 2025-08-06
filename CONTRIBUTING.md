@@ -25,7 +25,7 @@ This document provides guidelines for contributing to the CloudBees CI add-on fo
     - The `source` field in the `eks_blueprints_addon_cbci` in the blueprints folder must point to the local root of the [terraform-aws-cloudbees-ci-eks-addon](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon) repository (for example, `source = "../../"`).
     - The CasC bundles SCM configuration must point to the `develop` branch in the [terraform-aws-cloudbees-ci-eks-addon](https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon) repository.
 
-**2.** Once the pull request from `develop` is merged into the `main` branch, make a direct push to the main branch to update `version >= "x.y.z"`. With the values `"x.y.z"` matching with the version of the helm chart of CloudBees Core CI.
+**2.** Once the pull request from `develop` is merged into the `main` branch, make a direct push to the main branch to update `version >= "x.y.z"`. With the values `"x.y.z"` matching with the **previous** version of the helm chart of CloudBees Core CI. Why? Until the release is not published, the version in the terraform registry is not updated.
 
 **3.** Publish the draft release in the [Releases](https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon/releases) making sure the `tag` and `release title` match the version of the helm chart of CloudBees Core CI.
 
