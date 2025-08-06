@@ -121,7 +121,7 @@ variable "prometheus_target_ns" {
 variable "pi_eks_cluster_name" {
   description = "EKS cluster name for Pod Identity."
   type        = string
-  default     = "dummy-cluster"
+  default     = "acme-cluster"
   validation {
     condition     = length(var.pi_eks_cluster_name) > 0
     error_message = "The pi_eks_cluster_name must not be an empty string."
@@ -137,7 +137,7 @@ variable "create_pi_s3" {
 variable "pi_s3_bucket_arn" {
   description = "S3 bucket arn for CBCI Backups and/or Workspace Cache"
   type        = string
-  default     = "arn:aws:s3:::dummy-bucket"
+  default     = "arn:aws:s3:::foo-bucket"
   validation {
     condition     = can(regex("^arn:aws:s3:", var.pi_s3_bucket_arn)) && length(var.pi_s3_bucket_arn) > 0
     error_message = "The pi_s3_bucket_arn should be a valid S3 ARN and must not be empty."
@@ -147,7 +147,7 @@ variable "pi_s3_bucket_arn" {
 variable "pi_s3_bucket_cbci_prefix" {
   description = "S3 bucket path prefix for CBCI Backups and/or Workspace Cache"
   type        = string
-  default     = "dummy-prefix"
+  default     = "bar-prefix"
   validation {
     condition     = length(var.pi_s3_bucket_cbci_prefix) > 0
     error_message = "The pi_s3_bucket_cbci_prefix must not be an empty string."
