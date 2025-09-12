@@ -49,6 +49,30 @@ variable "tags" {
   type        = map(string)
 }
 
+variable "oc_casc_scm_repo_url" {
+  description = "URL of the Git repository that contains the CloudBees CI bundle configuration for OC."
+  type        = string
+  default     = "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
+}
+
+variable "oc_casc_scm_branch" {
+  description = "Branch of the Git repository that contains the CloudBees CI bundle configuration for OC."
+  type        = string
+  default     = "main"
+}
+
+variable "oc_casc_scm_bundle_path" {
+  description = "Path within the Git repository that contains the CloudBees CI bundle configuration for OC."
+  type        = string
+  default     = "blueprints/02-at-scale/cbci/casc/oc"
+}
+
+variable "oc_casc_scm_polling_interval" {
+  description = "Polling interval for the Git repository that contains the CloudBees CI bundle configuration for OC."
+  type        = string
+  default     = "PT20M"
+}
+
 ############
 # Others. Hidden
 ############

@@ -70,6 +70,10 @@ module "eks_blueprints_addon_cbci" {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
       cbciAgentsNamespace     = local.cbci_agents_ns
+      cbciScmRepoUrl          = var.oc_casc_scm_repo_url
+      cbciScmBranch           = var.oc_casc_scm_branch
+      cbciScmBundlePath       = var.oc_casc_scm_bundle_path
+      cbciScmPollingInterval  = var.oc_casc_scm_polling_interval
     })]
   }
 
