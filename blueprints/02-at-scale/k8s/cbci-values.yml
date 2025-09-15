@@ -15,6 +15,7 @@ OperationsCenter:
     Enabled: true
     Retriever:
       Enabled: true
+      ocBundleAutomaticVersion: true
       scmRepo: ${cbciScmRepoUrl}
       scmBranch: ${cbciScmBranch}
       scmBundlePath: ${cbciScmBundlePath}
