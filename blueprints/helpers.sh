@@ -2,13 +2,17 @@
 
 # Copyright (c) CloudBees, Inc.
 
-set -euox pipefail
+set -euo pipefail
 
 SCRIPTDIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bpAgentUser="bp-agent"
+bpAgentLocalImage="local.cloudbees/bp-agent"
 
-
-#https://developer.hashicorp.com/terraform/internals/debugging
-export TF_LOG=DEBUG
+if [ "${DEBUG:-}" != "false" ]; then
+  set -x
+  #https://developer.hashicorp.com/terraform/internals/debugging
+  export TF_LOG=DEBUG
+fi
 
 declare -a BLUEPRINTS=(
     "01-getting-started"
@@ -28,9 +32,27 @@ ERROR () {
   exit 1
 }
 
+tfChecks () {
+  if [ ! -f "$SCRIPTDIR/$ROOT/.auto.tfvars" ]; then
+    ERROR "$SCRIPTDIR/$ROOT/.auto.tfvars file does not exist and it is required to store your own values"
+  fi
+  if [ ! -f "$SCRIPTDIR/$ROOT/k8s/secrets-values.yml" ] && [ "$ROOT" == "02-at-scale" ]; then
+    ERROR "$SCRIPTDIR/$ROOT/k8s/secrets-values.yml file does not exist and it is required to store your secrets"
+  fi
+  USER_ID=$(aws sts get-caller-identity | grep UserId | cut -d"," -f 1 | xargs ) || USER_ID=""
+  if [ "$USER_ID" == "" ]; then
+    ERROR "AWS Authention for CLI is not configured"
+  fi
+  INFO "Terraform Preflight Checks OK for $USER_ID"
+}
+
+agentCheck () {
+  if [ "$(whoami)" != "$bpAgentUser" ]; then
+    WARN "$bpAgentUser user is not detected. Blueprint Docker Agent available via: make bpAgent-dRun"
+  fi
+}
+
 bpAgent-dRun (){
-  local bpAgentUser="bp-agent"
-  local bpAgentLocalImage="local.cloudbees/bp-agent"
 	if [ "$(docker image ls | grep -c "$bpAgentLocalImage")" -eq 0 ]; then \
 		INFO "Building Docker Image local.cloudbees/bp-agent:latest" && \
 		docker build . --build-arg CREATE_USER=true --file "$SCRIPTDIR/../.docker/agent/agent.Dockerfile" --tag "$bpAgentLocalImage"; \
@@ -39,6 +61,41 @@ bpAgent-dRun (){
 		-v "$SCRIPTDIR/..":"/$bpAgentUser/cbci-eks-addon" -v "$HOME/.aws":"/$bpAgentUser/.aws" \
     --workdir="/$bpAgentUser/cbci-eks-addon/blueprints" \
 		"$bpAgentLocalImage"
+}
+
+deploy () {
+  terraform -chdir="$SCRIPTDIR/$ROOT" init
+  terraform -chdir="$SCRIPTDIR/$ROOT" plan -no-color > "$SCRIPTDIR/$ROOT/tfplan.txt"
+  if [ "$CI" == "false" ]; then
+    ask-confirmation "Deploy $ROOT. Check plan at $ROOT/tfplan.txt" || exit 0
+  fi
+  tf-apply "$ROOT"
+  INFO "CloudBees CI Blueprint $ROOT Deploy target finished succesfully."
+}
+
+validate () {
+  if [ "$CI" == "false" ]; then
+    local msg="Validate $ROOT"
+    if [ ! -f "$SCRIPTDIR/$ROOT/terraform.output" ]; then
+      WARN "Blueprint $ROOT did not complete the Deployment target thus it is not Ready to be validated."
+      msg="Continue validation of $ROOT anyway"
+    fi
+    ask-confirmation "$msg" || exit 0
+  fi
+  probes "$ROOT"
+  INFO "CloudBees CI Blueprint $ROOT Validation target finished succesfully."
+}
+
+destroy () {
+  if [ "$CI" == "false" ]; then
+    ask-confirmation "Destroy $ROOT with Destroy Workloads Only=$DESTROY_WL_ONLY" || exit 0
+  fi
+  if [ "$DESTROY_WL_ONLY" == "false" ]; then
+    tf-destroy "$ROOT"
+  else
+    tf-destroy-wl "$ROOT"
+  fi
+  INFO "CloudBees CI Blueprint $ROOT Destroy target finished succesfully. Destroy Workloads Only=$DESTROY_WL_ONLY"
 }
 
 ask-confirmation () {
@@ -57,6 +114,7 @@ retry () {
     set +e
   fi
 
+  INFO "Running command (retries left: $retries): $command"
   $command
   local exit_code=$?
 
@@ -198,10 +256,9 @@ test-all () {
 }
 
 clean() {
-  local root="$1"
-  cd "$SCRIPTDIR/$root" && \
+  cd "$SCRIPTDIR/$ROOT" && \
     rm -rf ".terraform" && \
-	  rm -f ".terraform.lock.hcl" "k8s/kubeconfig_*.yaml"  "terraform.output" "terraform.log" "tfplan.txt"
+    rm -f ".terraform.lock.hcl" "k8s/kubeconfig_*.yaml"  "terraform.output" "terraform.log" "tfplan.txt"
 }
 
 set-kube-env () {
