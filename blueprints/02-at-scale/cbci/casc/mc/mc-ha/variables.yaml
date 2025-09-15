@@ -1,4 +1,5 @@
-variables:
-  - sharedLibRepo: "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
-  - sharedLibBranch: upgrade-3.28671.0
-  - sharedLibPath: "blueprints/02-at-scale/cbci/shared-lib"
+variables: {}
+  # The following variables are now provided via k8s secrets
+  # - cbci_casc_repo_url: "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
+  # - cbci_casc_branch: upgrade-3.28671.0
+  # - cbci_casc_path_shared_library: "blueprints/02-at-scale/cbci/shared-lib"

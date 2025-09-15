@@ -40,6 +40,11 @@ locals {
 
   node_iam_role_name = module.eks_blueprints_addons.karpenter.node_iam_role_name
 
+  cbci_casc_repo_url            = var.oc_casc_scm_repo_url
+  cbci_casc_branch              = var.oc_casc_scm_branch
+  cbci_casc_path_controller     = var.cbci_casc_path_controller
+  cbci_casc_path_shared_library = var.cbci_casc_path_shared_library
+
 }
 
 resource "random_string" "global_pass_string" {
@@ -70,8 +75,8 @@ module "eks_blueprints_addon_cbci" {
       cbciAppsTolerationKey   = local.mng["cbci_apps"]["taints"].key
       cbciAppsTolerationValue = local.mng["cbci_apps"]["taints"].value
       cbciAgentsNamespace     = local.cbci_agents_ns
-      cbciScmRepoUrl          = var.oc_casc_scm_repo_url
-      cbciScmBranch           = var.oc_casc_scm_branch
+      cbciScmRepoUrl          = local.cbci_casc_repo_url
+      cbciScmBranch           = local.cbci_casc_branch
       cbciScmBundlePath       = var.oc_casc_scm_bundle_path
       cbciScmPollingInterval  = var.oc_casc_scm_polling_interval
     })]
@@ -79,11 +84,15 @@ module "eks_blueprints_addon_cbci" {
 
   create_casc_secrets = true
   casc_secrets_file = templatefile("k8s/secrets-values.yml", {
-    global_password = local.global_password
-    s3bucketName    = module.cbci_s3_bucket.s3_bucket_id
-    awsRegion       = var.aws_region
-    adminMail       = var.trial_license["email"]
-    grafana_url     = local.grafana_url
+    global_password               = local.global_password
+    s3bucketName                  = module.cbci_s3_bucket.s3_bucket_id
+    awsRegion                     = var.aws_region
+    adminMail                     = var.trial_license["email"]
+    grafana_url                   = local.grafana_url
+    cbci_casc_repo_url            = local.cbci_casc_repo_url
+    cbci_casc_branch              = local.cbci_casc_branch
+    cbci_casc_path_controller     = local.cbci_casc_path_controller
+    cbci_casc_path_shared_library = local.cbci_casc_path_shared_library
   })
 
   create_reg_secret = true
