@@ -214,12 +214,13 @@ resource "aws_iam_role_policy" "s3_policy" {
     {
       "Version" : "2012-10-17",
       #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
+      #More permissions needed until BEE-62592 is resolved
       "Statement" : [
         {
           "Effect" : "Allow",
           "Action" : [
             "s3express:CreateSession",
-            "s3:GetBucketLocation"
+            "s3:ListBucket"
           ],
           "Resource" : "${var.pi_s3_bucket_arn}"
         },
