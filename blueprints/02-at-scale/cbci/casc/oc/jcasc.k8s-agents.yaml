@@ -3,6 +3,7 @@ kube:
     templates:
     - name: "busybox-L"
       label: "busybox-L"
+      serviceAccount: "jenkins-agents"
       yaml: |-
         apiVersion: "v1"
         kind: "Pod"
