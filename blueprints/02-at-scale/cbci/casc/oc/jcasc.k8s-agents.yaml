@@ -25,7 +25,6 @@ kube:
           nodeSelector:
             kubernetes.io/os: linux
             role: "linux-builds"
-            size: "2x"
           tolerations:
           - effect: "NoSchedule"
             key: "dedicated"
