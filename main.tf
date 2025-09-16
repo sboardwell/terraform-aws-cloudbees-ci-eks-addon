@@ -216,6 +216,14 @@ resource "aws_iam_role_policy" "s3_policy" {
       #https://docs.cloudbees.com/docs/cloudbees-ci/latest/pipelines/cloudbees-cache-step#_s3_configuration
       "Statement" : [
         {
+          "Effect" : "Allow",
+          "Action" : [
+            "s3express:CreateSession",
+            "s3:GetBucketLocation"
+          ],
+          "Resource" : "${var.pi_s3_bucket_arn}"
+        },
+        {
           "Sid" : "cbciS3BucketputGetDelete",
           "Effect" : "Allow",
           "Action" : [
