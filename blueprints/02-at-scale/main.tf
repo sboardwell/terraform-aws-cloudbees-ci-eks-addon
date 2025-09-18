@@ -376,7 +376,7 @@ module "cbci_s3_bucket" {
 }
 
 resource "aws_backup_plan" "efs_backup_plan" {
-  name = "efs-backup-plan"
+  name = "efs-backup-plan-${local.name}"
 
   rule {
     rule_name         = "efs-backup-rule"
@@ -392,7 +392,7 @@ resource "aws_backup_plan" "efs_backup_plan" {
 }
 
 resource "aws_backup_vault" "efs_backup_vault" {
-  name = "efs-backup-vault"
+  name = "efs-backup-vault-${local.name}"
 
   kms_key_arn   = aws_kms_key.backup_key.arn
   force_destroy = true
