@@ -1,0 +1,5 @@
+apiVersion: "2"
+id: "oc-plugins-only"
+version: "1"
+plugins:
+  - plugins.yaml
