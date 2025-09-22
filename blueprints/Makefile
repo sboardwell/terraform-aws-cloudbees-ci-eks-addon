@@ -4,7 +4,7 @@ MAKEFLAGS       	+= --no-print-directory
 MKFILEDIR 			:= $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 CBCI_REPO		    ?= https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git
 CBCI_BRANCH			?= main
-DESTROY_WL_ONLY		?= false
+export DESTROY_WL_ONLY		?= false
 export CI 					?= false
 
 define helpers

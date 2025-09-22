@@ -97,20 +97,6 @@ roles:
   - hudson.model.Hudson.Read
   - hudson.model.View.Read
   name: browse
-- permissions:
-  - hudson.model.Hudson.Read
-  - com.cloudbees.jenkins.plugins.casc.permissions.CascPermission.Item
-  - hudson.model.View.Read
-  - hudson.model.Hudson.SystemRead
-  - hudson.model.Computer.ExtendedRead
-  - hudson.model.Item.ExtendedRead
-  - com.cloudbees.jenkins.plugins.casc.permissions.CascPermission.Administer
-  name: validate-casc
-- filterable: true
-  permissions:
-  - hudson.model.Hudson.Read
-  - hudson.model.Hudson.Manage
-  name: manage
 groups:
 - members:
     external_groups:
@@ -128,20 +114,3 @@ groups:
     grantedAt: current
     propagates: false
   name: Developers
-- members:
-    users:
-    - casc-validator
-    - global-developer-0
-  roles:
-  - name: validate-casc
-    grantedAt: current
-  name: CasC-Validators
-- members:
-    external_groups:
-    - global-manager-grp
-    users:
-    - manager
-  roles:
-  - name: manage
-    grantedAt: child
-  name: Managers
