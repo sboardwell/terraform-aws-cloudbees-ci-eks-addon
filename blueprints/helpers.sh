@@ -100,6 +100,10 @@ destroy () {
 
 ask-confirmation () {
   local msg="$1"
+  if [ "${NO_CONFIRMATION:-}" == "true" ]; then
+    INFO "NO_CONFIRMATION is set to true. Proceeding without user confirmation to $msg"
+    return 0
+  fi
   INFO "Asking for your confirmation to $msg. [yes/No]"
 	read -r ans && [ "$ans" = "yes" ]
 }
@@ -251,7 +255,7 @@ test-all () {
   for bp in "${BLUEPRINTS[@]}"
   do
     export ROOT="$bp"
-    cd "$SCRIPTDIR"/.. && make test
+    cd "$SCRIPTDIR" && make test
   done
 }
 

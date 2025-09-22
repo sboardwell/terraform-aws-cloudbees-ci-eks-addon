@@ -60,3 +60,6 @@ Master:
     -XX:ErrorFile=/var/jenkins_home/logs/hs_err_%p.log
     -XX:+LogVMOutput
     -XX:LogFile=/var/jenkins_home/logs/jvm.log
+Agents:
+  SeparateNamespace:
+    Enabled: false
