@@ -19,6 +19,15 @@ dh_reg_secret_auth = { # Required.
 #   "cb-purpose" : "demo-env"
 # }
 
+# Optional variables in order to use a different repository and/or branch for CasC and configuration
+# oc_casc_scm_repo_url = "https://github.com/cloudbees-oss/terraform-aws-cloudbees-ci-eks-addon.git"
+# oc_casc_scm_branch    = "develop"
+# oc_casc_scm_bundle_path = "blueprints/02-at-scale/cbci/casc/oc"
+# oc_casc_scm_polling_interval = "PT2M"
+# cbci_casc_path_controller = "blueprints/02-at-scale/cbci/casc/mc"
+# cbci_casc_path_shared_library = "blueprints/02-at-scale/cbci/shared-lib"
+
+
 # suffix = my-demo #Optional
 
 # aws_region = "us-west-2" #Optional

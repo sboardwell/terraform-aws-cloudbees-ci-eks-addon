@@ -276,21 +276,6 @@ set-kube-env () {
   done
 }
 
-set-cbci-location () {
-  local repo="$1"
-  local branch="$2"
-  #Repo
-  sed -i "s|scmRepo: .*|scmRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/k8s/cbci-values.yml"
-  sed -i "s|scmCascMmStore: .*|scmCascMmStore: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
-  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
-  sed -i "s|sharedLibRepo: .*|sharedLibRepo: \"$repo\"|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
-  #Branch
-  sed -i "s|scmBranch: .*|scmBranch: $branch|g" "$SCRIPTDIR/02-at-scale/k8s/cbci-values.yml"
-  sed -i "s|cascBranch: .*|cascBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/oc/variables.yaml"
-  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-ha/variables.yaml"
-  sed -i "s|sharedLibBranch: .*|sharedLibBranch: $branch|g" "$SCRIPTDIR/02-at-scale/cbci/casc/mc/mc-none-ha/variables.yaml"
-}
-
 zip-all-casc-bundles () {
   branch=$(git rev-parse --abbrev-ref HEAD)
   cbciDirInput="$SCRIPTDIR/02-at-scale/cbci"

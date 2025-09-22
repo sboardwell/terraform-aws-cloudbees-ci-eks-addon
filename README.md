@@ -75,7 +75,7 @@ The two main components of CloudBees CI - the operations center and managed cont
 - Amazon EBS volumes are scoped to a particular availability zone to offer high-speed, low-latency access to the Amazon Elastic Compute Cloud (Amazon EC2) instances they are connected to. If an availability zone fails, an Amazon EBS volume becomes inaccessible due to file corruption, or there is a service outage, the data on these volumes becomes inaccessible. The operations center and managed controller pods require this persistent data and have no mechanism to replicate the data, so CloudBees recommends frequent backups for Amazon EBS.
 - Amazon EFS file systems are scoped to an AWS region and can be accessed from any availability zone in the region that the file system was created in. Using Amazon EFS as a storage class for the operations center and managed controllers allows pods to be rescheduled successfully onto healthy nodes in the event of an availability zone outage. Amazon EFS is more expensive than Amazon EBS, but provides greater fault tolerance.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > CloudBees CI High Availability (HA) (active-active) requires Amazon EFS. For more information, refer to [CloudBees CI EKS storage requirements](https://docs.cloudbees.com/docs/cloudbees-ci/latest/eks-install-guide/eks-pre-install-requirements-helm#_storage_requirements).
 
 > [!NOTE]
