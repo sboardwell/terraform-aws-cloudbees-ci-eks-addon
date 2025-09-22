@@ -2,6 +2,15 @@
 
 fail_fast: false
 repos:
+- repo: https://github.com/tcort/markdown-link-check
+  rev: v3.13.7
+  hooks:
+    - id: markdown-link-check
+      args:
+        - -v
+        - -c
+        - .github/workflows/markdown.links.config.json
+
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
   hooks:
