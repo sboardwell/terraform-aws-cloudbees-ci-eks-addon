@@ -98,7 +98,7 @@ CloudBees CI uses a couple of Kubernetes secrets for different purposes dependin
 | cbci_casc_path_controller | Path within the Git repository that contains the CloudBees CI controllers. | `string` | `"blueprints/02-at-scale/cbci/mc"` | no |
 | cbci_casc_path_shared_library | Path within the Git repository that contains the CloudBees CI shared library. | `string` | `"blueprints/02-at-scale/cbci/shared-lib"` | no |
 | ci | Running in a CI service versus running locally. False when running locally, true when running in a CI service. | `bool` | `false` | no |
-| dh_reg_secret_auth | Docker Hub registry server authentication details for cbci-sec-reg secret. | `map(string)` | <pre>{<br/>  "email": "foo.bar@acme.com",<br/>  "password": "changeme1234",<br/>  "username": "foo"<br/>}</pre> | no |
+| dh_reg_secret_auth | Docker Hub registry server authentication details for cbci-sec-reg secret. | `map(string)` | <pre>{<br/>  "email": "email@example.com",<br/>  "password": "changeme1234",<br/>  "username": "foo"<br/>}</pre> | no |
 | oc_casc_scm_branch | Branch of the Git repository that contains the CloudBees CI bundle configuration for OC. | `string` | `"main"` | no |
 | oc_casc_scm_bundle_path | Path within the Git repository that contains the CloudBees CI bundle configuration for OC. | `string` | `"blueprints/02-at-scale/cbci/casc/oc"` | no |
 | oc_casc_scm_polling_interval | Polling interval for the Git repository that contains the CloudBees CI bundle configuration for OC. | `string` | `"PT20M"` | no |

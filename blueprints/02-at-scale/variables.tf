@@ -18,7 +18,7 @@ variable "dh_reg_secret_auth" {
   default = {
     username = "foo"
     password = "changeme1234"
-    email    = "foo.bar@acme.com"
+    email    = "email@example.com"
   }
 }
 
