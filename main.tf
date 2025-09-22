@@ -222,7 +222,7 @@ resource "aws_iam_role_policy" "s3_policy" {
             "s3express:CreateSession",
             "s3:ListBucket"
           ],
-          "Resource" : "${var.pi_s3_bucket_arn}"
+          "Resource" : var.pi_s3_bucket_arn
         },
         {
           "Sid" : "cbciS3BucketputGetDelete",

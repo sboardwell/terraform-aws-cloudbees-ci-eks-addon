@@ -73,18 +73,6 @@ variable "oc_casc_scm_polling_interval" {
   default     = "PT20M"
 }
 
-variable "cbci_casc_repo_url" {
-  description = "URL of the Git repository that contains the CloudBees CI bundle configuration for CloudBees CI."
-  type        = string
-  default     = "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
-}
-
-variable "cbci_casc_branch" {
-  description = "Branch of the Git repository that contains the CloudBees CI bundle configuration for CloudBees CI."
-  type        = string
-  default     = "main"
-}
-
 variable "cbci_casc_path_controller" {
   description = "Path within the Git repository that contains the CloudBees CI controllers."
   type        = string

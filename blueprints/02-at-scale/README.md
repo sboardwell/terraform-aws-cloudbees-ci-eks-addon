@@ -95,10 +95,8 @@ CloudBees CI uses a couple of Kubernetes secrets for different purposes dependin
 | hosted_zone | Amazon Route 53 hosted zone. CloudBees CI applications are configured to use subdomains in this hosted zone. | `string` | n/a | yes |
 | trial_license | CloudBees CI trial license details for evaluation. | `map(string)` | n/a | yes |
 | aws_region | AWS region to deploy resources to. It requires a minimum of three availability zones. | `string` | `"us-west-2"` | no |
-| cbci_casc_branch | Branch of the Git repository that contains the CloudBees CI bundle configuration for CloudBees CI. | `string` | `"main"` | no |
 | cbci_casc_path_controller | Path within the Git repository that contains the CloudBees CI controllers. | `string` | `"blueprints/02-at-scale/cbci/mc"` | no |
 | cbci_casc_path_shared_library | Path within the Git repository that contains the CloudBees CI shared library. | `string` | `"blueprints/02-at-scale/cbci/shared-lib"` | no |
-| cbci_casc_repo_url | URL of the Git repository that contains the CloudBees CI bundle configuration for CloudBees CI. | `string` | `"https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"` | no |
 | ci | Running in a CI service versus running locally. False when running locally, true when running in a CI service. | `bool` | `false` | no |
 | dh_reg_secret_auth | Docker Hub registry server authentication details for cbci-sec-reg secret. | `map(string)` | <pre>{<br/>  "email": "foo.bar@acme.com",<br/>  "password": "changeme1234",<br/>  "username": "foo"<br/>}</pre> | no |
 | oc_casc_scm_branch | Branch of the Git repository that contains the CloudBees CI bundle configuration for OC. | `string` | `"main"` | no |
