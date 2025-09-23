@@ -32,6 +32,7 @@ unclassified:
                     - path: ${cbci_casc_path_controller}
   cascAutoControllerProvisioning:
     provisionControllerOnCreation: true
+    initialDelay: 60
   audit-trail:
     displayUserName: true
     logBuildCause: true
