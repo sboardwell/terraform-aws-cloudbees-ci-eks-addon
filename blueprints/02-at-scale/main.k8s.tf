@@ -142,7 +142,7 @@ module "eks_blueprints_addons" {
   source = "aws-ia/eks-blueprints-addons/aws"
   #vEKSBpAddonsTFMod#
   version    = "1.20.0"
-  depends_on = [kubernetes_storage_class_v1.efs, kubernetes_storage_class_v1.gp3_a, kubernetes_annotations.gp2]
+  depends_on = [kubernetes_storage_class_v1.efs, kubernetes_storage_class_v1.gp3_a]
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -425,7 +425,6 @@ resource "kubernetes_storage_class_v1" "gp3_a" {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
-  depends_on = [module.eks_blueprints_addons.ebs_csi_driver]
 
   storage_provisioner    = "ebs.csi.aws.com"
   allow_volume_expansion = true

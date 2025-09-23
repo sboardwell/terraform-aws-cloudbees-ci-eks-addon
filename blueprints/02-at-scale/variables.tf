@@ -53,12 +53,20 @@ variable "oc_casc_scm_repo_url" {
   description = "URL of the Git repository that contains the CloudBees CI bundle configuration for OC."
   type        = string
   default     = "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
+  validation {
+    condition     = length(var.oc_casc_scm_repo_url) > 0
+    error_message = "The repository URL must not be empty."
+  }
 }
 
 variable "oc_casc_scm_branch" {
   description = "Branch of the Git repository that contains the CloudBees CI bundle configuration for OC."
   type        = string
-  default     = "main"
+  default     = "develop"
+  validation {
+    condition     = length(var.oc_casc_scm_branch) > 0
+    error_message = "The branch name must not be empty."
+  }
 }
 
 variable "oc_casc_scm_bundle_path" {
