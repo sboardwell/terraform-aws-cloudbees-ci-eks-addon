@@ -18,7 +18,8 @@ locals {
 
   vpc_cidr = "10.0.0.0/16"
   #It assumes that AZ as named as "a", "b", "c" consecutively.
-  azs              = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs_count        = 3
+  azs              = slice(data.aws_availability_zones.available.names, 0, local.azs_count)
   route53_zone_id  = data.aws_route53_zone.this.id
   route53_zone_arn = data.aws_route53_zone.this.arn
 
@@ -212,8 +213,8 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs             = local.azs
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
+  private_subnets = [for i in range(0, local.azs_count) : cidrsubnet(local.vpc_cidr, 4, i)]
+  public_subnets  = [for i in range(0, local.azs_count) : cidrsubnet(local.vpc_cidr, 4, local.azs_count + i)]
 
   enable_nat_gateway = true
   single_nat_gateway = true
