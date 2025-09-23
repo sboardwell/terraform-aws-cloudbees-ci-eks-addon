@@ -12,15 +12,6 @@ items:
         disk: 10
         nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
         storageClassName: "gp3-a"
-  - kind: managedController
-    name: team-d
-    configuration:
-      kubernetes:
-        memory: 2048
-        cpus: 1.0
-        disk: 10
-        nodeSelectors: topology.kubernetes.io/zone=${sec_awsRegion}a,role=cb-apps
-        storageClassName: "gp3-a"
   # Casc, Non-HA
   - kind: managedController
     name: team-b
