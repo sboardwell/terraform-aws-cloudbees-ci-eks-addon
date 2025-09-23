@@ -165,8 +165,8 @@ tf-destroy () {
   #Prevent Issue #165
   #TODO: Run only when terraform output is present
   if [ "$ROOT" == "${BLUEPRINTS[1]}" ]; then
-    aws_region=$(tf-output "$ROOT" aws_region)
-    eks_cluster_name=$(tf-output "$ROOT" eks_cluster_name)
+    aws_region=$(tf-output aws_region)
+    eks_cluster_name=$(tf-output eks_cluster_name)
     bash "$SCRIPTDIR/$ROOT/k8s/kube-prom-destroy.sh" "$eks_cluster_name" "$aws_region"
     INFO "kube-prom-destroy.sh completed."
   fi
