@@ -406,7 +406,7 @@ resource "kubernetes_annotations" "gp2" {
   kind        = "StorageClass"
   # This is true because the resources was already created by the ebs-csi-driver addon
   force      = "true"
-  depends_on = [module.eks]
+  depends_on = [module.eks_blueprints_addons.ebs_csi_driver]
 
   metadata {
     name = "gp2"
@@ -425,7 +425,7 @@ resource "kubernetes_storage_class_v1" "gp3_a" {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
-  depends_on = [module.eks]
+  depends_on = [module.eks_blueprints_addons.ebs_csi_driver]
 
   storage_provisioner    = "ebs.csi.aws.com"
   allow_volume_expansion = true
