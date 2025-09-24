@@ -8,7 +8,7 @@ variables:
   - cascSecretsName: "cbci-sec-casc"
   - s3bucketPreffix: "cbci"
 
-# Values for casc repository and branch are now provided via k8s secrets
+# Values for the CasC repository and branch are provided via K8s secrets
 # - cbci_casc_repo_url: "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
 # - cbci_casc_branch: upgrade-3.28671.0
 # - cbci_casc_path_controller: "/blueprints/02-at-scale/cbci/casc/mc/"

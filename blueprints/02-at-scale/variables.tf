@@ -50,7 +50,7 @@ variable "tags" {
 }
 
 variable "oc_casc_scm_repo_url" {
-  description = "URL of the Git repository that contains the CloudBees CI bundle configuration for OC."
+  description = "URL of the Git repository that contains the CloudBees CI CasC bundle configuration for the operations center."
   type        = string
   default     = "https://github.com/cloudbees/terraform-aws-cloudbees-ci-eks-addon.git"
   validation {
@@ -60,7 +60,7 @@ variable "oc_casc_scm_repo_url" {
 }
 
 variable "oc_casc_scm_branch" {
-  description = "Branch of the Git repository that contains the CloudBees CI bundle configuration for OC."
+  description = "Branch of the Git repository that contains the CloudBees CI CasC bundle configuration for the operations center."
   type        = string
   default     = "develop"
   validation {
@@ -70,13 +70,13 @@ variable "oc_casc_scm_branch" {
 }
 
 variable "oc_casc_scm_bundle_path" {
-  description = "Path within the Git repository that contains the CloudBees CI bundle configuration for OC."
+  description = "Path within the Git repository that contains the CloudBees CI CasC bundle configuration for the operations center."
   type        = string
   default     = "blueprints/02-at-scale/cbci/casc/oc"
 }
 
 variable "oc_casc_scm_polling_interval" {
-  description = "Polling interval for the Git repository that contains the CloudBees CI bundle configuration for OC."
+  description = "Polling interval for the Git repository that contains the CloudBees CI CasC bundle configuration for the operations center."
   type        = string
   default     = "PT20M"
 }
